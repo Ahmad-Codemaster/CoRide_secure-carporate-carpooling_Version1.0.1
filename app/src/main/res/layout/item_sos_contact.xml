@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:gravity="center_vertical"
+    android:paddingVertical="@dimen/spacing_sm"
+    android:paddingHorizontal="@dimen/spacing_sm"
+    android:background="?attr/selectableItemBackground"
+    android:layout_marginTop="@dimen/spacing_xs">
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tvSosContactName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Contact Name"
+            android:textColor="@color/on_error_container"
+            android:textSize="@dimen/text_body_medium"
+            android:fontFamily="sans-serif-medium" />
+
+        <TextView
+            android:id="@+id/tvSosContactPhone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="+92 300 0000000"
+            android:textColor="@color/on_error_container"
+            android:textSize="@dimen/text_label_large"
+            android:alpha="0.8" />
+    </LinearLayout>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnSosNotifyWhatsApp"
+        android:layout_width="wrap_content"
+        android:layout_height="36dp"
+        android:text="Notify"
+        android:textSize="12sp"
+        app:icon="@drawable/ic_bolt"
+        app:iconSize="14dp"
+        app:iconPadding="4dp"
+        style="@style/Widget.Material3.Button.TonalButton"
+        app:cornerRadius="@dimen/shape_small" />
+
+</LinearLayout>

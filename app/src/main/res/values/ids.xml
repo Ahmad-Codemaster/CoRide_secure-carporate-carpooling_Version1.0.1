@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="tvDriverInfo" type="id" />
+    <item name="tvDest" type="id" />
+    <item name="ivPlaceIcon" type="id" />
+    <item name="tvRateDriverName" type="id" />
+</resources>

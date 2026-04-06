@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/main_nav_graph"
+    app:startDestination="@id/homeFragment">
+
+    <fragment
+        android:id="@+id/homeFragment"
+        android:name="com.indrive.clone.ui.home.HomeFragment"
+        android:label="Home">
+
+        <action
+            android:id="@+id/action_home_to_search"
+            app:destination="@id/searchPlaceFragment"
+            app:enterAnim="@android:anim/slide_in_left"
+            app:exitAnim="@android:anim/fade_out"
+            app:popEnterAnim="@android:anim/fade_in"
+            app:popExitAnim="@android:anim/slide_out_right" />
+
+        <action
+            android:id="@+id/action_home_to_booking"
+            app:destination="@id/bookingFragment"
+            app:enterAnim="@android:anim/slide_in_left"
+            app:exitAnim="@android:anim/fade_out" />
+
+        <action
+            android:id="@+id/action_home_to_history"
+            app:destination="@id/historyFragment"
+            app:enterAnim="@android:anim/slide_in_left"
+            app:exitAnim="@android:anim/fade_out"
+            app:popEnterAnim="@android:anim/fade_in"
+            app:popExitAnim="@android:anim/slide_out_right" />
+            
+        <action
+            android:id="@+id/action_home_to_home_map"
+            app:destination="@id/homeMapFragment"
+            app:enterAnim="@android:anim/fade_in"
+            app:exitAnim="@android:anim/fade_out" />
+            
+        <action
+            android:id="@+id/action_home_to_profile"
+            app:destination="@id/profileFragment"
+            app:enterAnim="@android:anim/fade_in"
+            app:exitAnim="@android:anim/fade_out"
+            app:popEnterAnim="@android:anim/fade_in"
+            app:popExitAnim="@android:anim/fade_out" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/searchPlaceFragment"
+        android:name="com.indrive.clone.ui.home.SearchPlaceFragment"
+        android:label="Search">
+
+        <action
+            android:id="@+id/action_search_to_booking"
+            app:destination="@id/bookingFragment"
+            app:enterAnim="@android:anim/slide_in_left"
+            app:exitAnim="@android:anim/fade_out" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/bookingFragment"
+        android:name="com.indrive.clone.ui.booking.BookingFragment"
+        android:label="Book Ride">
+
+        <action
+            android:id="@+id/action_booking_to_offers"
+            app:destination="@id/driverOffersFragment"
+            app:enterAnim="@android:anim/slide_in_left"
+            app:exitAnim="@android:anim/fade_out" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/driverOffersFragment"
+        android:name="com.indrive.clone.ui.booking.DriverOffersFragment"
+        android:label="Driver Offers">
+
+        <action
+            android:id="@+id/action_offers_to_ride"
+            app:destination="@id/rideFragment"
+            app:enterAnim="@android:anim/slide_in_left"
+            app:exitAnim="@android:anim/fade_out" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/rideFragment"
+        android:name="com.indrive.clone.ui.ride.RideFragment"
+        android:label="Ride">
+
+        <action
+            android:id="@+id/action_ride_to_complete"
+            app:destination="@id/rideCompleteFragment"
+            app:enterAnim="@android:anim/fade_in"
+            app:exitAnim="@android:anim/fade_out" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/rideCompleteFragment"
+        android:name="com.indrive.clone.ui.ride.RideCompleteFragment"
+        android:label="Ride Complete">
+
+        <action
+            android:id="@+id/action_complete_to_home"
+            app:destination="@id/homeFragment"
+            app:popUpTo="@id/homeFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/historyFragment"
+        android:name="com.indrive.clone.ui.history.HistoryFragment"
+        android:label="Activity" />
+
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="com.indrive.clone.ui.profile.ProfileFragment"
+        android:label="Profile">
+        <action
+            android:id="@+id/action_profile_to_trusted_contacts"
+            app:destination="@id/trustedContactsFragment"
+            app:enterAnim="@android:anim/fade_in"
+            app:exitAnim="@android:anim/fade_out"
+            app:popEnterAnim="@android:anim/fade_in"
+            app:popExitAnim="@android:anim/fade_out" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/trustedContactsFragment"
+        android:name="com.indrive.clone.ui.profile.TrustedContactsFragment"
+        android:label="Security Center" />
+        
+    <fragment
+        android:id="@+id/homeMapFragment"
+        android:name="com.indrive.clone.ui.home.HomeMapFragment"
+        android:label="Home Map Focus" />
+
+</navigation>

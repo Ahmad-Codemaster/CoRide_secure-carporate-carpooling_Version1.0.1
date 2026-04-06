@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_top_sheet"
+    android:orientation="vertical"
+    android:paddingTop="@dimen/spacing_lg"
+    android:paddingBottom="@dimen/spacing_xl"
+    android:paddingHorizontal="@dimen/spacing_lg">
+
+    <!-- SOS Hero Icon — red alert circle -->
+    <LinearLayout
+        android:id="@+id/sosHeroIcon"
+        android:layout_width="72dp"
+        android:layout_height="72dp"
+        android:layout_gravity="center"
+        android:background="@drawable/bg_button_danger"
+        android:gravity="center"
+        android:alpha="0"
+        android:scaleX="0.5"
+        android:scaleY="0.5">
+
+        <ImageView
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:src="@drawable/ic_warning"
+            android:contentDescription="SOS"
+            app:tint="@color/on_error" />
+    </LinearLayout>
+
+    <!-- Drag Handle — moved below hero icon for top-sheet consistency -->
+    <View
+        android:layout_width="@dimen/drag_handle_width"
+        android:layout_height="@dimen/drag_handle_height"
+        android:layout_gravity="center"
+        android:layout_marginTop="@dimen/spacing_md"
+        android:layout_marginBottom="@dimen/spacing_sm"
+        android:background="@drawable/indicator_m3_drag" />
+
+    <!-- Title -->
+    <TextView
+        android:id="@+id/tvSosTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/spacing_sm"
+        android:gravity="center"
+        android:text="@string/sos_title"
+        android:textColor="@color/error"
+        android:textSize="@dimen/text_headline_small"
+        android:fontFamily="sans-serif-bold"
+        android:alpha="0"
+        android:translationY="20dp" />
+
+    <!-- Message -->
+    <TextView
+        android:id="@+id/tvSosMessage"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/spacing_sm"
+        android:gravity="center"
+        android:text="@string/sos_message"
+        android:textColor="@color/on_surface_variant"
+        android:textSize="@dimen/text_body_small"
+        android:lineSpacingMultiplier="1.4"
+        android:alpha="0"
+        android:translationY="20dp" />
+
+    <!-- Emergency Contact Info Card -->
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/cardEmergencyContact"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/spacing_lg"
+        app:cardCornerRadius="@dimen/shape_medium"
+        app:cardElevation="@dimen/elevation_none"
+        app:strokeColor="@color/error"
+        app:strokeWidth="1dp"
+        app:cardBackgroundColor="@color/error_container"
+        android:alpha="0"
+        android:translationY="30dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="@dimen/spacing_md">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/emergency_contacts"
+                android:textColor="@color/on_error_container"
+                android:textSize="@dimen/text_label_large"
+                android:fontFamily="sans-serif-medium" />
+
+            <TextView
+                android:id="@+id/tvEmergencyContactInfo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_xs"
+                android:textColor="@color/on_error_container"
+                android:textSize="@dimen/text_body_small" />
+
+            <LinearLayout
+                android:id="@+id/containerTrustedContacts"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_sm"
+                android:orientation="vertical" />
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+    <!-- Send Alert Button -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnSendAlert"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/button_height"
+        android:layout_marginTop="@dimen/spacing_lg"
+        android:text="@string/sos_confirm"
+        style="@style/Widget.InDrive.Button.Error"
+        android:alpha="0"
+        android:translationY="20dp" />
+
+    <!-- Call Police -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnCallPolice"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/button_height"
+        android:layout_marginTop="@dimen/spacing_sm"
+        android:text="@string/call_police"
+        style="@style/Widget.InDrive.Button.Secondary"
+        app:strokeColor="@color/error"
+        android:textColor="@color/error"
+        android:alpha="0"
+        android:translationY="20dp" />
+
+    <!-- Go Back -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnGoBack"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/button_height"
+        android:layout_marginTop="@dimen/spacing_sm"
+        android:text="@string/sos_cancel"
+        style="@style/Widget.InDrive.Button.Text"
+        android:alpha="0"
+        android:translationY="20dp" />
+
+</LinearLayout>

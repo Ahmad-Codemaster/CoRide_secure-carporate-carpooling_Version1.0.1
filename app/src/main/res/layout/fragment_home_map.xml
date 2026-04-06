@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/surface">
+
+    <!-- Map Full Background -->
+    <fragment
+        android:id="@+id/homeMapView"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <!-- Center Pin -->
+    <ImageView
+        android:id="@+id/ivCenterPin"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginBottom="20dp"
+        android:src="@drawable/ic_location_pin"
+        app:tint="@color/primary"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Back button -->
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/btnBackContainer"
+        android:layout_width="44dp"
+        android:layout_height="44dp"
+        android:layout_margin="@dimen/spacing_md"
+        app:cardCornerRadius="@dimen/shape_full"
+        app:cardElevation="@dimen/elevation_md"
+        app:cardBackgroundColor="@color/surface_container_lowest"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <ImageView
+            android:id="@+id/btnBack"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="10dp"
+            android:src="@drawable/ic_arrow_back"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            app:tint="@color/on_surface" />
+    </com.google.android.material.card.MaterialCardView>
+
+    <!-- Address Preview Card -->
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/addressCard"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/spacing_md"
+        android:layout_marginTop="@dimen/spacing_md"
+        app:cardCornerRadius="@dimen/shape_large"
+        app:cardElevation="@dimen/elevation_sm"
+        app:cardBackgroundColor="@color/surface_container_lowest"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toEndOf="@id/btnBackContainer"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <TextView
+            android:id="@+id/tvMapAddress"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/spacing_md"
+            android:text="Locating..."
+            android:textColor="@color/on_surface"
+            android:textSize="@dimen/text_body_medium"
+            android:fontFamily="sans-serif-medium"
+            android:maxLines="2"
+            android:ellipsize="end"/>
+    </com.google.android.material.card.MaterialCardView>
+
+    <!-- My Location FAB + Loading Spinner Container -->
+    <FrameLayout
+        android:id="@+id/fabMyLocationContainer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/spacing_md"
+        android:layout_marginBottom="@dimen/spacing_md"
+        app:layout_constraintBottom_toTopOf="@id/btnSaveLocation"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fabMyLocation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/location"
+            app:tint="@color/primary"
+            app:backgroundTint="@color/surface_container_lowest"
+            app:fabSize="normal"
+            app:elevation="4dp" />
+
+        <ProgressBar
+            android:id="@+id/locationProgressBar"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:layout_gravity="center"
+            android:padding="8dp"
+            android:indeterminate="true"
+            android:visibility="gone"
+            android:elevation="6dp" />
+    </FrameLayout>
+
+    <!-- Save Location Button -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnSaveLocation"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/button_height"
+        android:layout_marginHorizontal="@dimen/spacing_lg"
+        android:layout_marginBottom="@dimen/spacing_lg"
+        android:text="Save Location"
+        style="@style/Widget.InDrive.Button.Primary"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- 5. Weather Action Corner (Bottom Right, Stacked Above Location FAB) -->
+    <LinearLayout
+        android:id="@+id/mapWeatherContainer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="@dimen/spacing_md"
+        android:gravity="end"
+        app:layout_constraintBottom_toTopOf="@id/fabMyLocationContainer"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <!-- Weather Popup Card (Solid White, Above FAB) -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cvWeatherPopupMap"
+            android:layout_width="160dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/spacing_md"
+            android:visibility="gone"
+            android:alpha="0"
+            android:translationY="20dp"
+            app:cardCornerRadius="@dimen/shape_large"
+            app:cardElevation="8dp"
+            app:strokeWidth="0dp"
+            app:cardBackgroundColor="#FFFFFF"> <!-- Solid White -->
+
+            <LinearLayout
+                android:id="@+id/layoutWeatherDaysMap"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="@dimen/spacing_sm" />
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Spiral Outline + FAB Container -->
+        <FrameLayout
+            android:layout_width="64dp"
+            android:layout_height="64dp">
+
+            <!-- Animated Spiral Ring -->
+            <ProgressBar
+                android:id="@+id/pbWeatherSpiralMap"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:indeterminate="true"
+                android:indeterminateDrawable="@drawable/ic_playstore_spinner" />
+
+            <!-- Shadowless Weather FAB -->
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/fabWeatherMap"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:src="@drawable/cloud"
+                app:tint="@color/primary"
+                app:backgroundTint="@color/surface_container_lowest"
+                app:fabSize="mini"
+                app:elevation="0dp"
+                app:pressedTranslationZ="0dp"
+                app:shapeAppearanceOverlay="@style/ShapeAppearance.InDrive.Full" />
+        </FrameLayout>
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

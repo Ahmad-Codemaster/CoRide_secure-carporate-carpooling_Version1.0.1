@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="@dimen/spacing_md"
+    android:layout_marginVertical="@dimen/spacing_sm"
+    android:alpha="0"
+    android:translationY="40dp"
+    app:cardCornerRadius="@dimen/shape_large"
+    app:cardElevation="@dimen/elevation_none"
+    app:strokeColor="@color/outline_variant"
+    app:strokeWidth="1dp"
+    app:cardBackgroundColor="@color/surface_container_lowest">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="@dimen/spacing_md">
+
+        <!-- Driver Row -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <!-- Full-round avatar -->
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/ivDriverAvatar"
+                android:layout_width="52dp"
+                android:layout_height="52dp"
+                android:src="@drawable/ic_location_pin"
+                android:tint="@color/on_surface_variant"
+                android:padding="@dimen/spacing_md"
+                android:background="@color/surface_container"
+                app:shapeAppearanceOverlay="@style/ShapeAppearance.InDrive.Full"
+                android:contentDescription="Driver" />
+
+            <!-- Name + Rating + Trips -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="@dimen/spacing_md"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tvDriverName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/on_surface"
+                    android:textSize="@dimen/text_title_small"
+                    android:fontFamily="sans-serif-medium" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="★"
+                        android:textColor="@color/tertiary"
+                        android:textSize="@dimen/text_body_small" />
+
+                    <TextView
+                        android:id="@+id/tvDriverRating"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="4dp"
+                        android:textColor="@color/on_surface"
+                        android:textSize="@dimen/text_body_small" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="@dimen/spacing_sm"
+                        android:text="·"
+                        android:textColor="@color/on_surface_variant"
+                        android:textSize="@dimen/text_body_small" />
+
+                    <TextView
+                        android:id="@+id/tvDriverTrips"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/on_surface_variant"
+                        android:textSize="@dimen/text_body_small" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- Price — Headline Small, primary -->
+            <TextView
+                android:id="@+id/tvOfferPrice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/primary"
+                android:textSize="@dimen/text_headline_small"
+                android:fontFamily="sans-serif-bold" />
+        </LinearLayout>
+
+        <!-- Vehicle + ETA Row -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_sm"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/ivCarImage"
+                android:layout_width="48dp"
+                android:layout_height="24dp"
+                android:scaleType="centerInside"
+                android:layout_marginEnd="@dimen/spacing_sm"
+                android:src="@drawable/ic_car"
+                android:contentDescription="Car Type" />
+
+            <TextView
+                android:id="@+id/tvVehicleInfo"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textColor="@color/on_surface_variant"
+                android:textSize="@dimen/text_body_small" />
+
+            <!-- ETA Badge — surface container chip -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="@dimen/shape_full"
+                app:cardElevation="@dimen/elevation_none"
+                app:cardBackgroundColor="@color/secondary_container">
+
+                <TextView
+                    android:id="@+id/tvEta"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingHorizontal="@dimen/spacing_sm"
+                    android:paddingVertical="2dp"
+                    android:textColor="@color/on_secondary_container"
+                    android:textSize="@dimen/text_label_medium" />
+            </com.google.android.material.card.MaterialCardView>
+        </LinearLayout>
+
+        <!-- Action Buttons -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_md"
+            android:orientation="horizontal">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnDecline"
+                android:layout_width="0dp"
+                android:layout_height="44dp"
+                android:layout_weight="1"
+                android:layout_marginEnd="@dimen/spacing_sm"
+                android:text="@string/decline"
+                style="@style/Widget.InDrive.Button.Secondary" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnAccept"
+                android:layout_width="0dp"
+                android:layout_height="44dp"
+                android:layout_weight="1"
+                android:layout_marginStart="@dimen/spacing_sm"
+                android:text="@string/accept"
+                style="@style/Widget.InDrive.Button.Primary" />
+        </LinearLayout>
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>

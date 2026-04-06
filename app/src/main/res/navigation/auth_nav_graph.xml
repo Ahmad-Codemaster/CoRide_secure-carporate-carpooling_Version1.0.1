@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/auth_nav_graph"
+    app:startDestination="@id/loginFragment">
+
+    <fragment
+        android:id="@+id/loginFragment"
+        android:name="com.indrive.clone.ui.auth.LoginFragment"
+        android:label="Login">
+
+        <action
+            android:id="@+id/action_login_to_register"
+            app:destination="@id/registerFragment"
+            app:enterAnim="@android:anim/slide_in_left"
+            app:exitAnim="@android:anim/slide_out_right"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right" />
+
+        <action
+            android:id="@+id/action_login_to_forgot_password"
+            app:destination="@id/forgotPasswordFragment"
+            app:enterAnim="@android:anim/slide_in_left"
+            app:exitAnim="@android:anim/slide_out_right"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/forgotPasswordFragment"
+        android:name="com.indrive.clone.ui.auth.ForgotPasswordFragment"
+        android:label="Identity Check">
+        <action
+            android:id="@+id/action_forgot_to_reset"
+            app:destination="@id/resetPasswordFragment"
+            app:enterAnim="@android:anim/slide_in_left"
+            app:exitAnim="@android:anim/slide_out_right"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/resetPasswordFragment"
+        android:name="com.indrive.clone.ui.auth.ResetPasswordFragment"
+        android:label="Verify &amp; Reset" />
+
+    <fragment
+        android:id="@+id/registerFragment"
+        android:name="com.indrive.clone.ui.auth.RegisterFragment"
+        android:label="Create Account">
+
+        <action
+            android:id="@+id/action_register_to_otp"
+            app:destination="@id/otpVerificationFragment"
+            app:enterAnim="@android:anim/slide_in_left"
+            app:exitAnim="@android:anim/slide_out_right"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/otpVerificationFragment"
+        android:name="com.indrive.clone.ui.auth.OtpVerificationFragment"
+        android:label="OTP Verification">
+
+        <argument
+            android:name="phone"
+            app:argType="string"
+            android:defaultValue="" />
+    </fragment>
+
+</navigation>

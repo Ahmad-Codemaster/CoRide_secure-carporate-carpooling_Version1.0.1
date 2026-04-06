@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_top_sheet"
+    android:orientation="vertical"
+    android:paddingTop="@dimen/spacing_lg"
+    android:paddingBottom="@dimen/spacing_xl"
+    android:paddingHorizontal="@dimen/spacing_lg">
+
+    <!-- Shield Icon — premium animated hero -->
+    <LinearLayout
+        android:id="@+id/heroIcon"
+        android:layout_width="72dp"
+        android:layout_height="72dp"
+        android:layout_gravity="center"
+        android:background="@drawable/bg_circle_primary"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:alpha="0"
+        android:scaleX="0.5"
+        android:scaleY="0.5">
+
+        <ImageView
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:src="@drawable/ic_info"
+            android:contentDescription="@string/verify"
+            app:tint="@color/on_primary" />
+    </LinearLayout>
+
+    <!-- Drag Handle — moved below hero icon -->
+    <View
+        android:layout_width="@dimen/drag_handle_width"
+        android:layout_height="@dimen/drag_handle_height"
+        android:layout_gravity="center"
+        android:layout_marginTop="@dimen/spacing_md"
+        android:layout_marginBottom="@dimen/spacing_sm"
+        android:background="@drawable/indicator_m3_drag" />
+
+    <!-- Title -->
+    <TextView
+        android:id="@+id/tvTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/spacing_sm"
+        android:gravity="center"
+        android:text="@string/verification_required"
+        android:textColor="@color/on_surface"
+        android:textSize="@dimen/text_headline_small"
+        android:fontFamily="sans-serif-medium"
+        android:alpha="0"
+        android:translationY="20dp" />
+
+    <!-- Subtitle -->
+    <TextView
+        android:id="@+id/tvSubtitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/spacing_sm"
+        android:gravity="center"
+        android:text="@string/verification_popup_subtitle"
+        android:textColor="@color/on_surface_variant"
+        android:textSize="@dimen/text_body_small"
+        android:alpha="0"
+        android:translationY="20dp" />
+
+    <!-- Option 1: Organization Card — Interactive Card -->
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/cardOrgId"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/spacing_lg"
+        app:cardCornerRadius="@dimen/shape_large"
+        app:cardElevation="@dimen/elevation_none"
+        app:strokeColor="@color/outline_variant"
+        app:strokeWidth="1.5dp"
+        app:cardBackgroundColor="@color/surface_container_low"
+        android:alpha="0"
+        android:translationX="-60dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:padding="@dimen/spacing_md"
+            android:background="?attr/selectableItemBackground">
+
+            <!-- Icon Circle -->
+            <LinearLayout
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="@drawable/bg_circle_primary_container"
+                android:gravity="center">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_location_pin"
+                    android:contentDescription="@string/org"
+                    app:tint="@color/primary" />
+            </LinearLayout>
+
+            <!-- Text -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="@dimen/spacing_md"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/org_card_option"
+                    android:textColor="@color/on_surface"
+                    android:textSize="@dimen/text_title_medium"
+                    android:fontFamily="sans-serif-medium" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:text="@string/org_card_desc"
+                    android:textColor="@color/on_surface_variant"
+                    android:textSize="@dimen/text_body_small" />
+            </LinearLayout>
+
+            <!-- Arrow -->
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/ic_chevron_right"
+                android:contentDescription="@string/select"
+                app:tint="@color/on_surface_variant" />
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+    <!-- Verification Timer — hidden until document uploaded -->
+    <LinearLayout
+        android:id="@+id/timerContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/spacing_lg"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <com.google.android.material.progressindicator.CircularProgressIndicator
+            android:id="@+id/progressTimer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:indicatorColor="@color/primary"
+            app:trackColor="@color/surface_container_high"
+            app:indicatorSize="56dp"
+            app:trackThickness="4dp"
+            android:indeterminate="false"
+            android:max="100" />
+
+        <TextView
+            android:id="@+id/tvTimerCount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_sm"
+            android:textColor="@color/primary"
+            android:textSize="@dimen/text_title_medium"
+            android:fontFamily="sans-serif-medium" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_xs"
+            android:text="@string/verification_in_progress"
+            android:textColor="@color/on_surface_variant"
+            android:textSize="@dimen/text_body_small" />
+    </LinearLayout>
+
+    <!-- Cancel Button -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnCancel"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/button_height"
+        android:layout_marginTop="@dimen/spacing_lg"
+        android:text="@string/cancel"
+        style="@style/Widget.InDrive.Button.Secondary"
+        android:alpha="0"
+        android:translationY="20dp" />
+
+</LinearLayout>

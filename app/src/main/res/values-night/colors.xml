@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- =====================================================
+         M3 Expressive — DARK PALETTE
+         Brand: coride Red + Expressive Green Accent
+         ===================================================== -->
+
+    <!-- PRIMARY — Dark Mode Trust Blue (#A1C4FD) -->
+    <color name="primary">#A1C4FD</color>
+    <color name="on_primary">#041E49</color>
+    <color name="primary_container">#0B3A6E</color>
+    <color name="on_primary_container">#D3E3FD</color>
+    <color name="primary_fixed">#D3E3FD</color>
+    <color name="on_primary_fixed">#041E49</color>
+    <color name="primary_fixed_dim">#A1C4FD</color>
+    <color name="on_primary_fixed_variant">#0B3A6E</color>
+    <color name="inverse_primary">#1976D2</color>
+
+    <!-- SECONDARY — Deep Trust Accent Dark (#9ECAFF) -->
+    <color name="secondary">#9ECAFF</color>
+    <color name="on_secondary">#003258</color>
+    <color name="secondary_container">#00497D</color>
+    <color name="on_secondary_container">#D1E4FF</color>
+    <color name="secondary_fixed">#D1E4FF</color>
+    <color name="on_secondary_fixed">#001D36</color>
+    <color name="secondary_fixed_dim">#9ECAFF</color>
+    <color name="on_secondary_fixed_variant">#003361</color>
+
+    <!-- TERTIARY -->
+    <color name="tertiary">#97CBFF</color>
+    <color name="on_tertiary">#003354</color>
+    <color name="tertiary_container">#004A75</color>
+    <color name="on_tertiary_container">#CFE5FF</color>
+
+    <!-- ERROR -->
+    <color name="error">#FFB4AB</color>
+    <color name="on_error">#690005</color>
+    <color name="error_container">#93000A</color>
+    <color name="on_error_container">#FFDAD6</color>
+
+    <!-- SURFACE ROLES — M3 Dark Surface (#111418) -->
+    <color name="surface">#111418</color>
+    <color name="on_surface">#E2E2E6</color>
+    <color name="surface_variant">#42474E</color>
+    <color name="on_surface_variant">#C2C7CF</color>
+    <color name="surface_container_lowest">#0C0F12</color>
+    <color name="surface_container_low">#191C20</color>
+    <color name="surface_container">#1D2024</color>
+    <color name="surface_container_high">#282A2F</color>
+    <color name="surface_container_highest">#33353A</color>
+    <color name="surface_bright">#37393E</color>
+    <color name="surface_dim">#111418</color>
+    <color name="inverse_surface">#E2E2E6</color>
+    <color name="inverse_on_surface">#2F3033</color>
+
+    <!-- OUTLINE -->
+    <color name="outline">#8C9199</color>
+    <color name="outline_variant">#42474E</color>
+
+    <!-- SCRIM & SHADOW -->
+    <color name="scrim">#CC000000</color>
+    <color name="shadow">#000000</color>
+
+    <!-- LEGACY ALIASES (updated for dark mode) -->
+    <color name="primary_dark">#041E49</color>
+    <color name="primary_light">#1976D2</color>
+    <color name="primary_variant">#A1C4FD</color>
+    <color name="accent">#9ECAFF</color>
+    <color name="accent_light">#00497D</color>
+    <color name="background_white">#111418</color>
+    <color name="background_light">#1D2024</color>
+    <color name="background_card">#1D2024</color>
+    <color name="text_primary">#E2E2E6</color>
+    <color name="text_secondary">#C2C7CF</color>
+    <color name="text_hint">#8C9199</color>
+    <color name="text_white">#FFFFFF</color>
+    <color name="text_on_primary">#041E49</color>
+    <color name="success">#7ADC90</color>
+    <color name="warning">#EFC235</color>
+    <color name="info">#97CBFF</color>
+    <color name="divider">#42474E</color>
+    <color name="border">#8C9199</color>
+    <color name="star_yellow">#FFBF00</color>
+    <color name="map_overlay">#80000000</color>
+    <color name="route_color">#A1C4FD</color>
+    <color name="shimmer_base">#282A2F</color>
+    <color name="shimmer_highlight">#3D4046</color>
+    <color name="status_bar">#0C0F12</color>
+</resources>

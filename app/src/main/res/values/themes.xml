@@ -1,0 +1,352 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- =====================================================
+         M3 EXPRESSIVE BASE THEME
+         ===================================================== -->
+    <style name="Theme.InDriveClone" parent="Theme.Material3.Light.NoActionBar">
+        <!-- M3 Color Roles -->
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorOnPrimary">@color/on_primary</item>
+        <item name="colorPrimaryContainer">@color/primary_container</item>
+        <item name="colorOnPrimaryContainer">@color/on_primary_container</item>
+        <item name="colorSecondary">@color/secondary</item>
+        <item name="colorOnSecondary">@color/on_secondary</item>
+        <item name="colorSecondaryContainer">@color/secondary_container</item>
+        <item name="colorOnSecondaryContainer">@color/on_secondary_container</item>
+        <item name="colorTertiary">@color/tertiary</item>
+        <item name="colorOnTertiary">@color/on_tertiary</item>
+        <item name="colorTertiaryContainer">@color/tertiary_container</item>
+        <item name="colorOnTertiaryContainer">@color/on_tertiary_container</item>
+        <item name="colorError">@color/error</item>
+        <item name="colorOnError">@color/on_error</item>
+        <item name="colorErrorContainer">@color/error_container</item>
+        <item name="colorOnErrorContainer">@color/on_error_container</item>
+        <item name="colorSurface">@color/surface</item>
+        <item name="colorOnSurface">@color/on_surface</item>
+        <item name="colorSurfaceVariant">@color/surface_variant</item>
+        <item name="colorOnSurfaceVariant">@color/on_surface_variant</item>
+        <item name="colorOutline">@color/outline</item>
+        <item name="colorOutlineVariant">@color/outline_variant</item>
+        <item name="android:colorBackground">@color/surface</item>
+
+        <!-- M3 Expressive Shape System -->
+        <item name="shapeAppearanceSmallComponent">@style/ShapeAppearance.InDrive.Small</item>
+        <item name="shapeAppearanceMediumComponent">@style/ShapeAppearance.InDrive.Medium</item>
+        <item name="shapeAppearanceLargeComponent">@style/ShapeAppearance.InDrive.Large</item>
+
+        <!-- Window -->
+        <item name="android:statusBarColor">@color/status_bar</item>
+        <item name="android:navigationBarColor">@color/surface_container_low</item>
+        <item name="android:windowLightStatusBar" tools:targetApi="23">false</item>
+        <item name="android:windowLightNavigationBar" tools:targetApi="27">true</item>
+
+        <!-- Component Style Overrides -->
+        <item name="materialButtonStyle">@style/Widget.InDrive.Button.Primary</item>
+        <item name="materialButtonOutlinedStyle">@style/Widget.InDrive.Button.Secondary</item>
+        <item name="textInputStyle">@style/Widget.InDrive.TextInput</item>
+        <item name="chipStyle">@style/Widget.InDrive.Chip</item>
+        <item name="floatingActionButtonStyle">@style/Widget.InDrive.FAB</item>
+        <item name="extendedFloatingActionButtonStyle">@style/Widget.InDrive.ExtendedFAB</item>
+        <item name="bottomNavigationStyle">@style/Widget.InDrive.BottomNavigation</item>
+        <item name="toolbarStyle">@style/Widget.InDrive.TopAppBar</item>
+        <item name="appBarLayoutStyle">@style/Widget.InDrive.AppBarLayout</item>
+    </style>
+
+    <!-- Top Slide Dialog Animation -->
+    <style name="DialogAnimation.SlideFromTop" parent="@android:style/Animation.Dialog">
+        <item name="android:windowEnterAnimation">@anim/slide_in_top</item>
+        <item name="android:windowExitAnimation">@anim/slide_out_top</item>
+    </style>
+
+    <!-- SPLASH THEME -->
+    <style name="Theme.InDriveClone.Splash" parent="Theme.Material3.Light.NoActionBar">
+        <item name="android:statusBarColor">@color/primary</item>
+        <item name="android:navigationBarColor">@color/primary</item>
+        <item name="android:windowBackground">@color/primary</item>
+        <item name="android:windowLightStatusBar" tools:targetApi="23">false</item>
+    </style>
+
+    <!-- =====================================================
+         M3 EXPRESSIVE SHAPE SYSTEM
+         ===================================================== -->
+    <style name="ShapeAppearance.InDrive.Small" parent="ShapeAppearance.Material3.SmallComponent">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">@dimen/shape_small</item>
+    </style>
+
+    <style name="ShapeAppearance.InDrive.Medium" parent="ShapeAppearance.Material3.MediumComponent">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">@dimen/shape_medium</item>
+    </style>
+
+    <style name="ShapeAppearance.InDrive.Large" parent="ShapeAppearance.Material3.LargeComponent">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">@dimen/shape_large</item>
+    </style>
+
+    <style name="ShapeAppearance.InDrive.ExtraLarge" parent="ShapeAppearance.Material3.Corner.ExtraLarge">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">@dimen/shape_extra_large</item>
+    </style>
+
+    <style name="ShapeAppearance.InDrive.Full" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">@dimen/shape_full</item>
+    </style>
+
+    <style name="ShapeAppearance.InDrive.BottomSheet" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSizeTopLeft">@dimen/shape_extra_large</item>
+        <item name="cornerSizeTopRight">@dimen/shape_extra_large</item>
+        <item name="cornerSizeBottomLeft">0dp</item>
+        <item name="cornerSizeBottomRight">0dp</item>
+    </style>
+
+    <style name="ShapeAppearance.InDrive.TopImage" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSizeTopLeft">0dp</item>
+        <item name="cornerSizeTopRight">0dp</item>
+        <item name="cornerSizeBottomLeft">@dimen/shape_extra_large</item>
+        <item name="cornerSizeBottomRight">@dimen/shape_extra_large</item>
+    </style>
+
+    <style name="ShapeAppearance.InDrive.Card" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">@dimen/shape_medium</item>
+    </style>
+
+    <!-- =====================================================
+         BUTTONS — M3 Expressive full-round style
+         ===================================================== -->
+    <style name="Widget.InDrive.Button.Primary" parent="Widget.Material3.Button">
+        <item name="android:textColor">@color/on_primary</item>
+        <item name="android:textSize">@dimen/text_label_large</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:letterSpacing">0.006</item>
+        <item name="android:minHeight">@dimen/button_height</item>
+        <item name="cornerRadius">@dimen/shape_full</item>
+        <item name="backgroundTint">@color/primary</item>
+        <item name="iconGravity">textStart</item>
+        <item name="android:paddingHorizontal">24dp</item>
+    </style>
+
+    <style name="Widget.InDrive.Button.Secondary" parent="Widget.Material3.Button.OutlinedButton">
+        <item name="android:textColor">@color/primary</item>
+        <item name="android:textSize">@dimen/text_label_large</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:letterSpacing">0.006</item>
+        <item name="android:minHeight">@dimen/button_height</item>
+        <item name="cornerRadius">@dimen/shape_full</item>
+        <item name="strokeColor">@color/outline</item>
+        <item name="strokeWidth">1dp</item>
+        <item name="android:paddingHorizontal">24dp</item>
+    </style>
+
+    <style name="Widget.InDrive.Button.Text" parent="Widget.Material3.Button.TextButton">
+        <item name="android:textColor">@color/primary</item>
+        <item name="android:textSize">@dimen/text_label_large</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="cornerRadius">@dimen/shape_full</item>
+    </style>
+
+    <style name="Widget.InDrive.Button.Error" parent="Widget.Material3.Button">
+        <item name="android:textColor">@color/on_error</item>
+        <item name="android:textSize">@dimen/text_label_large</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:minHeight">@dimen/button_height</item>
+        <item name="cornerRadius">@dimen/shape_full</item>
+        <item name="backgroundTint">@color/error</item>
+    </style>
+
+    <!-- ICON BUTTONS (M3 square-ish with medium shape) -->
+    <style name="Widget.InDrive.IconButton" parent="Widget.Material3.Button.IconButton">
+        <item name="cornerRadius">@dimen/shape_medium</item>
+        <item name="backgroundTint">@color/surface_container_high</item>
+    </style>
+
+    <!-- =====================================================
+         TEXT INPUT — M3 Outlined/Filled
+         ===================================================== -->
+    <style name="Widget.InDrive.TextInput" parent="Widget.Material3.TextInputLayout.OutlinedBox">
+        <item name="boxCornerRadiusTopStart">@dimen/shape_small</item>
+        <item name="boxCornerRadiusTopEnd">@dimen/shape_small</item>
+        <item name="boxCornerRadiusBottomStart">@dimen/shape_small</item>
+        <item name="boxCornerRadiusBottomEnd">@dimen/shape_small</item>
+        <item name="boxStrokeColor">@color/outline</item>
+        <item name="boxStrokeWidth">1dp</item>
+        <item name="boxStrokeWidthFocused">2dp</item>
+        <item name="hintTextColor">@color/on_surface_variant</item>
+    </style>
+
+    <style name="Widget.InDrive.TextInput.Filled" parent="Widget.Material3.TextInputLayout.FilledBox">
+        <item name="boxCornerRadiusTopStart">@dimen/shape_small</item>
+        <item name="boxCornerRadiusTopEnd">@dimen/shape_small</item>
+        <item name="boxCornerRadiusBottomStart">0dp</item>
+        <item name="boxCornerRadiusBottomEnd">0dp</item>
+        <item name="boxBackgroundColor">@color/surface_container_high</item>
+        <item name="hintTextColor">@color/on_surface_variant</item>
+    </style>
+
+    <!-- =====================================================
+         CARD — M3 FilledCard / ElevatedCard
+         ===================================================== -->
+    <style name="Widget.InDrive.Card" parent="Widget.Material3.CardView.Filled">
+        <item name="cardCornerRadius">@dimen/shape_medium</item>
+        <item name="cardElevation">@dimen/elevation_none</item>
+        <item name="cardBackgroundColor">@color/surface_container_low</item>
+        <item name="strokeColor">@color/outline_variant</item>
+        <item name="strokeWidth">1dp</item>
+    </style>
+
+    <style name="Widget.InDrive.Card.Elevated" parent="Widget.Material3.CardView.Elevated">
+        <item name="cardCornerRadius">@dimen/shape_medium</item>
+        <item name="cardElevation">@dimen/elevation_sm</item>
+        <item name="cardBackgroundColor">@color/surface_container_lowest</item>
+    </style>
+
+    <!-- =====================================================
+         BOTTOM SHEET
+         ===================================================== -->
+    <style name="Widget.InDrive.BottomSheet" parent="Widget.Material3.BottomSheet">
+        <item name="shapeAppearanceOverlay">@style/ShapeAppearance.InDrive.BottomSheet</item>
+        <item name="backgroundTint">@color/surface_container_lowest</item>
+    </style>
+
+    <!-- =====================================================
+         CHIPS — M3 Expressive Filter/Assist Chips
+         ===================================================== -->
+    <style name="Widget.InDrive.Chip" parent="Widget.Material3.Chip.Filter">
+        <item name="chipCornerRadius">@dimen/shape_small</item>
+        <item name="chipBackgroundColor">@color/surface_container</item>
+        <item name="chipStrokeColor">@color/outline_variant</item>
+        <item name="chipStrokeWidth">1dp</item>
+        <item name="android:textColor">@color/on_surface_variant</item>
+        <item name="android:textSize">@dimen/text_label_large</item>
+    </style>
+
+    <style name="Widget.InDrive.Chip.Selected" parent="Widget.Material3.Chip.Filter">
+        <item name="chipCornerRadius">@dimen/shape_small</item>
+        <item name="chipBackgroundColor">@color/primary_container</item>
+        <item name="chipStrokeColor">@color/primary</item>
+        <item name="chipStrokeWidth">1.5dp</item>
+        <item name="android:textColor">@color/on_primary_container</item>
+        <item name="android:textSize">@dimen/text_label_large</item>
+    </style>
+
+    <!-- =====================================================
+         FAB — M3 Expressive (full-round)
+         ===================================================== -->
+    <style name="Widget.InDrive.FAB" parent="Widget.Design.FloatingActionButton">
+        <item name="shapeAppearance">@style/ShapeAppearance.InDrive.Full</item>
+        <item name="backgroundTint">@color/surface_container_lowest</item>
+        <item name="tint">@color/primary</item>
+        <item name="elevation">@dimen/elevation_md</item>
+    </style>
+
+    <style name="Widget.InDrive.ExtendedFAB" parent="Widget.MaterialComponents.ExtendedFloatingActionButton.Icon">
+        <item name="shapeAppearance">@style/ShapeAppearance.InDrive.Full</item>
+        <item name="backgroundTint">@color/primary_container</item>
+        <item name="android:textColor">@color/on_primary_container</item>
+        <item name="iconTint">@color/on_primary_container</item>
+        <item name="elevation">@dimen/elevation_md</item>
+    </style>
+
+    <!-- =====================================================
+         NAVIGATION BAR — M3 Expressive indicator pill
+         ===================================================== -->
+    <style name="Widget.InDrive.BottomNavigation" parent="Widget.Material3.BottomNavigationView">
+        <item name="backgroundTint">@color/surface_container_low</item>
+        <item name="itemActiveIndicatorStyle">@style/Widget.InDrive.NavActiveIndicator</item>
+        <item name="itemIconTint">@color/nav_item_color</item>
+        <item name="itemTextColor">@color/nav_item_color</item>
+        <item name="labelVisibilityMode">labeled</item>
+        <item name="elevation">@dimen/elevation_sm</item>
+    </style>
+
+    <style name="Widget.InDrive.NavActiveIndicator" parent="Widget.Material3.BottomNavigationView.ActiveIndicator">
+        <item name="android:width">64dp</item>
+        <item name="android:height">32dp</item>
+        <item name="shapeAppearance">@style/ShapeAppearance.InDrive.Full</item>
+        <item name="android:color">@color/primary_container</item>
+    </style>
+
+    <!-- =====================================================
+         TOP APP BAR
+         ===================================================== -->
+    <style name="Widget.InDrive.TopAppBar" parent="Widget.Material3.Toolbar">
+        <item name="android:background">@color/surface_container_low</item>
+        <item name="titleTextColor">@color/on_surface</item>
+        <item name="titleTextAppearance">@style/TextAppearance.InDrive.TitleLarge</item>
+    </style>
+
+    <style name="Widget.InDrive.AppBarLayout" parent="Widget.Material3.AppBarLayout">
+        <item name="android:background">@color/surface_container_low</item>
+        <item name="elevation">@dimen/elevation_none</item>
+        <item name="liftOnScroll">true</item>
+    </style>
+
+    <!-- =====================================================
+         M3 TYPE STYLES
+         ===================================================== -->
+    <!-- Base -->
+    <style name="TextAppearance.InDrive" parent="TextAppearance.Material3.BodyMedium">
+        <item name="android:textColor">@color/on_surface</item>
+    </style>
+
+    <!-- Display -->
+    <style name="TextAppearance.InDrive.DisplayLarge" parent="TextAppearance.Material3.DisplayLarge">
+        <item name="android:textColor">@color/on_surface</item>
+    </style>
+    <style name="TextAppearance.InDrive.DisplayMedium" parent="TextAppearance.Material3.DisplayMedium">
+        <item name="android:textColor">@color/on_surface</item>
+    </style>
+
+    <!-- Headline -->
+    <style name="TextAppearance.InDrive.HeadlineLarge" parent="TextAppearance.Material3.HeadlineLarge">
+        <item name="android:textColor">@color/on_surface</item>
+    </style>
+    <style name="TextAppearance.InDrive.HeadlineMedium" parent="TextAppearance.Material3.HeadlineMedium">
+        <item name="android:textColor">@color/on_surface</item>
+    </style>
+    <style name="TextAppearance.InDrive.HeadlineSmall" parent="TextAppearance.Material3.HeadlineSmall">
+        <item name="android:textColor">@color/on_surface</item>
+    </style>
+
+    <!-- Title -->
+    <style name="TextAppearance.InDrive.TitleLarge" parent="TextAppearance.Material3.TitleLarge">
+        <item name="android:textColor">@color/on_surface</item>
+    </style>
+    <style name="TextAppearance.InDrive.TitleMedium" parent="TextAppearance.Material3.TitleMedium">
+        <item name="android:textColor">@color/on_surface</item>
+    </style>
+    <style name="TextAppearance.InDrive.TitleSmall" parent="TextAppearance.Material3.TitleSmall">
+        <item name="android:textColor">@color/on_surface_variant</item>
+    </style>
+
+    <!-- Body -->
+    <style name="TextAppearance.InDrive.BodyLarge" parent="TextAppearance.Material3.BodyLarge">
+        <item name="android:textColor">@color/on_surface</item>
+    </style>
+    <style name="TextAppearance.InDrive.BodyMedium" parent="TextAppearance.Material3.BodyMedium">
+        <item name="android:textColor">@color/on_surface</item>
+    </style>
+    <style name="TextAppearance.InDrive.BodySmall" parent="TextAppearance.Material3.BodySmall">
+        <item name="android:textColor">@color/on_surface_variant</item>
+    </style>
+
+    <!-- Label -->
+    <style name="TextAppearance.InDrive.LabelLarge" parent="TextAppearance.Material3.LabelLarge">
+        <item name="android:textColor">@color/on_surface</item>
+    </style>
+    <style name="TextAppearance.InDrive.LabelMedium" parent="TextAppearance.Material3.LabelMedium">
+        <item name="android:textColor">@color/on_surface_variant</item>
+    </style>
+
+    <!-- LEGACY type style aliases -->
+    <style name="TextAppearance.InDrive.H1" parent="TextAppearance.InDrive.HeadlineLarge"/>
+    <style name="TextAppearance.InDrive.H2" parent="TextAppearance.InDrive.HeadlineMedium"/>
+    <style name="TextAppearance.InDrive.H3" parent="TextAppearance.InDrive.TitleLarge"/>
+    <style name="TextAppearance.InDrive.Body" parent="TextAppearance.InDrive.BodyLarge"/>
+
+</resources>

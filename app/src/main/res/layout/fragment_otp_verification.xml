@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background_white"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="@dimen/spacing_lg">
+
+        <!-- Back Button -->
+        <ImageView
+            android:id="@+id/btnBack"
+            android:layout_width="@dimen/icon_xl"
+            android:layout_height="@dimen/icon_xl"
+            android:padding="@dimen/spacing_sm"
+            android:src="@drawable/ic_arrow_back"
+            android:tint="@color/text_primary"
+            android:contentDescription="Back"
+            android:background="?attr/selectableItemBackgroundBorderless" />
+
+        <!-- Title -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_xl"
+            android:text="@string/enter_otp"
+            style="@style/TextAppearance.InDrive.H1" />
+
+        <!-- Subtitle -->
+        <TextView
+            android:id="@+id/tvOtpSubtitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_sm"
+            android:text="@string/otp_sent_to"
+            style="@style/TextAppearance.InDrive.BodySmall" />
+
+        <!-- OTP Input Fields -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_xl"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/etOtp1"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:layout_margin="@dimen/spacing_sm"
+                android:background="@drawable/bg_input_default"
+                android:gravity="center"
+                android:inputType="number"
+                android:maxLength="1"
+                android:textColor="@color/text_primary"
+                android:textSize="@dimen/text_h2"
+                android:fontFamily="sans-serif-bold"
+                android:importantForAutofill="no" />
+
+            <EditText
+                android:id="@+id/etOtp2"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:layout_margin="@dimen/spacing_sm"
+                android:background="@drawable/bg_input_default"
+                android:gravity="center"
+                android:inputType="number"
+                android:maxLength="1"
+                android:textColor="@color/text_primary"
+                android:textSize="@dimen/text_h2"
+                android:fontFamily="sans-serif-bold"
+                android:importantForAutofill="no" />
+
+            <EditText
+                android:id="@+id/etOtp3"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:layout_margin="@dimen/spacing_sm"
+                android:background="@drawable/bg_input_default"
+                android:gravity="center"
+                android:inputType="number"
+                android:maxLength="1"
+                android:textColor="@color/text_primary"
+                android:textSize="@dimen/text_h2"
+                android:fontFamily="sans-serif-bold"
+                android:importantForAutofill="no" />
+
+            <EditText
+                android:id="@+id/etOtp4"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:layout_margin="@dimen/spacing_sm"
+                android:background="@drawable/bg_input_default"
+                android:gravity="center"
+                android:inputType="number"
+                android:maxLength="1"
+                android:textColor="@color/text_primary"
+                android:textSize="@dimen/text_h2"
+                android:fontFamily="sans-serif-bold"
+                android:importantForAutofill="no" />
+        </LinearLayout>
+
+        <!-- Verify Button -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnVerify"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/button_height"
+            android:layout_marginTop="@dimen/spacing_xl"
+            android:text="@string/verify_otp"
+            style="@style/Widget.InDrive.Button.Primary" />
+
+        <!-- Resend Timer -->
+        <TextView
+            android:id="@+id/tvResend"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="@dimen/spacing_lg"
+            android:text="@string/resend_code"
+            style="@style/TextAppearance.InDrive.BodySmall"
+            android:textColor="@color/primary" />
+
+    </LinearLayout>
+</ScrollView>

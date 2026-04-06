@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="@dimen/spacing_md"
+    android:layout_marginVertical="@dimen/spacing_sm"
+    app:cardCornerRadius="@dimen/shape_large"
+    app:cardElevation="@dimen/elevation_none"
+    app:strokeColor="@color/outline_variant"
+    app:strokeWidth="1dp"
+    app:cardBackgroundColor="@color/surface_container_lowest">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="@dimen/spacing_md">
+
+        <!-- Header: Date and Price -->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/ivDateIcon"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_centerVertical="true"
+                android:src="@drawable/ic_calendar"
+                app:tint="@color/on_surface_variant" />
+
+            <TextView
+                android:id="@+id/tvRideDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toEndOf="@id/ivDateIcon"
+                android:layout_marginStart="@dimen/spacing_sm"
+                android:layout_centerVertical="true"
+                android:text="Today, 2:30 PM"
+                android:textColor="@color/on_surface_variant"
+                android:textSize="@dimen/text_label_large" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:id="@+id/tvRideFare"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="₨ 1,250"
+                    android:textColor="@color/on_surface"
+                    android:textSize="@dimen/text_title_large"
+                    android:fontFamily="sans-serif-bold" />
+
+                <ImageView
+                    android:id="@+id/btnDeleteRide"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginStart="@dimen/spacing_sm"
+                    android:src="@drawable/ic_delete"
+                    android:padding="4dp"
+                    android:contentDescription="Delete"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    app:tint="@color/error" />
+            </LinearLayout>
+        </RelativeLayout>
+
+        <!-- Sub-header: Brand and Duration -->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/coride_brand"
+                android:textColor="@color/primary"
+                android:textSize="@dimen/text_label_medium"
+                android:fontFamily="sans-serif-medium" />
+
+            <TextView
+                android:id="@+id/tvDuration"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:text="12 min"
+                android:textColor="@color/on_surface_variant"
+                android:textSize="@dimen/text_label_small" />
+        </RelativeLayout>
+
+        <!-- Route Section: Vertical Line and Addresses -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_lg"
+            android:orientation="horizontal">
+
+            <!-- Route Indicator (Vertical Dots/Line) -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center_horizontal"
+                android:orientation="vertical"
+                android:paddingTop="6dp"
+                android:paddingBottom="6dp">
+
+                <View
+                    android:layout_width="8dp"
+                    android:layout_height="8dp"
+                    android:background="@drawable/bg_circle_primary" />
+
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:layout_marginVertical="4dp"
+                    android:background="@color/outline_variant" />
+
+                <View
+                    android:layout_width="8dp"
+                    android:layout_height="8dp"
+                    android:background="@drawable/bg_circle_secondary" />
+            </LinearLayout>
+
+            <!-- Address Details -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/spacing_md"
+                android:orientation="vertical">
+
+                <!-- Pickup -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/pickup_label"
+                    android:textColor="@color/on_surface_variant"
+                    android:textSize="@dimen/text_label_small" />
+
+                <TextView
+                    android:id="@+id/tvPickup"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:text="123 Main Street"
+                    android:textColor="@color/on_surface"
+                    android:textSize="@dimen/text_body_medium"
+                    android:fontFamily="sans-serif-medium"
+                    android:maxLines="1"
+                    android:ellipsize="end" />
+
+                <!-- Drop-off -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_md"
+                    android:text="@string/dropoff_label"
+                    android:textColor="@color/on_surface_variant"
+                    android:textSize="@dimen/text_label_small" />
+
+                <TextView
+                    android:id="@+id/tvDest"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:text="456 Office Avenue"
+                    android:textColor="@color/on_surface"
+                    android:textSize="@dimen/text_body_medium"
+                    android:fontFamily="sans-serif-medium"
+                    android:maxLines="1"
+                    android:ellipsize="end" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Divider -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="@dimen/spacing_lg"
+            android:background="@color/surface_container_highest" />
+
+        <!-- Footer Actions -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="@dimen/spacing_sm"
+            android:orientation="horizontal">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnBookAgain"
+                style="@style/Widget.Material3.Button.TonalButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/btn_book_again"
+                android:textSize="@dimen/text_label_large"
+                app:cornerRadius="@dimen/shape_small" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnViewReceipt"
+                style="@style/Widget.Material3.Button.TextButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/spacing_sm"
+                android:layout_weight="1"
+                android:text="@string/btn_view_receipt"
+                android:textColor="@color/on_surface"
+                android:textSize="@dimen/text_label_large"
+                app:cornerRadius="@dimen/shape_small" />
+        </LinearLayout>
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>

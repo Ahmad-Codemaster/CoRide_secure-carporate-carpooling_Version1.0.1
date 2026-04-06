@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="@dimen/spacing_md"
+    app:cardCornerRadius="@dimen/shape_medium"
+    app:cardElevation="@dimen/elevation_none"
+    app:strokeColor="@color/outline_variant"
+    app:strokeWidth="1dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:padding="@dimen/spacing_md">
+
+        <!-- Initial Placeholder Circle -->
+        <FrameLayout
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="@drawable/bg_circle_primary_subtle">
+            <TextView
+                android:id="@+id/tvInitial"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="A"
+                android:textColor="@color/primary"
+                android:textSize="18sp"
+                android:fontFamily="sans-serif-bold" />
+        </FrameLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="@dimen/spacing_md"
+            android:orientation="vertical">
+            <TextView
+                android:id="@+id/tvContactName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Muhammad Ali"
+                android:textColor="@color/on_surface"
+                android:textSize="@dimen/text_title_medium"
+                android:fontFamily="sans-serif-bold" />
+            <TextView
+                android:id="@+id/tvContactPhone"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="+92 312 9876543"
+                android:textColor="@color/on_surface_variant"
+                android:textSize="@dimen/text_body_small" />
+        </LinearLayout>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnCallContact"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:padding="0dp"
+            app:icon="@drawable/ic_call"
+            app:iconPadding="0dp"
+            android:contentDescription="@string/call_contact"
+            style="@style/Widget.Material3.Button.IconButton"
+            app:iconTint="@color/primary" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnDeleteContact"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginStart="@dimen/spacing_xs"
+            android:padding="0dp"
+            app:icon="@drawable/ic_delete"
+            app:iconPadding="0dp"
+            android:contentDescription="@string/delete_contact"
+            style="@style/Widget.Material3.Button.IconButton"
+            app:iconTint="@color/error" />
+
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>

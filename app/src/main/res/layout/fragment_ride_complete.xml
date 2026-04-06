@@ -1,0 +1,350 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#80000000">
+
+    <!-- Bottom Sheet Container -->
+    <LinearLayout
+        android:id="@+id/reviewSheet"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_bottom_sheet"
+        android:orientation="vertical"
+        android:paddingTop="@dimen/spacing_md"
+        android:paddingBottom="@dimen/spacing_xl"
+        android:paddingHorizontal="@dimen/spacing_lg"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:clipChildren="false"
+        android:clipToPadding="false">
+
+        <!-- Drag Handle / Header Row -->
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/spacing_lg">
+            
+            <View
+                android:layout_width="@dimen/drag_handle_width"
+                android:layout_height="@dimen/drag_handle_height"
+                android:layout_gravity="center"
+                android:background="@drawable/indicator_m3_drag" />
+
+            <!-- Skip Button -->
+            <TextView
+                android:id="@+id/btnSkip"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end|center_vertical"
+                android:text="Skip"
+                android:textColor="@color/primary"
+                android:fontFamily="sans-serif-medium"
+                android:padding="8dp"
+                android:background="?attr/selectableItemBackgroundBorderless"/>
+        </FrameLayout>
+
+        <!-- Lottie Animation -->
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/lottieSuccess"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:layout_gravity="center"
+            app:lottie_url="https://assets8.lottiefiles.com/packages/lf20_jbrw3hcz.json"
+            app:lottie_autoPlay="true"
+            app:lottie_loop="false" />
+
+        <!-- Title -->
+        <TextView
+            android:id="@+id/tvCompleteTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_sm"
+            android:text="Destination Reached!"
+            android:textColor="@color/on_surface"
+            android:textSize="@dimen/text_headline_small"
+            android:fontFamily="sans-serif-medium"
+            android:textAlignment="center" />
+            
+        <TextView
+            android:id="@+id/tvDestination"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Destination Name"
+            android:textColor="@color/on_surface_variant"
+            android:textSize="@dimen/text_body_medium"
+            android:textAlignment="center" />
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_lg"
+            app:cardCornerRadius="@dimen/shape_large"
+            app:cardElevation="@dimen/elevation_none"
+            app:strokeColor="@color/outline_variant"
+            app:strokeWidth="1dp"
+            app:cardBackgroundColor="@color/surface_container_lowest">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingVertical="@dimen/spacing_md">
+
+                <!-- Distance -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/tvDistance"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/on_surface"
+                        android:textSize="@dimen/text_title_large"
+                        android:fontFamily="sans-serif-bold" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="km"
+                        android:textColor="@color/on_surface_variant"
+                        android:textSize="@dimen/text_label_small" />
+                </LinearLayout>
+
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="32dp"
+                    android:layout_gravity="center_vertical"
+                    android:background="@color/outline_variant" />
+
+                <!-- Duration -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/tvDuration"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/on_surface"
+                        android:textSize="@dimen/text_title_large"
+                        android:fontFamily="sans-serif-bold" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="min"
+                        android:textColor="@color/on_surface_variant"
+                        android:textSize="@dimen/text_label_small" />
+                </LinearLayout>
+
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="32dp"
+                    android:layout_gravity="center_vertical"
+                    android:background="@color/outline_variant" />
+
+                <!-- Fare -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/tvTotalFare"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/primary"
+                        android:textSize="@dimen/text_title_large"
+                        android:fontFamily="sans-serif-bold" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="PKR"
+                        android:textColor="@color/on_surface_variant"
+                        android:textSize="@dimen/text_label_small" />
+                </LinearLayout>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Dynamic Phase Content -->
+        <LinearLayout
+            android:id="@+id/layoutPhaseContent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- ── Phase 1: Payment ── -->
+            <LinearLayout
+                android:id="@+id/layoutPayment"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_xl"
+                    android:text="Select Payment Method"
+                    android:textColor="@color/on_surface"
+                    android:textSize="@dimen/text_title_medium"
+                    android:fontFamily="sans-serif-medium"
+                    android:textAlignment="center" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_md"
+                    android:orientation="vertical">
+
+                    <!-- Cash Option -->
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/cardCash"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="8dp"
+                        app:cardCornerRadius="16dp"
+                        app:cardElevation="0dp"
+                        app:strokeColor="@color/primary"
+                        app:strokeWidth="2dp"
+                        app:cardBackgroundColor="@color/surface_container_low">
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:padding="16dp"
+                            android:gravity="center_vertical">
+                            <ImageView android:layout_width="24dp" android:layout_height="24dp" android:src="@drawable/ic_cash" app:tint="@color/primary"/>
+                            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="16dp" android:orientation="vertical">
+                                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Cash" android:textColor="@color/on_surface" android:fontFamily="sans-serif-bold"/>
+                                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Pay driver directly" android:textColor="@color/on_surface_variant" android:textSize="12sp"/>
+                            </LinearLayout>
+                            <RadioButton android:id="@+id/rbCash" android:layout_width="wrap_content" android:layout_height="wrap_content" android:checked="true" android:clickable="false"/>
+                        </LinearLayout>
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <!-- Wallet Option -->
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/cardWallet"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="8dp"
+                        app:cardCornerRadius="16dp"
+                        app:cardElevation="0dp"
+                        app:strokeColor="@color/outline_variant"
+                        app:strokeWidth="1dp"
+                        app:cardBackgroundColor="@color/surface_container_lowest">
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:padding="16dp"
+                            android:gravity="center_vertical">
+                            <ImageView android:layout_width="24dp" android:layout_height="24dp"
+                                android:contentDescription="TODO"
+                                android:src="@drawable/ic_wallet" app:tint="@color/on_surface_variant"/>
+                            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="16dp" android:orientation="vertical">
+                                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="CoRide Wallet" android:textColor="@color/on_surface" android:fontFamily="sans-serif-bold"/>
+                                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Balance: ₨ 1,250" android:textColor="@color/on_surface_variant" android:textSize="12sp"/>
+                            </LinearLayout>
+                            <RadioButton android:id="@+id/rbWallet" android:layout_width="wrap_content" android:layout_height="wrap_content" android:clickable="false"/>
+                        </LinearLayout>
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <!-- Card Option -->
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/cardVisa"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:cardCornerRadius="16dp"
+                        app:cardElevation="0dp"
+                        app:strokeColor="@color/outline_variant"
+                        app:strokeWidth="1dp"
+                        app:cardBackgroundColor="@color/surface_container_lowest">
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:padding="16dp"
+                            android:gravity="center_vertical">
+                            <ImageView android:layout_width="24dp" android:layout_height="24dp" android:src="@drawable/ic_card" app:tint="@color/on_surface_variant"/>
+                            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="16dp" android:orientation="vertical">
+                                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Credit/Debit Card" android:textColor="@color/on_surface" android:fontFamily="sans-serif-bold"/>
+                                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="**** 4242" android:textColor="@color/on_surface_variant" android:textSize="12sp"/>
+                            </LinearLayout>
+                            <RadioButton android:id="@+id/rbVisa" android:layout_width="wrap_content" android:layout_height="wrap_content" android:clickable="false"/>
+                        </LinearLayout>
+                    </com.google.android.material.card.MaterialCardView>
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- ── Phase 2: Rating ── -->
+            <LinearLayout
+                android:id="@+id/layoutRating"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/tvRateDriverName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_xl"
+                    android:text="How was your ride?"
+                    android:textColor="@color/on_surface"
+                    android:textSize="@dimen/text_title_medium"
+                    android:fontFamily="sans-serif-medium"
+                    android:textAlignment="center" />
+
+                <!-- Star Rating Row -->
+                <LinearLayout
+                    android:id="@+id/ratingRow"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_sm"
+                    android:layout_gravity="center_horizontal"
+                    android:orientation="horizontal">
+
+                    <TextView android:id="@+id/star1" android:layout_width="48dp"
+                        android:layout_height="48dp" android:gravity="center"
+                        android:text="★" android:textColor="@color/outline"
+                        android:textSize="32sp" android:background="?attr/selectableItemBackgroundBorderless"/>
+                    <TextView android:id="@+id/star2" android:layout_width="48dp"
+                        android:layout_height="48dp" android:gravity="center"
+                        android:text="★" android:textColor="@color/outline"
+                        android:textSize="32sp" android:background="?attr/selectableItemBackgroundBorderless"/>
+                    <TextView android:id="@+id/star3" android:layout_width="48dp"
+                        android:layout_height="48dp" android:gravity="center"
+                        android:text="★" android:textColor="@color/outline"
+                        android:textSize="32sp" android:background="?attr/selectableItemBackgroundBorderless"/>
+                    <TextView android:id="@+id/star4" android:layout_width="48dp"
+                        android:layout_height="48dp" android:gravity="center"
+                        android:text="★" android:textColor="@color/outline"
+                        android:textSize="32sp" android:background="?attr/selectableItemBackgroundBorderless"/>
+                    <TextView android:id="@+id/star5" android:layout_width="48dp"
+                        android:layout_height="48dp" android:gravity="center"
+                        android:text="★" android:textColor="@color/outline"
+                        android:textSize="32sp" android:background="?attr/selectableItemBackgroundBorderless"/>
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Done/Proceed Button -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnDone"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/button_height"
+            android:layout_marginTop="@dimen/spacing_lg"
+            android:text="Confirm Payment"
+            app:icon="@drawable/ic_check"
+            style="@style/Widget.InDrive.Button.Primary" />
+
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
