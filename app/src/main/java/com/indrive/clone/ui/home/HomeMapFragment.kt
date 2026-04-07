@@ -242,6 +242,10 @@ class HomeMapFragment : Fragment() {
         val fabWeather = view.findViewById<FloatingActionButton>(R.id.fabWeatherMap)
         val cvWeatherPopup = view.findViewById<View>(R.id.cvWeatherPopupMap)
         val layoutWeatherDays = view.findViewById<LinearLayout>(R.id.layoutWeatherDaysMap)
+        val ivGlow = view.findViewById<View>(R.id.ivWeatherGlowMap)
+
+        // Weather Outline (Static Blue)
+        // Animation removed as requested.
 
         fun refreshWeather() {
             val target = googleMap?.cameraPosition?.target ?: LatLng(31.5204, 74.3587)

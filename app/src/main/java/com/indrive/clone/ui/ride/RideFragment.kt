@@ -401,9 +401,13 @@ class RideFragment : Fragment() {
     }
 
     private fun setupWeatherFeature(view: View) {
-        val fabWeather = view.findViewById<com.google.android.material.floatingactionbutton.FloatingActionButton>(R.id.fabWeatherSmall)
+        val fabWeather = view.findViewById<FloatingActionButton>(R.id.fabWeatherSmall)
         val cvWeatherPopup = view.findViewById<View>(R.id.cvWeatherPopupRide)
         val layoutWeatherDays = view.findViewById<android.widget.LinearLayout>(R.id.layoutWeatherDaysRide)
+        val ivGlow = view.findViewById<View>(R.id.ivWeatherGlowRide)
+
+        // Weather Outline (Static Blue)
+        // Animation removed as requested.
 
         fun refreshWeather() {
             val pickup = pickupLocation ?: LatLng(31.5204, 74.3587)

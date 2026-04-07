@@ -554,13 +554,12 @@
             android:layout_width="60dp"
             android:layout_height="60dp">
 
-            <!-- Animated Spiral Ring (Play Store Style) -->
-            <ProgressBar
-                android:id="@+id/pbWeatherSpiralHome"
+            <!-- Animated Glowy Aurora Outline (Glow Effect) -->
+            <ImageView
+                android:id="@+id/ivWeatherGlowHome"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:indeterminate="true"
-                android:indeterminateDrawable="@drawable/ic_playstore_spinner" />
+                android:src="@drawable/bg_weather_glow_aurora" />
 
             <!-- Shadowless Home Weather FAB -->
             <com.google.android.material.floatingactionbutton.FloatingActionButton

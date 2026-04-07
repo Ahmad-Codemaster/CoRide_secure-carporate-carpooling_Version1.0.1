@@ -96,7 +96,7 @@
                 android:id="@+id/fabMyLocation"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_my_location"
+                android:src="@drawable/location"
                 android:contentDescription="My Location"
                 app:tint="@color/primary"
                 app:backgroundTint="@color/surface_container_lowest"

@@ -157,13 +157,12 @@
             android:layout_width="64dp"
             android:layout_height="64dp">
 
-            <!-- Animated Spiral Ring -->
-            <ProgressBar
-                android:id="@+id/pbWeatherSpiralMap"
+            <!-- Animated Glowy Aurora Outline (Glow Effect) -->
+            <ImageView
+                android:id="@+id/ivWeatherGlowMap"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:indeterminate="true"
-                android:indeterminateDrawable="@drawable/ic_playstore_spinner" />
+                android:src="@drawable/bg_weather_glow_aurora" />
 
             <!-- Shadowless Weather FAB -->
             <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -171,7 +170,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:src="@drawable/cloud"
+                android:src="@drawable/ic_sunny"
                 app:tint="@color/primary"
                 app:backgroundTint="@color/surface_container_lowest"
                 app:fabSize="mini"

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="ring"
+    android:innerRadiusRatio="3"
+    android:thicknessRatio="15"
+    android:useLevel="false">
+
+    <!-- Simple Modern Blue Outline (No Animation) -->
+    <stroke
+        android:width="2.5dp"
+        android:color="#1976D2" /> <!-- Primary Blue -->
+
+    <solid android:color="@android:color/transparent" />
+
+</shape>

@@ -152,25 +152,20 @@
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
-            <!-- ShapeableImageView avatar -->
-            <com.google.android.material.imageview.ShapeableImageView
-                android:id="@+id/ivDriverAvatar"
-                android:layout_width="@dimen/avatar_md"
-                android:layout_height="@dimen/avatar_md"
-                android:src="@drawable/ic_location_pin"
+            <ImageView
+                android:id="@+id/ivDriverProfile"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:src="@drawable/profile"
                 android:scaleType="centerCrop"
-                android:tint="@color/on_surface_variant"
-                android:padding="@dimen/spacing_md"
-                android:background="@color/surface_container"
-                app:shapeAppearanceOverlay="@style/ShapeAppearance.InDrive.Full"
+                app:shapeAppearance="@style/ShapeAppearance.InDrive.Full"
                 android:contentDescription="Driver" />
 
-            <!-- Name + Rating -->
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
                 android:layout_marginStart="@dimen/spacing_md"
+                android:layout_weight="1"
                 android:orientation="vertical">
 
                 <TextView
@@ -192,7 +187,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="★"
-                        android:textColor="@color/tertiary_container"
+                        android:textColor="@color/star_yellow"
                         android:textSize="@dimen/text_title_small" />
 
                     <TextView
@@ -378,13 +373,12 @@
             android:layout_width="60dp"
             android:layout_height="60dp">
 
-            <!-- Animated Spiral Ring -->
-            <ProgressBar
-                android:id="@+id/pbWeatherSpiralRide"
+            <!-- Animated Glowy Aurora Outline (Glow Effect) -->
+            <ImageView
+                android:id="@+id/ivWeatherGlowRide"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:indeterminate="true"
-                android:indeterminateDrawable="@drawable/ic_playstore_spinner" />
+                android:src="@drawable/bg_weather_glow_aurora" />
 
             <!-- Shadowless Weather FAB -->
             <com.google.android.material.floatingactionbutton.FloatingActionButton

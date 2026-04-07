@@ -54,8 +54,10 @@ class HomeFragment : Fragment() {
         val fabWeather = view.findViewById<FloatingActionButton>(R.id.fabWeatherHome)
         val cvWeatherPopup = view.findViewById<View>(R.id.cvWeatherPopupHome)
         val layoutWeatherDays = view.findViewById<LinearLayout>(R.id.layoutWeatherDaysHome)
+        val ivGlow = view.findViewById<View>(R.id.ivWeatherGlowHome)
 
-        // Fetch Live Weather
+        // Weather Outline (Static Blue)
+        // Animation removed as requested.
         lifecycleScope.launch {
             try {
                 // Lahore Default Coords
