@@ -18,18 +18,7 @@ class SettingsDialog : DialogFragment() {
         
         view.background = ContextCompat.getDrawable(requireContext(), R.drawable.bg_card) ?: view.background
 
-        val switchDarkMode = view.findViewById<MaterialSwitch>(R.id.switchDarkMode)
-        
-        // 1. Initial State from Preference
-        val isDark = ThemeHelper.isDarkMode(requireContext())
-        switchDarkMode?.isChecked = isDark
-        
-        // 2. Toggle Handler
-        switchDarkMode?.setOnCheckedChangeListener { _, isChecked ->
-            if (isChecked != ThemeHelper.isDarkMode(requireContext())) {
-                ThemeHelper.setDarkMode(requireContext(), isChecked)
-            }
-        }
+
 
         view.findViewById<View>(R.id.btnSaveSettings)?.setOnClickListener {
             dismiss()

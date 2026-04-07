@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/bg_top_sheet"
@@ -19,7 +20,8 @@
         android:gravity="center"
         android:alpha="0"
         android:scaleX="0.5"
-        android:scaleY="0.5">
+        android:scaleY="0.5"
+        tools:alpha="1">
 
         <ImageView
             android:layout_width="36dp"
@@ -50,7 +52,9 @@
         android:textSize="@dimen/text_headline_small"
         android:fontFamily="sans-serif-bold"
         android:alpha="0"
-        android:translationY="20dp" />
+        android:translationY="20dp"
+        tools:alpha="1"
+        tools:translationY="0dp" />
 
     <!-- Message -->
     <TextView
@@ -64,7 +68,9 @@
         android:textSize="@dimen/text_body_small"
         android:lineSpacingMultiplier="1.4"
         android:alpha="0"
-        android:translationY="20dp" />
+        android:translationY="20dp"
+        tools:alpha="1"
+        tools:translationY="0dp" />
 
     <!-- Emergency Contact Info Card -->
     <com.google.android.material.card.MaterialCardView
@@ -78,36 +84,33 @@
         app:strokeWidth="1dp"
         app:cardBackgroundColor="@color/error_container"
         android:alpha="0"
-        android:translationY="30dp">
-
+        android:translationY="30dp"
+        tools:alpha="1"
+        tools:translationY="0dp">
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:padding="@dimen/spacing_md">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/emergency_contacts"
-                android:textColor="@color/on_error_container"
-                android:textSize="@dimen/text_label_large"
-                android:fontFamily="sans-serif-medium" />
-
+            <!-- Fallback text when no contacts exist -->
             <TextView
                 android:id="@+id/tvEmergencyContactInfo"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/spacing_xs"
+                android:gravity="center"
+                android:text="Notifying your trusted contacts..."
                 android:textColor="@color/on_error_container"
-                android:textSize="@dimen/text_body_small" />
+                android:textSize="@dimen/text_body_medium"
+                android:visibility="gone" />
 
+            <!-- Container for dynamic trusted contact items -->
             <LinearLayout
                 android:id="@+id/containerTrustedContacts"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/spacing_sm"
                 android:orientation="vertical" />
+                
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
 
@@ -120,7 +123,10 @@
         android:text="@string/sos_confirm"
         style="@style/Widget.InDrive.Button.Error"
         android:alpha="0"
-        android:translationY="20dp" />
+        android:translationY="20dp"
+        tools:alpha="1"
+        tools:translationY="0dp"
+        tools:ignore="VisualLintButtonSize" />
 
     <!-- Call Police -->
     <com.google.android.material.button.MaterialButton
@@ -133,17 +139,24 @@
         app:strokeColor="@color/error"
         android:textColor="@color/error"
         android:alpha="0"
-        android:translationY="20dp" />
+        android:translationY="20dp"
+        tools:alpha="1"
+        tools:translationY="0dp"
+        tools:ignore="VisualLintButtonSize" />
 
     <!-- Go Back -->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnGoBack"
         android:layout_width="match_parent"
         android:layout_height="@dimen/button_height"
+        android:textColor="#FFFFFF"
         android:layout_marginTop="@dimen/spacing_sm"
+        android:background="@drawable/go_back"
         android:text="@string/sos_cancel"
-        style="@style/Widget.InDrive.Button.Text"
         android:alpha="0"
-        android:translationY="20dp" />
+        android:translationY="20dp"
+        tools:alpha="1"
+        tools:translationY="0dp"
+        tools:ignore="VisualLintButtonSize" />
 
 </LinearLayout>

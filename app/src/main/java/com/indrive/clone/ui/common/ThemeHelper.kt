@@ -1,52 +1,28 @@
 package com.indrive.clone.ui.common
 
 import android.content.Context
-import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatDelegate
 
 /**
- * Utility to manage and persist theme selection (Light/Dark mode).
+ * Utility to enforce the exact "Eco & Trustworthy" Kelly Green design
+ * and completely prevent system Dark Mode overrides.
  */
 object ThemeHelper {
 
-    private const val PREFS_NAME = "coride_prefs"
-    private const val KEY_DARK_MODE = "is_dark_mode"
-
-    private fun getPrefs(context: Context): SharedPreferences {
-        return context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-    }
-
     /**
-     * Persists and applies the theme mode.
+     * Applies the hardcoded branding theme to an activity. 
+     * MUST be called before super.onCreate().
      */
-    fun setDarkMode(context: Context, isEnabled: Boolean) {
-        getPrefs(context).edit().putBoolean(KEY_DARK_MODE, isEnabled).apply()
-        applyTheme(isEnabled)
+    fun applyThemeState(activity: android.app.Activity) {
+        activity.setTheme(com.indrive.clone.R.style.Theme_InDriveClone)
+        // Permanently enforce light mode styling
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
     }
 
     /**
-     * Checks the stored preference.
-     */
-    fun isDarkMode(context: Context): Boolean {
-        return getPrefs(context).getBoolean(KEY_DARK_MODE, false)
-    }
-
-    /**
-     * Applies the theme mode globally using AppCompatDelegate.
-     */
-    fun applyTheme(isDark: Boolean) {
-        val mode = if (isDark) {
-            AppCompatDelegate.MODE_NIGHT_YES
-        } else {
-            AppCompatDelegate.MODE_NIGHT_NO
-        }
-        AppCompatDelegate.setDefaultNightMode(mode)
-    }
-
-    /**
-     * Call this on app startup (e.g. Activity onCreate) to set the initial theme state.
+     * Call this on app startup.
      */
     fun init(context: Context) {
-        applyTheme(isDarkMode(context))
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
     }
 }

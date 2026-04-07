@@ -18,7 +18,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Settings"
-        android:textColor="@color/on_surface"
+        android:textColor="?attr/colorOnSurface"
         android:textSize="@dimen/text_headline_small"
         android:fontFamily="sans-serif-bold"
         android:layout_marginBottom="@dimen/spacing_lg"/>
@@ -34,7 +34,7 @@
             android:layout_width="@dimen/icon_md"
             android:layout_height="@dimen/icon_md"
             android:src="@drawable/ic_notifications"
-            app:tint="@color/primary" />
+            app:tint="?attr/colorPrimary" />
             
         <TextView
             android:layout_width="0dp"
@@ -42,7 +42,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/spacing_md"
             android:text="Notifications"
-            android:textColor="@color/on_surface"
+            android:textColor="?attr/colorOnSurface"
             android:textSize="@dimen/text_body_large"/>
             
         <com.google.android.material.materialswitch.MaterialSwitch
@@ -62,7 +62,7 @@
             android:layout_width="@dimen/icon_md"
             android:layout_height="@dimen/icon_md"
             android:src="@drawable/location"
-            app:tint="@color/primary" />
+            app:tint="?attr/colorPrimary" />
             
         <TextView
             android:layout_width="0dp"
@@ -70,7 +70,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/spacing_md"
             android:text="Location Services"
-            android:textColor="@color/on_surface"
+            android:textColor="?attr/colorOnSurface"
             android:textSize="@dimen/text_body_large"/>
             
         <com.google.android.material.materialswitch.MaterialSwitch
@@ -79,34 +79,11 @@
             android:checked="true"/>
     </LinearLayout>
 
-    <!-- Dark Mode Switch -->
-    <LinearLayout
+    <View
         android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:gravity="center_vertical"
-        android:orientation="horizontal">
-        
-        <ImageView
-            android:layout_width="@dimen/icon_md"
-            android:layout_height="@dimen/icon_md"
-            android:src="@drawable/ic_dark_mode"
-            app:tint="@color/primary" />
-            
-        <TextView
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/spacing_md"
-            android:text="Dark Mode"
-            android:textColor="@color/on_surface"
-            android:textSize="@dimen/text_body_large"/>
-            
-        <com.google.android.material.materialswitch.MaterialSwitch
-            android:id="@+id/switchDarkMode"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:checked="false"/>
-    </LinearLayout>
+        android:layout_height="1dp"
+        android:layout_marginVertical="@dimen/spacing_md"
+        android:background="?attr/colorOutlineVariant" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnSaveSettings"

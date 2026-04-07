@@ -1,36 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- =====================================================
-         M3 Expressive — Full 30-Role Color System
-         Brand: coride Red + Expressive Green Accent
+         M3 Expressive — Single "Eco & Trustworthy" Theme
+         Primary Green: #00B14F (Kelly Green)
+         Background: #FFFFFF (Pure White)
          ===================================================== -->
 
-    <!-- PRIMARY — Trust Blue (#1976D2) -->
-    <color name="primary">#1976D2</color>
+    <!-- PRIMARY — Kelly Green -->
+    <color name="primary">#00B14F</color>
     <color name="on_primary">#FFFFFF</color>
-    <color name="primary_container">#D3E3FD</color>
-    <color name="on_primary_container">#041E49</color>
-    <color name="primary_fixed">#D3E3FD</color>
-    <color name="on_primary_fixed">#041E49</color>
-    <color name="primary_fixed_dim">#A1C4FD</color>
-    <color name="on_primary_fixed_variant">#0B3A6E</color>
-    <color name="inverse_primary">#A1C4FD</color>
+    <color name="primary_container">#E8F5E9</color>
+    <color name="on_primary_container">#00B14F</color>
+    <color name="primary_fixed">#E8F5E9</color>
+    <color name="on_primary_fixed">#003914</color>
+    <color name="primary_fixed_dim">#33C572</color>
+    <color name="on_primary_fixed_variant">#00B14F</color>
+    <color name="inverse_primary">#E8F5E9</color>
 
-    <!-- SECONDARY — Deep Trust Accent (#0D47A1) -->
-    <color name="secondary">#0D47A1</color>
-    <color name="on_secondary">#FFFFFF</color>
-    <color name="secondary_container">#D1E4FF</color>
-    <color name="on_secondary_container">#001D36</color>
-    <color name="secondary_fixed">#D1E4FF</color>
-    <color name="on_secondary_fixed">#001D36</color>
-    <color name="secondary_fixed_dim">#9ECAFF</color>
-    <color name="on_secondary_fixed_variant">#003361</color>
 
-    <!-- TERTIARY — Subtle sky blue for highlights -->
-    <color name="tertiary">#00629E</color>
-    <color name="on_tertiary">#FFFFFF</color>
-    <color name="tertiary_container">#CFE5FF</color>
-    <color name="on_tertiary_container">#001D34</color>
+    <!-- TERTIARY -->
+    <color name="tertiary">#E8F5E9</color>
+    <color name="on_tertiary">#1F2937</color>
+    <color name="tertiary_container">#F1F8F1</color>
+    <color name="on_tertiary_container">#00B14F</color>
 
     <!-- ERROR -->
     <color name="error">#BA1A1A</color>
@@ -38,53 +30,55 @@
     <color name="error_container">#FFDAD6</color>
     <color name="on_error_container">#410002</color>
 
-    <!-- SURFACE ROLES — M3 surface tonal system (#F4F8FB) -->
-    <color name="surface">#F4F8FB</color>
-    <color name="on_surface">#181C1F</color>
-    <color name="surface_variant">#DEE3E8</color>
-    <color name="on_surface_variant">#40484E</color>
+    <!-- SURFACE ROLES — Pure Clean White (#FFFFFF) & Slate Text -->
+    <color name="surface">#FFFFFF</color>
+    <color name="on_surface">#1F2937</color> <!-- Slate Gray for readability -->
+    <color name="surface_variant">#F9FAFB</color>
+    <color name="on_surface_variant">#6B7280</color> <!-- Medium gray -->
     <color name="surface_container_lowest">#FFFFFF</color>
-    <color name="surface_container_low">#F4F8FB</color>
-    <color name="surface_container">#EEF2F5</color>
-    <color name="surface_container_high">#E8ECF0</color>
-    <color name="surface_container_highest">#E2E6EA</color>
-    <color name="surface_bright">#F4F8FB</color>
-    <color name="surface_dim">#D6DADD</color>
-    <color name="inverse_surface">#2D3135</color>
-    <color name="inverse_on_surface">#EEF1F4</color>
+    <color name="surface_container_low">#F9FAFB</color>
+    <color name="surface_container">#F3F4F6</color>
+    <color name="surface_container_high">#E5E7EB</color>
+    <color name="surface_container_highest">#D1D5DB</color>
+    <color name="surface_bright">#FFFFFF</color>
+    <color name="surface_dim">#F3F4F6</color>
+    <color name="inverse_surface">#1F2937</color>
+    <color name="inverse_on_surface">#FFFFFF</color>
 
     <!-- OUTLINE -->
-    <color name="outline">#71797E</color>
-    <color name="outline_variant">#C0C8CD</color>
+    <color name="outline">#9CA3AF</color>
+    <color name="outline_variant">#E5E7EB</color>
 
     <!-- SCRIM & SHADOW -->
     <color name="scrim">#80000000</color>
     <color name="shadow">#000000</color>
 
-    <!-- LEGACY ALIASES (used by existing Kotlin code) -->
-    <color name="primary_dark">#0B3A6E</color>
-    <color name="primary_light">#A1C4FD</color>
-    <color name="primary_variant">#1976D2</color>
-    <color name="accent">#0D47A1</color>
-    <color name="accent_light">#D1E4FF</color>
-    <color name="background_white">#F4F8FB</color>
-    <color name="background_light">#EEF2F5</color>
+    <!-- LEGACY ALIASES (Keeping these intact so older fragments don't crash) -->
+    <color name="primary_dark">#008E3F</color>
+    <color name="primary_light">#E8F5E9</color>
+    <color name="primary_variant">#00B14F</color>
+    <color name="accent">@color/primary</color>
+    <color name="accent_light">#EFF6FF</color>
+    <color name="background_white">#FFFFFF</color>
+    <color name="background_light">#F9FAFB</color>
     <color name="background_card">#FFFFFF</color>
-    <color name="text_primary">#181C1F</color>
-    <color name="text_secondary">#40484E</color>
-    <color name="text_hint">#71797E</color>
+    <color name="text_primary">#1F2937</color>
+    <color name="text_secondary">#6B7280</color>
+    <color name="text_hint">#9CA3AF</color>
     <color name="text_white">#FFFFFF</color>
     <color name="text_on_primary">#FFFFFF</color>
-    <color name="success">#1A6839</color>
-    <color name="warning">#785900</color>
-    <color name="info">#0060A8</color>
-    <color name="divider">#C0C8CD</color>
-    <color name="border">#71797E</color>
+    <color name="success">#00B14F</color>
+    <color name="warning">#FFBF00</color>
+    <color name="info">@color/accent</color>
+    <color name="divider">#E5E7EB</color>
+    <color name="border">#D1D5DB</color>
     <color name="star_yellow">#FFBF00</color>
-    <color name="map_overlay">#40094453</color>
-    <color name="route_color">#094453</color>
-    <color name="shimmer_base">#DCE4EB</color>
-    <color name="shimmer_highlight">#F0F4F8</color>
-    <color name="status_bar">#041E49</color>
-    <!-- Navigation bar color state list ref -->
+    <color name="map_overlay">#4000B14F</color> <!-- Soft green overlay for maps if used -->
+    <color name="route_color">#00B14F</color>
+    <color name="shimmer_base">#E5E7EB</color>
+    <color name="shimmer_highlight">#F3F4F6</color>
+    
+    <!-- Status Bar Default Color -->
+    <color name="status_bar">#00B14F</color>
+
 </resources>

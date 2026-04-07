@@ -221,7 +221,7 @@ class HomeFragment : Fragment() {
         val microWidget = view.findViewById<TextView>(R.id.tvHomeMicroWidget)
         val safetyStats = view.findViewById<TextView>(R.id.tvSafetyStats)
 
-        microWidget.text = "Hi ${user.name.split(" ").first()}, Traffic is light • 12 mins to Arfa Tower"
+        microWidget.text = "Hi ${user.name.split(" ").first()}, Start your new journey here"
         safetyStats.text = "98% Drivers Verified Today"
     }
 

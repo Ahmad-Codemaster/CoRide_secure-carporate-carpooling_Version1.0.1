@@ -8,6 +8,7 @@ import androidx.navigation.ui.setupWithNavController
 import com.indrive.clone.ui.custom.CurvedBottomNavigationView
 import com.indrive.clone.R
 import com.indrive.clone.data.repository.MockDataRepository
+import com.indrive.clone.ui.common.ThemeHelper
 import com.indrive.clone.ui.verification.VerificationPopupDialogFragment
 
 class MainActivity : AppCompatActivity() {
@@ -15,6 +16,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var bottomNav: CurvedBottomNavigationView
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        ThemeHelper.applyThemeState(this)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 

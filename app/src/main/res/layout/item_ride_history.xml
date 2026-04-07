@@ -126,7 +126,8 @@
                 <View
                     android:layout_width="8dp"
                     android:layout_height="8dp"
-                    android:background="@drawable/bg_circle_secondary" />
+                    android:background="@drawable/bg_circle_primary"
+                    android:backgroundTint="@color/primary_dark" />
             </LinearLayout>
 
             <!-- Address Details -->
@@ -195,12 +196,14 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnBookAgain"
-                style="@style/Widget.Material3.Button.TonalButton"
+                style="@style/Widget.Material3.Button"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/btn_book_again"
                 android:textSize="@dimen/text_label_large"
+                app:backgroundTint="@color/primary_dark"
+                android:textColor="@color/text_white"
                 app:cornerRadius="@dimen/shape_small" />
 
             <com.google.android.material.button.MaterialButton

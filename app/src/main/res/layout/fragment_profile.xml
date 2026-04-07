@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/surface_container_low">
+    android:background="?attr/colorSurfaceVariant">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -11,90 +11,56 @@
         android:orientation="vertical"
         android:paddingBottom="100dp">
 
-        <!-- Profile Header — gradient primary banner -->
+        <!-- Profile Header — Branded primary banner -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/rounded_card_red"
+            android:background="@drawable/profile_card"
             android:gravity="center_horizontal"
             android:orientation="vertical"
             android:paddingTop="@dimen/spacing_xl"
             android:paddingBottom="@dimen/spacing_xl"
             android:paddingHorizontal="@dimen/spacing_lg">
 
-            <!-- Avatar — ShapeableImageView full-round -->
+            <!-- Avatar -->
             <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/ivAvatar"
                 android:layout_width="match_parent"
                 android:layout_height="130dp"
                 android:src="@drawable/profile"
-                android:padding="@dimen/spacing_lg"
-                android:contentDescription="@string/profile_photo" />
+                android:padding="@dimen/spacing_lg"/>
 
-            <!-- Name — Headline Small, white -->
+            <!-- Name -->
             <TextView
                 android:id="@+id/tvUserName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/spacing_md"
-                android:textColor="@color/on_primary"
+                android:textColor="?attr/colorOnPrimary"
                 android:textSize="@dimen/text_headline_small"
                 android:fontFamily="sans-serif-medium" />
 
-            <!-- Phone — Body Small, semi-white -->
+            <!-- Phone -->
             <TextView
                 android:id="@+id/tvUserPhone"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/spacing_xs"
-                android:textColor="#A0D8F0"
+                android:textColor="?attr/colorOnPrimary"
+                android:alpha="0.8"
                 android:textSize="@dimen/text_body_small" />
 
-            <!-- CoRide: Verification Badge -->
+            <!-- Role -->
             <TextView
-                android:id="@+id/tvVerificationBadge"
+                android:id="@+id/tvRole"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="@dimen/spacing_xs"
-                android:textColor="@color/on_primary"
+                android:layout_marginTop="2dp"
+                android:textColor="?attr/colorOnPrimary"
+                android:alpha="0.7"
                 android:textSize="@dimen/text_label_large"
                 android:fontFamily="sans-serif-medium"
                 android:visibility="gone" />
-
-            <!-- CoRide: Role + Organization -->
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="@dimen/spacing_xs"
-                android:orientation="horizontal"
-                android:gravity="center_vertical">
-
-                <TextView
-                    android:id="@+id/tvRole"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="#A0D8F0"
-                    android:textSize="@dimen/text_label_medium"
-                    android:visibility="gone" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text=" • "
-                    android:textColor="#A0D8F0"
-                    android:textSize="@dimen/text_label_medium"
-                    android:visibility="gone" />
-
-                <TextView
-                    android:id="@+id/tvOrganization"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="#A0D8F0"
-                    android:textSize="@dimen/text_label_medium"
-                    android:visibility="gone" />
-            </LinearLayout>
 
             <!-- Stats Row -->
             <com.google.android.material.card.MaterialCardView
@@ -102,7 +68,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/spacing_lg"
-                app:cardBackgroundColor="#20FFFFFF"
+                app:cardBackgroundColor="#7BC6C8C6"
                 app:cardCornerRadius="@dimen/shape_medium"
                 app:cardElevation="0dp"
                 app:strokeWidth="0dp">
@@ -125,7 +91,7 @@
                         android:id="@+id/tvTotalRides"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textColor="@color/on_primary"
+                        android:textColor="?attr/colorOnPrimary"
                         android:textSize="@dimen/text_headline_small"
                         android:fontFamily="sans-serif-bold" />
 
@@ -133,7 +99,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/total_rides"
-                        android:textColor="#A0D8F0"
+                        android:textColor="?attr/colorOnPrimary"
+                        android:alpha="0.7"
                         android:textSize="@dimen/text_label_medium" />
                 </LinearLayout>
 
@@ -141,9 +108,10 @@
                     android:layout_width="1dp"
                     android:layout_height="48dp"
                     android:layout_gravity="center_vertical"
-                    android:background="#40FFFFFF" />
+                    android:background="?attr/colorOnPrimary"
+                    android:alpha="0.2" />
 
-                <!-- Rating -->
+                <!-- Status -->
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -156,7 +124,7 @@
                         android:id="@+id/tvRating"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textColor="@color/on_primary"
+                        android:textColor="?attr/colorOnPrimary"
                         android:textSize="@dimen/text_headline_small"
                         android:fontFamily="sans-serif-bold" />
 
@@ -164,7 +132,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Status"
-                        android:textColor="#A0D8F0"
+                        android:textColor="?attr/colorOnPrimary"
+                        android:alpha="0.7"
                         android:textSize="@dimen/text_label_medium" />
                 </LinearLayout>
 
@@ -172,7 +141,8 @@
                     android:layout_width="1dp"
                     android:layout_height="48dp"
                     android:layout_gravity="center_vertical"
-                    android:background="#40FFFFFF" />
+                    android:background="?attr/colorOnPrimary"
+                    android:alpha="0.2" />
 
                 <!-- Member Since -->
                 <LinearLayout
@@ -187,7 +157,7 @@
                         android:id="@+id/tvMemberSince"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textColor="@color/on_primary"
+                        android:textColor="?attr/colorOnPrimary"
                         android:textSize="@dimen/text_body_small"
                         android:fontFamily="sans-serif-bold" />
 
@@ -195,7 +165,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/member_since"
-                        android:textColor="#A0D8F0"
+                        android:textColor="?attr/colorOnPrimary"
+                        android:alpha="0.7"
                         android:textSize="@dimen/text_label_medium" />
                 </LinearLayout>
                 </LinearLayout>
@@ -211,8 +182,8 @@
             android:layout_marginTop="@dimen/spacing_md"
             app:cardCornerRadius="@dimen/shape_medium"
             app:cardElevation="0dp"
-            app:cardBackgroundColor="#FFF3E0"
-            app:strokeColor="#FFB74D"
+            app:cardBackgroundColor="?attr/colorSecondaryContainer"
+            app:strokeColor="?attr/colorOnSecondaryContainer"
             app:strokeWidth="1dp"
             android:visibility="gone">
 
@@ -227,8 +198,7 @@
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     android:src="@drawable/ic_warning"
-                    android:contentDescription="Warning"
-                    app:tint="#E65100" />
+                    app:tint="?attr/colorOnSecondaryContainer" />
 
                 <TextView
                     android:layout_width="0dp"
@@ -236,12 +206,12 @@
                     android:layout_weight="1"
                     android:layout_marginStart="@dimen/spacing_sm"
                     android:text="Your account is not verified. Tap Verification below to get full access."
-                    android:textColor="#E65100"
+                    android:textColor="?attr/colorOnSecondaryContainer"
                     android:textSize="@dimen/text_body_small" />
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- Menu Section — M3 surface container white -->
+        <!-- Menu Section -->
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/cardMenu"
             android:layout_width="match_parent"
@@ -249,9 +219,9 @@
             android:layout_margin="@dimen/spacing_md"
             app:cardCornerRadius="@dimen/shape_large"
             app:cardElevation="@dimen/elevation_none"
-            app:strokeColor="@color/outline_variant"
+            app:strokeColor="?attr/colorOutlineVariant"
             app:strokeWidth="1dp"
-            app:cardBackgroundColor="@color/surface_container_lowest">
+            app:cardBackgroundColor="?attr/colorSurface">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -272,8 +242,7 @@
                         android:layout_width="@dimen/icon_md"
                         android:layout_height="@dimen/icon_md"
                         android:src="@drawable/ic_edit"
-                        android:contentDescription="Edit"
-                        app:tint="@color/primary" />
+                        app:tint="?attr/colorPrimary" />
 
                     <TextView
                         android:layout_width="0dp"
@@ -281,19 +250,18 @@
                         android:layout_weight="1"
                         android:layout_marginStart="@dimen/spacing_md"
                         android:text="@string/edit_profile"
-                        android:textColor="@color/on_surface"
+                        android:textColor="?attr/colorOnSurface"
                         android:textSize="@dimen/text_body_medium" />
 
                     <ImageView
                         android:layout_width="@dimen/icon_sm"
                         android:layout_height="@dimen/icon_sm"
                         android:src="@drawable/ic_chevron_right"
-                        android:contentDescription="Arrow"
-                        app:tint="@color/on_surface_variant" />
+                        app:tint="?attr/colorOnSurfaceVariant" />
                 </LinearLayout>
 
                 <View android:layout_width="match_parent" android:layout_height="1dp"
-                    android:layout_marginStart="56dp" android:background="@color/outline_variant" />
+                    android:layout_marginStart="56dp" android:background="?attr/colorOutlineVariant" />
 
                 <!-- Verification -->
                 <LinearLayout
@@ -309,8 +277,7 @@
                         android:layout_width="@dimen/icon_md"
                         android:layout_height="@dimen/icon_md"
                         android:src="@drawable/ic_info"
-                        android:contentDescription="Verify"
-                        app:tint="@color/primary" />
+                        app:tint="?attr/colorPrimary" />
 
                     <TextView
                         android:id="@+id/tvVerificationLabel"
@@ -319,7 +286,7 @@
                         android:layout_weight="1"
                         android:layout_marginStart="@dimen/spacing_md"
                         android:text="Verification"
-                        android:textColor="@color/on_surface"
+                        android:textColor="?attr/colorOnSurface"
                         android:textSize="@dimen/text_body_medium" />
 
                     <TextView
@@ -327,6 +294,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="@dimen/spacing_sm"
+                        android:textColor="?attr/colorOnSurfaceVariant"
                         android:textSize="@dimen/text_label_medium"
                         android:fontFamily="sans-serif-medium" />
 
@@ -334,14 +302,13 @@
                         android:layout_width="@dimen/icon_sm"
                         android:layout_height="@dimen/icon_sm"
                         android:src="@drawable/ic_chevron_right"
-                        android:contentDescription="Arrow"
-                        app:tint="@color/on_surface_variant" />
+                        app:tint="?attr/colorOnSurfaceVariant" />
                 </LinearLayout>
 
                 <View android:layout_width="match_parent" android:layout_height="1dp"
-                    android:layout_marginStart="56dp" android:background="@color/outline_variant" />
+                    android:layout_marginStart="56dp" android:background="?attr/colorOutlineVariant" />
 
-                <!-- Security Center (Trusted Contacts) -->
+                <!-- Security Center -->
                 <LinearLayout
                     android:id="@+id/btnSecurityCenter"
                     android:layout_width="match_parent"
@@ -355,8 +322,7 @@
                         android:layout_width="@dimen/icon_md"
                         android:layout_height="@dimen/icon_md"
                         android:src="@drawable/ic_shield_check"
-                        android:contentDescription="Security"
-                        app:tint="@color/primary" />
+                        app:tint="?attr/colorPrimary" />
 
                     <TextView
                         android:layout_width="0dp"
@@ -364,19 +330,18 @@
                         android:layout_weight="1"
                         android:layout_marginStart="@dimen/spacing_md"
                         android:text="Security Center"
-                        android:textColor="@color/on_surface"
+                        android:textColor="?attr/colorOnSurface"
                         android:textSize="@dimen/text_body_medium" />
 
                     <ImageView
                         android:layout_width="@dimen/icon_sm"
                         android:layout_height="@dimen/icon_sm"
                         android:src="@drawable/ic_chevron_right"
-                        android:contentDescription="Arrow"
-                        app:tint="@color/on_surface_variant" />
+                        app:tint="?attr/colorOnSurfaceVariant" />
                 </LinearLayout>
 
                 <View android:layout_width="match_parent" android:layout_height="1dp"
-                    android:layout_marginStart="56dp" android:background="@color/outline_variant" />
+                    android:layout_marginStart="56dp" android:background="?attr/colorOutlineVariant" />
 
                 <!-- Security Settings (Biometrics) -->
                 <LinearLayout
@@ -392,8 +357,7 @@
                         android:layout_width="@dimen/icon_md"
                         android:layout_height="@dimen/icon_md"
                         android:src="@drawable/biometric"
-                        android:contentDescription="Biometrics"
-                        app:tint="@color/primary" />
+                        app:tint="?attr/colorPrimary" />
 
                     <TextView
                         android:layout_width="0dp"
@@ -401,19 +365,18 @@
                         android:layout_weight="1"
                         android:layout_marginStart="@dimen/spacing_md"
                         android:text="Security Settings"
-                        android:textColor="@color/on_surface"
+                        android:textColor="?attr/colorOnSurface"
                         android:textSize="@dimen/text_body_medium" />
 
                     <ImageView
                         android:layout_width="@dimen/icon_sm"
                         android:layout_height="@dimen/icon_sm"
                         android:src="@drawable/ic_chevron_right"
-                        android:contentDescription="Arrow"
-                        app:tint="@color/on_surface_variant" />
+                        app:tint="?attr/colorOnSurfaceVariant" />
                 </LinearLayout>
 
                 <View android:layout_width="match_parent" android:layout_height="1dp"
-                    android:layout_marginStart="56dp" android:background="@color/outline_variant" />
+                    android:layout_marginStart="56dp" android:background="?attr/colorOutlineVariant" />
 
                 <!-- Settings -->
                 <LinearLayout
@@ -429,8 +392,7 @@
                         android:layout_width="@dimen/icon_md"
                         android:layout_height="@dimen/icon_md"
                         android:src="@drawable/ic_settings"
-                        android:contentDescription="Settings"
-                        app:tint="@color/primary" />
+                        app:tint="?attr/colorPrimary" />
 
                     <TextView
                         android:layout_width="0dp"
@@ -438,19 +400,18 @@
                         android:layout_weight="1"
                         android:layout_marginStart="@dimen/spacing_md"
                         android:text="@string/settings"
-                        android:textColor="@color/on_surface"
+                        android:textColor="?attr/colorOnSurface"
                         android:textSize="@dimen/text_body_medium" />
 
                     <ImageView
                         android:layout_width="@dimen/icon_sm"
                         android:layout_height="@dimen/icon_sm"
                         android:src="@drawable/ic_chevron_right"
-                        android:contentDescription="Arrow"
-                        app:tint="@color/on_surface_variant" />
+                        app:tint="?attr/colorOnSurfaceVariant" />
                 </LinearLayout>
 
                 <View android:layout_width="match_parent" android:layout_height="1dp"
-                    android:layout_marginStart="56dp" android:background="@color/outline_variant" />
+                    android:layout_marginStart="56dp" android:background="?attr/colorOutlineVariant" />
 
                 <!-- Help -->
                 <LinearLayout
@@ -466,8 +427,7 @@
                         android:layout_width="@dimen/icon_md"
                         android:layout_height="@dimen/icon_md"
                         android:src="@drawable/ic_help"
-                        android:contentDescription="Help"
-                        app:tint="@color/primary" />
+                        app:tint="?attr/colorPrimary" />
 
                     <TextView
                         android:layout_width="0dp"
@@ -475,19 +435,18 @@
                         android:layout_weight="1"
                         android:layout_marginStart="@dimen/spacing_md"
                         android:text="@string/help"
-                        android:textColor="@color/on_surface"
+                        android:textColor="?attr/colorOnSurface"
                         android:textSize="@dimen/text_body_medium" />
 
                     <ImageView
                         android:layout_width="@dimen/icon_sm"
                         android:layout_height="@dimen/icon_sm"
                         android:src="@drawable/ic_chevron_right"
-                        android:contentDescription="Arrow"
-                        app:tint="@color/on_surface_variant" />
+                        app:tint="?attr/colorOnSurfaceVariant" />
                 </LinearLayout>
 
                 <View android:layout_width="match_parent" android:layout_height="1dp"
-                    android:layout_marginStart="56dp" android:background="@color/outline_variant" />
+                    android:layout_marginStart="56dp" android:background="?attr/colorOutlineVariant" />
 
                 <!-- About -->
                 <LinearLayout
@@ -503,8 +462,7 @@
                         android:layout_width="@dimen/icon_md"
                         android:layout_height="@dimen/icon_md"
                         android:src="@drawable/ic_info"
-                        android:contentDescription="About"
-                        app:tint="@color/primary" />
+                        app:tint="?attr/colorPrimary" />
 
                     <TextView
                         android:layout_width="0dp"
@@ -512,15 +470,14 @@
                         android:layout_weight="1"
                         android:layout_marginStart="@dimen/spacing_md"
                         android:text="@string/about"
-                        android:textColor="@color/on_surface"
+                        android:textColor="?attr/colorOnSurface"
                         android:textSize="@dimen/text_body_medium" />
 
                     <ImageView
                         android:layout_width="@dimen/icon_sm"
                         android:layout_height="@dimen/icon_sm"
                         android:src="@drawable/ic_chevron_right"
-                        android:contentDescription="Arrow"
-                        app:tint="@color/on_surface_variant" />
+                        app:tint="?attr/colorOnSurfaceVariant" />
                 </LinearLayout>
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
@@ -533,9 +490,9 @@
             android:layout_marginHorizontal="@dimen/spacing_lg"
             android:layout_marginBottom="@dimen/spacing_lg"
             android:text="@string/sign_out"
-            android:textColor="@color/primary"
+            android:textColor="?attr/colorPrimary"
             style="@style/Widget.InDrive.Button.Secondary"
-            app:strokeColor="@color/primary" />
+            app:strokeColor="?attr/colorPrimary" />
 
     </LinearLayout>
 </ScrollView>
