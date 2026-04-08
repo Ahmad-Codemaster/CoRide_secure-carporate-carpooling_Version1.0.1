@@ -175,19 +175,19 @@
          TEXT INPUT
          ===================================================== -->
     <style name="Widget.InDrive.TextInput" parent="Widget.Material3.TextInputLayout.OutlinedBox">
-        <item name="boxCornerRadiusTopStart">@dimen/shape_small</item>
-        <item name="boxCornerRadiusTopEnd">@dimen/shape_small</item>
-        <item name="boxCornerRadiusBottomStart">@dimen/shape_small</item>
-        <item name="boxCornerRadiusBottomEnd">@dimen/shape_small</item>
+        <item name="boxCornerRadiusTopStart">@dimen/shape_full</item>
+        <item name="boxCornerRadiusTopEnd">@dimen/shape_full</item>
+        <item name="boxCornerRadiusBottomStart">@dimen/shape_full</item>
+        <item name="boxCornerRadiusBottomEnd">@dimen/shape_full</item>
         <item name="boxStrokeColor">@color/primary</item>
         <item name="hintTextColor">@color/primary</item>
     </style>
 
     <style name="Widget.InDrive.TextInput.Filled" parent="Widget.Material3.TextInputLayout.FilledBox">
-        <item name="boxCornerRadiusTopStart">@dimen/shape_small</item>
-        <item name="boxCornerRadiusTopEnd">@dimen/shape_small</item>
-        <item name="boxCornerRadiusBottomStart">0dp</item>
-        <item name="boxCornerRadiusBottomEnd">0dp</item>
+        <item name="boxCornerRadiusTopStart">@dimen/shape_full</item>
+        <item name="boxCornerRadiusTopEnd">@dimen/shape_full</item>
+        <item name="boxCornerRadiusBottomStart">@dimen/shape_full</item>
+        <item name="boxCornerRadiusBottomEnd">@dimen/shape_full</item>
         <item name="boxBackgroundColor">@color/surface_variant</item>
         <item name="hintTextColor">@color/primary</item>
     </style>

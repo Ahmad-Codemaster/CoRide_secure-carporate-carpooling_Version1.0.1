@@ -16,6 +16,12 @@
     <color name="primary_fixed_dim">#33C572</color>
     <color name="on_primary_fixed_variant">#00B14F</color>
     <color name="inverse_primary">#E8F5E9</color>
+    
+    <!-- SECONDARY — Accessible Greens -->
+    <color name="secondary">#4CAF50</color>
+    <color name="on_secondary">#FFFFFF</color>
+    <color name="secondary_container">#D1E8D1</color>
+    <color name="on_secondary_container">#002107</color>
 
 
     <!-- TERTIARY -->

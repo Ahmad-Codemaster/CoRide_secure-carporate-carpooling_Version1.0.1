@@ -25,6 +25,9 @@ object MockDataRepository {
     private var verificationStartTime = 0L
     private val VERIFICATION_DURATION_MS = 30 * 1000L // 30 seconds
 
+    // ── Driver State ──
+    private var isDriverOnline = false
+
     private val mockDrivers = listOf(
         Driver(
             id = "driver_001",
@@ -221,6 +224,38 @@ object MockDataRepository {
         
         // Automated Administrative Alert
         EmailNotificationHelper.sendVerificationAlert(currentUser)
+    }
+
+    // ── Driver Interface Logic ──
+    fun setDriverMode(enabled: Boolean) {
+        currentUser = currentUser.copy(isDriverMode = enabled)
+        updateUser(currentUser)
+        if (!enabled) isDriverOnline = false
+    }
+
+    fun isDriverOnline(): Boolean = isDriverOnline
+
+    fun setDriverOnline(online: Boolean) {
+        isDriverOnline = online
+    }
+
+    fun registerDriverDetails(make: String, model: String, plate: String, license: String) {
+        val vehicle = Vehicle(make, model, "White", plate, 2022)
+        val driverDetails = Driver(
+            id = "driver_${currentUser.id}",
+            name = currentUser.name,
+            phone = currentUser.phone,
+            avatarUrl = currentUser.avatarUrl,
+            rating = 5.0f,
+            totalTrips = 0,
+            vehicle = vehicle,
+            licenseNumber = license
+        )
+        currentUser = currentUser.copy(
+            isRegisteredDriver = true,
+            driverDetails = driverDetails
+        )
+        updateUser(currentUser)
     }
 
     fun submitDocument(docType: VerificationDocType) {

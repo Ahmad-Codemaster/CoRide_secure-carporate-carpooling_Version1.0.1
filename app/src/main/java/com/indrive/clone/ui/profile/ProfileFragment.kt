@@ -31,12 +31,12 @@ class ProfileFragment : Fragment() {
         populateUserData(view, user)
         updateVerificationUI(view)
 
-        // Menu items
-        view.findViewById<View>(R.id.btnEditProfile).setOnClickListener {
+        // Menu items — Safe Binding
+        view.findViewById<View>(R.id.btnEditProfile)?.setOnClickListener {
             showEditProfileDialog()
         }
 
-        view.findViewById<View>(R.id.btnVerification).setOnClickListener {
+        view.findViewById<View>(R.id.btnVerification)?.setOnClickListener {
             if (MockDataRepository.isUserVerified()) {
                 Toast.makeText(requireContext(), "✅ You are already verified!", Toast.LENGTH_SHORT).show()
             } else {
@@ -52,19 +52,30 @@ class ProfileFragment : Fragment() {
             }
         }
 
-        view.findViewById<View>(R.id.btnSettings).setOnClickListener {
+        view.findViewById<View>(R.id.btnSettings)?.setOnClickListener {
             SettingsDialog().show(childFragmentManager, "settings_dialog")
         }
 
-        view.findViewById<View>(R.id.btnSecurityCenter).setOnClickListener {
+        view.findViewById<View>(R.id.btnSecurityCenter)?.setOnClickListener {
             findNavController().navigate(R.id.action_profile_to_trusted_contacts)
         }
 
-        view.findViewById<View>(R.id.btnSecuritySettings).setOnClickListener {
+        view.findViewById<View>(R.id.btnDriverMode)?.setOnClickListener {
+            SpringPhysicsHelper.springPressFeedback(it)
+            val currentUser = MockDataRepository.getCurrentUser()
+            if (currentUser.isRegisteredDriver) {
+                MockDataRepository.setDriverMode(true)
+                findNavController().navigate(R.id.action_global_to_driver_dashboard)
+            } else {
+                findNavController().navigate(R.id.driverRegistrationFragment)
+            }
+        }
+
+        view.findViewById<View>(R.id.btnSecuritySettings)?.setOnClickListener {
             SecuritySettingsDialog.newInstance().show(childFragmentManager, SecuritySettingsDialog.TAG)
         }
 
-        view.findViewById<View>(R.id.btnHelp).setOnClickListener {
+        view.findViewById<View>(R.id.btnHelp)?.setOnClickListener {
             com.google.android.material.dialog.MaterialAlertDialogBuilder(requireContext())
                 .setTitle("📞 Help & Support")
                 .setMessage(
@@ -89,7 +100,7 @@ class ProfileFragment : Fragment() {
                 .show()
         }
 
-        view.findViewById<View>(R.id.btnAbout).setOnClickListener {
+        view.findViewById<View>(R.id.btnAbout)?.setOnClickListener {
             com.google.android.material.dialog.MaterialAlertDialogBuilder(requireContext())
                 .setTitle("About CoRide")
                 .setMessage("CoRide v1.0\n\nA secure, identity-verified ride-sharing platform exclusively designed for students and employees.\n\nAll drivers and riders go through mandatory background checks and institutional ID verification to ensure maximum safety on campus and commutes.")
@@ -98,7 +109,7 @@ class ProfileFragment : Fragment() {
         }
 
         // Sign Out
-        view.findViewById<MaterialButton>(R.id.btnSignOut).setOnClickListener {
+        view.findViewById<MaterialButton>(R.id.btnSignOut)?.setOnClickListener {
             com.google.android.material.dialog.MaterialAlertDialogBuilder(requireContext())
                 .setTitle("⚠️ Logout")
                 .setMessage("Are you sure you want to logout?\n\nDon't worry — your profile data, ride history, and verification status will be safely saved for when you return.")
@@ -136,12 +147,14 @@ class ProfileFragment : Fragment() {
         val isVerified = MockDataRepository.isUserVerified()
         val currentYear = java.util.Calendar.getInstance().get(java.util.Calendar.YEAR).toString()
 
-        view.findViewById<TextView>(R.id.tvUserName).text = user.name
-        view.findViewById<TextView>(R.id.tvUserPhone).text = user.phone
-        view.findViewById<TextView>(R.id.tvTotalRides).text = totalRides
-        view.findViewById<TextView>(R.id.tvRating).text = if (isVerified) "Verified" else "Pending"
-        view.findViewById<TextView>(R.id.tvRating).textSize = 14f
-        view.findViewById<TextView>(R.id.tvMemberSince).text = currentYear
+        view.findViewById<TextView>(R.id.tvUserName)?.text = user.name
+        view.findViewById<TextView>(R.id.tvUserPhone)?.text = user.phone
+        view.findViewById<TextView>(R.id.tvTotalRides)?.text = totalRides
+        view.findViewById<TextView>(R.id.tvRating)?.let {
+            it.text = if (isVerified) "Verified" else "Pending"
+            it.textSize = 14f
+        }
+        view.findViewById<TextView>(R.id.tvMemberSince)?.text = currentYear
 
         // Role
         val tvRole = view.findViewById<TextView>(R.id.tvRole)

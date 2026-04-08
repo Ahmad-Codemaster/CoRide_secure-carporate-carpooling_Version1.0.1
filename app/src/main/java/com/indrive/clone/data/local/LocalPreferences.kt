@@ -50,6 +50,12 @@ object LocalPreferences {
             .putString("idCardImagePath", user.idCardImagePath)
             .putString("trustedContacts", serializeContacts(user.trustedContacts))
             .putBoolean("isLoggedIn", user.name.isNotEmpty())
+            .putBoolean("isDriverMode", user.isDriverMode)
+            .putBoolean("isRegisteredDriver", user.isRegisteredDriver)
+            .putString("driverId", user.driverDetails?.id ?: "")
+            .putString("vehMake", user.driverDetails?.vehicle?.make ?: "")
+            .putString("vehModel", user.driverDetails?.vehicle?.model ?: "")
+            .putString("vehPlate", user.driverDetails?.vehicle?.plateNumber ?: "")
             .apply()
     }
 
@@ -87,7 +93,26 @@ object LocalPreferences {
             emergencyContactName = prefs.getString("emergencyContactName", "") ?: "",
             emergencyContactPhone = prefs.getString("emergencyContactPhone", "") ?: "",
             idCardImagePath = prefs.getString("idCardImagePath", "") ?: "",
-            trustedContacts = deserializeContacts(prefs.getString("trustedContacts", "") ?: "")
+            trustedContacts = deserializeContacts(prefs.getString("trustedContacts", "") ?: ""),
+            isDriverMode = prefs.getBoolean("isDriverMode", false),
+            isRegisteredDriver = prefs.getBoolean("isRegisteredDriver", false),
+            driverDetails = if (prefs.getString("driverId", "")?.isNotEmpty() == true) {
+                com.indrive.clone.data.model.Driver(
+                    id = prefs.getString("driverId", "") ?: "",
+                    name = prefs.getString("name", "") ?: "",
+                    phone = prefs.getString("phone", "") ?: "",
+                    avatarUrl = prefs.getString("avatarUrl", "") ?: "",
+                    rating = 4.8f,
+                    totalTrips = 0,
+                    vehicle = com.indrive.clone.data.model.Vehicle(
+                        make = prefs.getString("vehMake", "") ?: "",
+                        model = prefs.getString("vehModel", "") ?: "",
+                        color = "White",
+                        plateNumber = prefs.getString("vehPlate", "") ?: "",
+                        year = 2022
+                    )
+                )
+            } else null
         )
     }
 

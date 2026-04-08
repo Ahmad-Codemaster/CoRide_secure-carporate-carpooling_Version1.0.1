@@ -23,6 +23,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:src="@drawable/bogo"
+
             android:contentDescription="CoRide Logo"
             />
     </LinearLayout>
@@ -48,7 +49,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/spacing_sm"
         android:text="Verified rides for students \u0026 employees"
-        android:textColor="#A0D8EF"
+        android:textColor="#FFFFFF"
         android:textSize="@dimen/text_title_small"
         android:fontFamily="sans-serif-light"
         android:letterSpacing="0.04"

@@ -263,6 +263,56 @@
                 <View android:layout_width="match_parent" android:layout_height="1dp"
                     android:layout_marginStart="56dp" android:background="?attr/colorOutlineVariant" />
 
+                <!-- Driver Mode / Become a Driver -->
+                <LinearLayout
+                    android:id="@+id/btnDriverMode"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingHorizontal="@dimen/spacing_md"
+                    android:background="?attr/selectableItemBackground">
+
+                    <ImageView
+                        android:layout_width="@dimen/icon_md"
+                        android:layout_height="@dimen/icon_md"
+                        android:src="@drawable/ic_car"
+                        app:tint="?attr/colorPrimary" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginStart="@dimen/spacing_md"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/tvDriverModeLabel"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Driver Mode"
+                            android:textColor="?attr/colorOnSurface"
+                            android:textSize="@dimen/text_body_medium" />
+
+                        <TextView
+                            android:id="@+id/tvDriverModeSubtitle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Earn by giving rides"
+                            android:textColor="?attr/colorOnSurfaceVariant"
+                            android:textSize="@dimen/text_label_small" />
+                    </LinearLayout>
+
+                    <ImageView
+                        android:layout_width="@dimen/icon_sm"
+                        android:layout_height="@dimen/icon_sm"
+                        android:src="@drawable/ic_chevron_right"
+                        app:tint="?attr/colorOnSurfaceVariant" />
+                </LinearLayout>
+
+                <View android:layout_width="match_parent" android:layout_height="1dp"
+                    android:layout_marginStart="56dp" android:background="?attr/colorOutlineVariant" />
+
                 <!-- Verification -->
                 <LinearLayout
                     android:id="@+id/btnVerification"

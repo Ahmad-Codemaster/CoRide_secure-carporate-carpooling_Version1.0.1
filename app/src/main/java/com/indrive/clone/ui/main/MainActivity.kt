@@ -33,19 +33,23 @@ class MainActivity : AppCompatActivity() {
         )
         bottomNav.setupWithNavController(navController, navItems)
 
-        // Hide bottom nav on ride flow screens
+        // Hide bottom nav on specialized screens
         navController.addOnDestinationChangedListener { _, destination, _ ->
             when (destination.id) {
                 R.id.homeFragment, R.id.historyFragment, R.id.profileFragment -> {
                     bottomNav.visibility = View.VISIBLE
                 }
                 else -> {
+                    // Hide bottom nav for Ride flow and Driver Interface
                     bottomNav.visibility = View.GONE
                 }
             }
         }
 
-        if (MockDataRepository.isLoggedIn() && !MockDataRepository.isUserVerified()) {
+        val user = MockDataRepository.getCurrentUser()
+        if (user.isDriverMode) {
+            navController.navigate(R.id.action_global_to_driver_dashboard)
+        } else if (MockDataRepository.isLoggedIn() && !MockDataRepository.isUserVerified()) {
             VerificationPopupDialogFragment.newInstance {
                 // Verified
             }.show(supportFragmentManager, "VerificationPopup")

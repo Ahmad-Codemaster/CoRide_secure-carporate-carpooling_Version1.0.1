@@ -4,6 +4,21 @@
     android:id="@+id/main_nav_graph"
     app:startDestination="@id/homeFragment">
 
+    <action
+        android:id="@+id/action_global_to_home"
+        app:destination="@id/homeFragment"
+        app:popUpTo="@id/homeFragment"
+        app:popUpToInclusive="true"
+        app:enterAnim="@android:anim/fade_in"
+        app:exitAnim="@android:anim/fade_out" />
+
+    <action
+        android:id="@+id/action_global_to_driver_dashboard"
+        app:destination="@id/driverDashboardFragment"
+        app:popUpTo="@id/homeFragment"
+        app:enterAnim="@android:anim/fade_in"
+        app:exitAnim="@android:anim/fade_out" />
+
     <fragment
         android:id="@+id/homeFragment"
         android:name="com.indrive.clone.ui.home.HomeFragment"
@@ -133,5 +148,16 @@
         android:id="@+id/homeMapFragment"
         android:name="com.indrive.clone.ui.home.HomeMapFragment"
         android:label="Home Map Focus" />
+
+    <!-- ── Driver Interface Destinations ── -->
+    <fragment
+        android:id="@+id/driverRegistrationFragment"
+        android:name="com.indrive.clone.ui.driver.DriverRegistrationFragment"
+        android:label="Driver Registration" />
+
+    <fragment
+        android:id="@+id/driverDashboardFragment"
+        android:name="com.indrive.clone.ui.driver.DriverDashboardFragment"
+        android:label="Driver Dashboard" />
 
 </navigation>

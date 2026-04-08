@@ -31,7 +31,11 @@ data class User(
     val verificationStatus: VerificationStatus = VerificationStatus.PENDING,
     val emergencyContactName: String = "",
     val emergencyContactPhone: String = "",
-    val trustedContacts: List<TrustedContact> = emptyList()
+    val trustedContacts: List<TrustedContact> = emptyList(),
+    // ── Driver Persona Fields ──
+    val isDriverMode: Boolean = false,
+    val isRegisteredDriver: Boolean = false,
+    val driverDetails: Driver? = null
 )
 
 data class Driver(
