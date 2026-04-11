@@ -21,10 +21,7 @@
     <color name="on_secondary">#003258</color>
     <color name="secondary_container">#00497D</color>
     <color name="on_secondary_container">#D1E4FF</color>
-    <color name="secondary_fixed">#D1E4FF</color>
-    <color name="on_secondary_fixed">#001D36</color>
-    <color name="secondary_fixed_dim">#9ECAFF</color>
-    <color name="on_secondary_fixed_variant">#003361</color>
+
 
     <!-- TERTIARY -->
     <color name="tertiary">#97CBFF</color>

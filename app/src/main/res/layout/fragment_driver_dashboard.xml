@@ -7,11 +7,12 @@
     android:background="@color/surface">
 
     <!-- 1. Background Map Layer -->
-    <fragment
+    <androidx.fragment.app.FragmentContainerView
         android:id="@+id/driverMap"
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        tools:layout="@layout/view_map_placeholder" />
 
     <!-- 2. Header Overlay (Driver Info / Status) -->
     <com.google.android.material.card.MaterialCardView

@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:background="#0A00B14F"
+    android:background="#0AFFFFFF"
     android:layout_height="match_parent">
 
     <!-- 1. Background Image Layer (Absolute Bottom) -->
@@ -13,7 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="300dp"
         android:scaleType="centerCrop"
-        android:src="@drawable/img_1"
+        android:src="@drawable/img_2"
         app:shapeAppearanceOverlay="@style/ShapeAppearance.InDrive.TopImage"
         android:contentDescription="Background" />
 
@@ -99,7 +99,6 @@
             android:orientation="vertical"
             android:paddingHorizontal="@dimen/spacing_lg"
             android:paddingTop="20dp"
-            android:background="#1900B14F"
             android:paddingBottom="120dp">
 
             <!-- Search Card Overlay -->
@@ -110,7 +109,7 @@
                 android:layout_marginTop="30dp"
                 app:cardBackgroundColor="?attr/colorSurface"
                 app:cardCornerRadius="@dimen/shape_full"
-                app:strokeWidth="0dp">
+                app:strokeWidth="2dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -214,7 +213,7 @@
                     <com.google.android.material.card.MaterialCardView
                         android:layout_width="56dp"
                         android:layout_height="56dp"
-                        app:cardBackgroundColor="?attr/colorSurfaceVariant"
+                        app:cardBackgroundColor="@color/accent_light"
                         app:cardCornerRadius="16dp"
                         app:cardElevation="0dp">
 
@@ -280,7 +279,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/spacing_xl"
-                app:cardBackgroundColor="#F800B14F"
+                app:cardBackgroundColor="@color/primary"
                 app:cardCornerRadius="@dimen/shape_large"
                 app:cardElevation="0dp">
 

@@ -20,11 +20,12 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/statusChipContainer">
 
-        <fragment
+        <androidx.fragment.app.FragmentContainerView
             android:id="@+id/rideMapView"
             android:name="com.google.android.gms.maps.SupportMapFragment"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            tools:layout="@layout/view_map_placeholder" />
     </androidx.cardview.widget.CardView>
 
     <!-- M3 Status Chip -->

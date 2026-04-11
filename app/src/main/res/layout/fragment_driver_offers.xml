@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/surface_container_low"
@@ -32,96 +33,71 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
-            <!-- Nearby Drivers Map Widget -->
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="match_parent"
-                android:layout_height="280dp"
-                android:layout_margin="@dimen/spacing_md"
-                app:cardCornerRadius="@dimen/shape_large"
-                app:cardElevation="@dimen/elevation_sm"
-                app:strokeColor="@color/outline_variant"
-                app:strokeWidth="1dp">
+<!--            &lt;!&ndash; Nearby Drivers Map Widget &ndash;&gt;-->
+<!--            <com.google.android.material.card.MaterialCardView-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="280dp"-->
+<!--                android:layout_margin="@dimen/spacing_md"-->
+<!--                app:cardCornerRadius="@dimen/shape_large"-->
+<!--                app:cardElevation="@dimen/elevation_sm"-->
+<!--                app:strokeColor="@color/outline_variant"-->
+<!--                app:strokeWidth="1dp">-->
 
-                <fragment
-                    android:id="@+id/offersMapView"
-                    android:name="com.google.android.gms.maps.SupportMapFragment"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
-            </com.google.android.material.card.MaterialCardView>
+<!--                <androidx.fragment.app.FragmentContainerView-->
+<!--                    android:id="@+id/offersMapView"-->
+<!--                    android:name="com.google.android.gms.maps.SupportMapFragment"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="match_parent"-->
+<!--                    tools:layout="@layout/view_map_placeholder" />-->
+<!--            </com.google.android.material.card.MaterialCardView>-->
 
             <!-- Ride Summary Card -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/spacing_md"
-                android:layout_marginBottom="@dimen/spacing_md"
-                app:cardCornerRadius="@dimen/shape_large"
-                app:cardElevation="@dimen/elevation_none"
+                android:layout_marginTop="40dp"
+                app:cardCornerRadius="@dimen/shape_medium"
+                app:cardElevation="0dp"
                 app:strokeColor="@color/outline_variant"
-                app:strokeWidth="1dp"
-                app:cardBackgroundColor="@color/surface_container_lowest">
+                app:strokeWidth="1dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
+                    android:orientation="horizontal"
                     android:padding="@dimen/spacing_md">
 
                     <LinearLayout
-                        android:layout_width="match_parent"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:gravity="center_vertical"
-                        android:orientation="horizontal">
-
-                        <View
-                            android:layout_width="8dp"
-                            android:layout_height="8dp"
-                            android:background="@drawable/bg_circle_primary" />
-
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:layout_marginStart="@dimen/spacing_sm"
-                            android:text="Your Location"
-                            android:textColor="@color/on_surface_variant"
-                            android:textSize="@dimen/text_body_small" />
-
-                        <TextView
-                            android:id="@+id/tvYourFare"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textColor="@color/primary"
-                            android:textSize="@dimen/text_title_medium"
-                            android:fontFamily="sans-serif-bold" />
-                    </LinearLayout>
-
-                    <View
-                        android:layout_width="2dp"
-                        android:layout_height="10dp"
-                        android:layout_marginStart="3dp"
-                        android:background="@color/outline_variant" />
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="center_vertical"
-                        android:orientation="horizontal">
-
-                        <View
-                            android:layout_width="8dp"
-                            android:layout_height="8dp"
-                            android:background="@drawable/bg_circle_secondary" />
+                        android:layout_weight="1"
+                        android:orientation="vertical">
 
                         <TextView
                             android:id="@+id/tvOfferDestination"
-                            android:layout_width="0dp"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:layout_marginStart="@dimen/spacing_sm"
-                            android:textColor="@color/on_surface_variant"
-                            android:textSize="@dimen/text_body_small" />
+                            android:text="Destination"
+                            android:textAppearance="@style/TextAppearance.InDrive.TitleMedium"
+                            android:textColor="@color/on_surface" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Your request"
+                            android:textAppearance="@style/TextAppearance.InDrive.BodySmall"
+                            android:textColor="@color/on_surface_variant" />
                     </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/tvYourFare"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:text="Rs. 0"
+                        android:textAppearance="@style/TextAppearance.InDrive.HeadlineSmall"
+                        android:textColor="@color/primary" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 

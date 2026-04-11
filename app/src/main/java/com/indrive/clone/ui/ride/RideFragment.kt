@@ -217,20 +217,40 @@ class RideFragment : Fragment() {
         map.clear()
         driverMarker = null
 
+        // Apply Premium Monochrome Map Style
+        val mapStyle = """
+            [
+              { "elementType": "geometry", "stylers": [ { "color": "#f5f5f5" } ] },
+              { "elementType": "labels.icon", "stylers": [ { "visibility": "off" } ] },
+              { "elementType": "labels.text.fill", "stylers": [ { "color": "#616161" } ] },
+              { "elementType": "labels.text.stroke", "stylers": [ { "color": "#f5f5f5" } ] },
+              { "featureType": "administrative.land_parcel", "elementType": "labels.text.fill", "stylers": [ { "color": "#bdbdbd" } ] },
+              { "featureType": "poi", "elementType": "geometry", "stylers": [ { "color": "#eeeeee" } ] },
+              { "featureType": "poi", "elementType": "labels.text.fill", "stylers": [ { "color": "#757575" } ] },
+              { "featureType": "road", "elementType": "geometry", "stylers": [ { "color": "#ffffff" } ] },
+              { "featureType": "road.arterial", "elementType": "labels.text.fill", "stylers": [ { "color": "#757575" } ] },
+              { "featureType": "road.highway", "elementType": "geometry", "stylers": [ { "color": "#dadada" } ] },
+              { "featureType": "road.highway", "elementType": "labels.text.fill", "stylers": [ { "color": "#616161" } ] },
+              { "featureType": "water", "elementType": "geometry", "stylers": [ { "color": "#c9c9c9" } ] },
+              { "featureType": "water", "elementType": "labels.text.fill", "stylers": [ { "color": "#9e9e9e" } ] }
+            ]
+        """.trimIndent()
+        map.setMapStyle(com.google.android.gms.maps.model.MapStyleOptions(mapStyle))
+
         val pLoc = pickupLocation ?: return
 
-        // Pickup marker
+        // Pickup marker (Monochrome Azure)
         map.addMarker(MarkerOptions()
             .position(pLoc)
             .title("Pickup")
-            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)))
+            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)))
 
         // Destination marker + route
         destinationLocation?.let { dLoc ->
             map.addMarker(MarkerOptions()
                 .position(dLoc)
                 .title("Destination")
-                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)))
+                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_VIOLET)))
 
             // Draw ride route (pickup → destination) as dimmed line
             if (ridePath.isNotEmpty()) {
@@ -241,11 +261,11 @@ class RideFragment : Fragment() {
                     .geodesic(false))
             }
 
-            // Draw approach route (driver → pickup) highlighted
+            // Draw approach route (driver → pickup) highlighted in Solid Black
             if (approachPath.isNotEmpty()) {
                 map.addPolyline(PolylineOptions()
                     .addAll(approachPath)
-                    .width(12f)
+                    .width(14f)
                     .color(ContextCompat.getColor(requireContext(), R.color.primary))
                     .geodesic(false))
             }
@@ -347,19 +367,19 @@ class RideFragment : Fragment() {
                     map.addMarker(MarkerOptions()
                         .position(pLoc)
                         .title("Pickup")
-                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)))
+                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)))
                 }
                 destinationLocation?.let { dLoc ->
                     map.addMarker(MarkerOptions()
                         .position(dLoc)
                         .title("Destination")
-                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)))
+                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_VIOLET)))
                 }
 
                 if (ridePath.isNotEmpty()) {
                     map.addPolyline(PolylineOptions()
                         .addAll(ridePath)
-                        .width(12f)
+                        .width(14f)
                         .color(ContextCompat.getColor(requireContext(), R.color.primary))
                         .geodesic(false))
                 }

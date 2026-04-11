@@ -1,16 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="?attr/colorSurface">
 
     <!-- Map Full Background -->
-    <fragment
+    <androidx.fragment.app.FragmentContainerView
         android:id="@+id/homeMapView"
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        tools:layout="@layout/view_map_placeholder" />
 
     <!-- Center Pin -->
     <ImageView
@@ -92,7 +95,6 @@
             app:tint="?attr/colorPrimary"
             app:backgroundTint="?attr/colorSurface"
             app:fabSize="normal"
-            app:elevation="4dp"
             app:shapeAppearanceOverlay="@style/ShapeAppearance.InDrive.Full" />
 
         <ProgressBar
@@ -153,7 +155,7 @@
 
         <!-- Static Blue Outline + FAB Container -->
         <FrameLayout
-            android:layout_width="64dp"
+            android:layout_width="58dp"
             android:layout_height="64dp">
 
             <ImageView

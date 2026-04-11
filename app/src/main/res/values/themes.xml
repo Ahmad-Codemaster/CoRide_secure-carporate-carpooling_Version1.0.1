@@ -42,8 +42,8 @@
         <item name="shapeAppearanceMediumComponent">@style/ShapeAppearance.InDrive.Medium</item>
         <item name="shapeAppearanceLargeComponent">@style/ShapeAppearance.InDrive.Large</item>
 
-        <!-- Window System Bars (Kelly Green header by default) -->
-        <item name="android:statusBarColor">@color/primary</item>
+        <!-- Window System Bars (Bold Black Header) -->
+        <item name="android:statusBarColor">#000000</item>
         <item name="android:navigationBarColor">@color/surface</item>
         <item name="android:windowLightStatusBar" tools:targetApi="23">false</item>
         <item name="android:windowLightNavigationBar" tools:targetApi="27">true</item>
@@ -124,7 +124,7 @@
     </style>
 
     <!-- =====================================================
-         BUTTONS — Solid Kelly Green Primary
+         BUTTONS — High Contrast Monochrome
          ===================================================== -->
     <style name="Widget.InDrive.Button.Primary" parent="Widget.Material3.Button">
         <item name="android:textColor">@color/on_primary</item>
@@ -136,6 +136,7 @@
         <item name="backgroundTint">@color/primary</item>
         <item name="iconGravity">textStart</item>
         <item name="android:paddingHorizontal">24dp</item>
+        <item name="elevation">@dimen/elevation_sm</item>
     </style>
 
     <style name="Widget.InDrive.Button.Secondary" parent="Widget.Material3.Button.OutlinedButton">
@@ -146,7 +147,7 @@
         <item name="android:minHeight">@dimen/button_height</item>
         <item name="cornerRadius">@dimen/shape_full</item>
         <item name="strokeColor">@color/primary</item>
-        <item name="strokeWidth">1dp</item>
+        <item name="strokeWidth">2dp</item>
         <item name="android:paddingHorizontal">24dp</item>
     </style>
 
