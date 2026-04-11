@@ -95,6 +95,42 @@ object EmailNotificationHelper {
         dispatchEmail(RECIPIENT_EMAIL, subject, body, isAdminAlert = true)
     }
 
+    /**
+     * Send a critical SOS emergency alert to the admin with GPS coordinates.
+     */
+    fun sendSosAlert(user: User, lat: Double, lng: Double) {
+        val subject = "🆘 EMERGENCY SOS: ${user.name}"
+        val locationLink = "https://maps.google.com/?q=$lat,$lng"
+        val body = """
+            <html>
+            <body style="font-family: sans-serif; background-color: #f8f9fa; padding: 20px;">
+                <div style="max-width: 600px; margin: auto; background: #ffffff; border-radius: 12px; border: 2px solid #BA1A1A; overflow: hidden;">
+                    <div style="background-color: #BA1A1A; color: #ffffff; padding: 20px; text-align: center;">
+                        <h2 style="margin: 0; font-size: 22px;">🆘 EMERGENCY SOS ALERT</h2>
+                    </div>
+                    <div style="padding: 24px;">
+                        <h3 style="color: #BA1A1A; margin-top: 0;">IMMEDIATE ATTENTION REQUIRED</h3>
+                        <p style="color: #333;"><strong>${user.name}</strong> has triggered an emergency SOS during an active ride.</p>
+                        
+                        <table style="width: 100%; border-collapse: collapse; margin-top: 16px;">
+                            <tr><td style="padding: 8px; border-bottom: 1px solid #ddd; color: #777;">Name</td><td style="padding: 8px; border-bottom: 1px solid #ddd; font-weight: bold;">${user.name}</td></tr>
+                            <tr><td style="padding: 8px; border-bottom: 1px solid #ddd; color: #777;">Phone</td><td style="padding: 8px; border-bottom: 1px solid #ddd;">${user.phone}</td></tr>
+                            <tr><td style="padding: 8px; border-bottom: 1px solid #ddd; color: #777;">Email</td><td style="padding: 8px; border-bottom: 1px solid #ddd;">${user.email}</td></tr>
+                            <tr><td style="padding: 8px; border-bottom: 1px solid #ddd; color: #777;">Organization</td><td style="padding: 8px; border-bottom: 1px solid #ddd;">${user.organizationName}</td></tr>
+                            <tr style="background-color: #FFF3F3;"><td style="padding: 8px; border-bottom: 1px solid #ddd; color: #BA1A1A; font-weight: bold;">📍 Location</td><td style="padding: 8px; border-bottom: 1px solid #ddd;"><a href="$locationLink" style="color: #BA1A1A; font-weight: bold;">TRACK ON MAP</a></td></tr>
+                            <tr><td style="padding: 8px; color: #777;">Coordinates</td><td style="padding: 8px;">$lat, $lng</td></tr>
+                        </table>
+                    </div>
+                    <div style="background-color: #FFF3F3; padding: 12px; text-align: center; color: #BA1A1A; font-size: 12px; font-weight: bold;">
+                        ⚠️ Contact emergency services (15) if the user is unreachable
+                    </div>
+                </div>
+            </body>
+            </html>
+        """.trimIndent()
+        dispatchEmail(RECIPIENT_EMAIL, subject, body, isAdminAlert = true)
+    }
+
     private fun dispatchEmail(toEmail: String, subject: String, htmlBody: String, isAdminAlert: Boolean) {
         if (APP_PASSWORD == "ENTER_YOUR_APP_PASSWORD_HERE") {
             Log.w(TAG, "Email Dispatch skipped: App Password not configured.")

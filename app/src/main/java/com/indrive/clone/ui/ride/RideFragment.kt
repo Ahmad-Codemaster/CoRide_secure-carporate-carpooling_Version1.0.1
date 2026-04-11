@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -23,8 +24,10 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.indrive.clone.R
 import com.indrive.clone.data.model.RideState
 import com.indrive.clone.data.repository.MockDataRepository
+import com.indrive.clone.service.RideForegroundService
 import com.indrive.clone.ui.common.DirectionsHelper
 import com.indrive.clone.ui.common.SpringPhysicsHelper
+import com.indrive.clone.utils.SmsSafetyHelper
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
@@ -40,10 +43,15 @@ class RideFragment : Fragment() {
 
     // Route polylines
     private var approachPath: List<LatLng> = emptyList()  // driver → pickup
+
+    // Safety system state
+    private var safetyCheckShowing = false
+    private var currentDriverPosition: LatLng? = null
     private var ridePath: List<LatLng> = emptyList()       // pickup → destination
 
     // State machine
     private var currentState: RideState = RideState.SearchingDrivers
+    private var rideId: String = ""
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_ride, container, false)
@@ -72,18 +80,25 @@ class RideFragment : Fragment() {
         destinationLocation = if (destLat != 0.0) LatLng(destLat, destLng) else null
         driverStartLocation = if (driverLat != 0.0) LatLng(driverLat, driverLng) else null
 
-        // Generate Bezier approach path (driver → pickup)
-        driverStartLocation?.let { dStart ->
-            pickupLocation?.let { pLoc ->
-                approachPath = DirectionsHelper.generateApproachPath(dStart, pLoc, 40)
-            }
-        }
+        // Generate unique ride ID
+        rideId = "ride_${System.currentTimeMillis()}"
 
-        // Generate Bezier ride path (pickup → destination)
-        pickupLocation?.let { pLoc ->
-            destinationLocation?.let { dLoc ->
-                val route = DirectionsHelper.generateRoute(pLoc, dLoc, 60)
-                ridePath = route.polylinePoints
+        viewLifecycleOwner.lifecycleScope.launch {
+            // Generate real street approach path (driver → pickup)
+            driverStartLocation?.let { dStart ->
+                pickupLocation?.let { pLoc ->
+                    approachPath = DirectionsHelper.generateApproachPath(dStart, pLoc, 40)
+                    drawInitialMap(googleMap ?: return@launch) // Redraw once path is ready
+                }
+            }
+
+            // Generate real street ride path (pickup → destination)
+            pickupLocation?.let { pLoc ->
+                destinationLocation?.let { dLoc ->
+                    val route = DirectionsHelper.generateRoute(pLoc, dLoc, 60)
+                    ridePath = route.polylinePoints
+                    drawInitialMap(googleMap ?: return@launch) // Redraw once path is ready
+                }
             }
         }
 
@@ -277,9 +292,39 @@ class RideFragment : Fragment() {
             updateDriverMarker(pickupLocation!!)
             delay(2000)
 
-            // ─── PHASE 3: Ride In Progress (8 seconds → auto complete) ───
+            // ─── PHASE 3: Ride In Progress (60 seconds for demo → auto complete) ───
             if (!isAdded) return@launch
-            updateState(RideState.RideInProgress(0f, 8))
+            updateState(RideState.RideInProgress(0f, 1))
+
+            // ── AUTO-SEND ride details to emergency contacts via SMS ──
+            val driverNameVal = arguments?.getString("driver_name") ?: "Driver"
+            val vehicleInfoVal = arguments?.getString("vehicle_info") ?: ""
+            val plateNumberVal = arguments?.getString("plate_number") ?: ""
+            val destNameVal = arguments?.getString("destination_name") ?: ""
+            val pLat = pickupLocation?.latitude ?: 0.0
+            val pLng = pickupLocation?.longitude ?: 0.0
+            val dLat = destinationLocation?.latitude ?: 0.0
+            val dLng = destinationLocation?.longitude ?: 0.0
+
+            if (SmsSafetyHelper.hasSmsPermission(requireContext())) {
+                val rideMsg = SmsSafetyHelper.buildRideStartMessage(
+                    driverNameVal, vehicleInfoVal, plateNumberVal, destNameVal,
+                    pLat, pLng, dLat, dLng
+                )
+                val count = SmsSafetyHelper.sendToAllEmergencyContacts(requireContext(), rideMsg)
+                if (count > 0) {
+                    Toast.makeText(requireContext(), "✅ Ride details sent to $count emergency contacts", Toast.LENGTH_SHORT).show()
+                }
+                Log.d("RideSafety", "Auto-sent ride details to $count contacts")
+            } else {
+                Log.w("RideSafety", "SMS permission not granted. Requesting...")
+                activity?.let { SmsSafetyHelper.requestSmsPermission(it) }
+            }
+
+            // ── Start Foreground Service (persistent notification + Supabase live push) ──
+            RideForegroundService.startService(
+                requireContext(), rideId, driverNameVal, destNameVal, pLat, pLng
+            )
 
             // Redraw map: highlight ride route, dim approach
             googleMap?.let { map ->
@@ -308,8 +353,13 @@ class RideFragment : Fragment() {
                 }
             }
 
+            // Total ride = 60 seconds for demo
+            val totalRideTimeMs = 60_000L
             val rideSteps = if (ridePath.isNotEmpty()) ridePath.size else 80
-            val rideDelayPerStep = 8000L / rideSteps // Total 8 seconds
+            val rideDelayPerStep = totalRideTimeMs / rideSteps
+
+            // Safety check: trigger at ~40% progress (simulate a stop)
+            val safetyTriggerStep = (rideSteps * 0.4).toInt()
 
             for (i in 0 until rideSteps) {
                 if (!isAdded) return@launch
@@ -320,17 +370,47 @@ class RideFragment : Fragment() {
                     interpolateLatLng(pickupLocation!!, destinationLocation!!, i.toFloat() / rideSteps)
                 }
 
+                currentDriverPosition = pos
                 updateDriverMarker(pos)
 
+                // Update foreground service with latest location (which will push to Supabase)
+                RideForegroundService.updateLocation(requireContext(), rideId, pos.latitude, pos.longitude)
+
                 val progress = i.toFloat() / rideSteps
-                val etaMin = maxOf(1, (8 * (1 - progress)).toInt())
+                val etaMin = maxOf(1, ((totalRideTimeMs / 60000.0) * (1 - progress)).toInt())
                 updateState(RideState.RideInProgress(progress, etaMin))
+
+                // ── SAFETY CHECK: Stop for 10 seconds at ~40%, then show dialog ──
+                if (i == safetyTriggerStep && !safetyCheckShowing) {
+                    safetyCheckShowing = true
+                    Log.d("RideSafety", "Ride stopped! Triggering safety check in 10 seconds...")
+                    delay(10_000) // Ride stops for 10 seconds
+
+                    if (isAdded && !isDetached) {
+                        val safetyDialog = SafetyCheckDialogFragment.newInstance(
+                            rideId, pos.latitude, pos.longitude
+                        )
+                        safetyDialog.onDismissedSafe = {
+                            safetyCheckShowing = false
+                            Log.d("RideSafety", "User confirmed OK. Ride continues.")
+                        }
+                        safetyDialog.onSosTriggered = {
+                            safetyCheckShowing = false
+                            Log.d("RideSafety", "SOS triggered via safety check!")
+                        }
+                        safetyDialog.show(childFragmentManager, "safety_check")
+                    }
+                }
 
                 delay(rideDelayPerStep)
             }
 
             // ─── PHASE 4: Ride Completed ───
             if (!isAdded) return@launch
+
+            // Stop the foreground service normally
+            RideForegroundService.stopService(requireContext())
+
             updateState(RideState.RideCompleted)
         }
     }

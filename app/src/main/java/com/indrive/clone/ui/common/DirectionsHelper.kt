@@ -1,16 +1,19 @@
 package com.indrive.clone.ui.common
 
+import android.util.Log
 import com.google.android.gms.maps.model.LatLng
+import com.indrive.clone.data.network.SafetyNetworkModule
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import kotlin.math.*
 
 /**
- * Generates a realistic curved polyline between two points using quadratic Bezier interpolation.
- * No Directions API required — works 100% offline.
- *
- * Also calculates road-realistic distance (applies a 1.3x winding factor to straight-line distance)
- * and estimates duration based on average city driving speed.
+ * Generates realistic routes for CoRide.
+ * Now integrates OpenRouteService (ORS) for real street-following navigation.
  */
 object DirectionsHelper {
+
+    private const val TAG = "DirectionsHelper"
 
     data class RouteResult(
         val polylinePoints: List<LatLng>,
@@ -19,15 +22,49 @@ object DirectionsHelper {
     )
 
     /**
-     * Generate a curved route between two coordinates.
-     * Uses quadratic Bezier with a perpendicular control point offset.
-     *
-     * @param origin      Start coordinate
-     * @param destination End coordinate
-     * @param numPoints   Number of interpolation points (more = smoother)
-     * @return RouteResult with polyline, distance, and duration
+     * Generate a route between two coordinates.
+     * Tries ORS for real streets first, falls back to Bezier if necessary.
      */
-    fun generateRoute(origin: LatLng, destination: LatLng, numPoints: Int = 60): RouteResult {
+    suspend fun generateRoute(origin: LatLng, destination: LatLng, numPoints: Int = 60): RouteResult = withContext(Dispatchers.IO) {
+        try {
+            val key = SafetyNetworkModule.getOrsKey()
+            // Format: "lon,lat"
+            val start = "${origin.longitude},${origin.latitude}"
+            val end = "${destination.longitude},${destination.latitude}"
+
+            val response = SafetyNetworkModule.orsApi.getDirections(key, start, end)
+
+            if (response.isSuccessful && response.body() != null) {
+                val orsData = response.body()!!
+                val feature = orsData.features?.firstOrNull()
+                val coordinates = feature?.geometry?.coordinates
+                val summary = feature?.properties?.summary
+
+                if (coordinates != null && coordinates.isNotEmpty()) {
+                    Log.d(TAG, "Successfully fetched real street route from ORS.")
+                    val points = coordinates.map { LatLng(it[1], it[0]) }
+                    
+                    return@withContext RouteResult(
+                        polylinePoints = points,
+                        distanceMeters = summary?.distance?.toInt() ?: 0,
+                        durationSeconds = summary?.duration?.toInt() ?: 0
+                    )
+                }
+            }
+            
+            Log.w(TAG, "ORS API failed or returned empty. Falling back to Bezier logic.")
+            generateBezierRoute(origin, destination, numPoints)
+
+        } catch (e: Exception) {
+            Log.e(TAG, "Error fetching road directions: ${e.message}. Falling back to Bezier.")
+            generateBezierRoute(origin, destination, numPoints)
+        }
+    }
+
+    /**
+     * Legacy Bezier logic — used as high-reliability fallback.
+     */
+    private fun generateBezierRoute(origin: LatLng, destination: LatLng, numPoints: Int): RouteResult {
         // Calculate a control point perpendicular to the midpoint for a natural curve
         val midLat = (origin.latitude + destination.latitude) / 2.0
         val midLng = (origin.longitude + destination.longitude) / 2.0
@@ -73,10 +110,9 @@ object DirectionsHelper {
     }
 
     /**
-     * Generate a set of intermediate waypoints for driver approach
-     * (from driver position to pickup, with slight curve)
+     * Generate waypoints for driver approach.
      */
-    fun generateApproachPath(driverPos: LatLng, pickup: LatLng, numPoints: Int = 40): List<LatLng> {
+    suspend fun generateApproachPath(driverPos: LatLng, pickup: LatLng, numPoints: Int = 40): List<LatLng> {
         return generateRoute(driverPos, pickup, numPoints).polylinePoints
     }
 
@@ -86,7 +122,7 @@ object DirectionsHelper {
     }
 
     /**
-     * Haversine distance between two LatLng points in meters.
+     * Haversine distance in meters.
      */
     fun haversineDistance(a: LatLng, b: LatLng): Double {
         val R = 6371000.0 // Earth radius in meters
@@ -98,9 +134,6 @@ object DirectionsHelper {
         return R * 2 * atan2(sqrt(aVal), sqrt(1 - aVal))
     }
 
-    /**
-     * Format meters into human-readable distance string.
-     */
     fun formatDistance(meters: Int): String {
         return if (meters >= 1000) {
             String.format("%.1f km", meters / 1000.0)
@@ -109,11 +142,9 @@ object DirectionsHelper {
         }
     }
 
-    /**
-     * Format seconds into human-readable duration string.
-     */
     fun formatDuration(seconds: Int): String {
         val mins = seconds / 60
         return if (mins < 1) "< 1 min" else "$mins min"
     }
 }
+

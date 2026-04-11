@@ -83,7 +83,6 @@ dependencies {
 
     // ViewPager2
     implementation("androidx.viewpager2:viewpager2:1.0.0")
-    implementation("com.google.android.material:material:1.13.0")
 
     // Direct SMTP Email sending (Automated Alerts)
     implementation("com.sun.mail:android-mail:1.6.2")

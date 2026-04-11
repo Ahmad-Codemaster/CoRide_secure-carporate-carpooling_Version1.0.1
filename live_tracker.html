@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CoRide — Live Safety Tracker</title>
+    
+    <!-- Leaflet Maps CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary: #00B14F;
+            --surface: #FFFFFF;
+            --on-surface: #1F2937;
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            font-family: 'Outfit', sans-serif;
+            background: #f3f4f6;
+        }
+
+        #map {
+            height: 100%;
+            width: 100%;
+            z-index: 1;
+        }
+
+        .overlay {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 16px 24px;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+            width: 90%;
+            max-width: 400px;
+            border: 1px solid rgba(0, 177, 79, 0.1);
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            background: rgba(0, 177, 79, 0.1);
+            color: var(--primary);
+            padding: 4px 12px;
+            border-radius: 99px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .pulse {
+            width: 8px;
+            height: 8px;
+            background: var(--primary);
+            border-radius: 50%;
+            margin-right: 8px;
+            box-shadow: 0 0 0 rgba(0, 177, 79, 0.4);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(0, 177, 79, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(0, 177, 79, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(0, 177, 79, 0); }
+        }
+
+        h1 { margin: 0; font-size: 18px; color: var(--on-surface); }
+        p { margin: 4px 0 0; font-size: 14px; color: #6b7280; }
+
+        #no-ride {
+            display: none;
+            text-align: center;
+            padding: 40px;
+        }
+
+        /* Marker Styles */
+        .car-marker {
+            background-color: var(--primary);
+            border: 3px solid white;
+            border-radius: 50%;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="overlay" id="info-card">
+        <div class="status-badge">
+            <div class="pulse"></div>
+            LIVE TRACKING
+        </div>
+        <h1 id="ride-title">Ride Tracking Active</h1>
+        <p id="ride-details">Waiting for location updates...</p>
+    </div>
+
+    <div id="no-ride">
+        <h1>Invalid Ride Link</h1>
+        <p>Please check the tracking link sent to you.</p>
+    </div>
+
+    <div id="map"></div>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <!-- Supabase JS -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <script>
+        // --- CONFIGURATION ---
+        const SUPABASE_URL = 'https://ollduovaiqlcmmqebliv.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9sbGR1b3ZhaXFsY21tcWVibGl2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU2NDgzMzUsImV4cCI6MjA5MTIyNDMzNX0.6LMQNW6kHgiRrHc-MPp-6xvYLwA8h07UGB8nrnCTkPc';
+        
+        const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        // Get Ride ID from URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const rideId = urlParams.get('ride');
+
+        if (!rideId) {
+            document.getElementById('info-card').style.display = 'none';
+            document.getElementById('no-ride').style.display = 'block';
+        }
+
+        // Initialize Map
+        const map = L.map('map').setView([31.5204, 74.3587], 15); // Default Lahore
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+
+        let marker = null;
+        let polyline = L.polyline([], {color: '#00B14F', weight: 5, opacity: 0.7}).addTo(map);
+
+        async function fetchInitialLocation() {
+            const { data, error } = await _supabase
+                .from('ride_live_location')
+                .select('*')
+                .eq('ride_id', rideId)
+                .order('timestamp', { ascending: false })
+                .limit(1);
+
+            if (data && data.length > 0) {
+                updateMap(data[0].latitude, data[0].longitude);
+            }
+        }
+
+        function updateMap(lat, lng) {
+            const pos = [lat, lng];
+            
+            if (!marker) {
+                marker = L.circleMarker(pos, {
+                    radius: 10,
+                    fillColor: "#00B14F",
+                    color: "#fff",
+                    weight: 3,
+                    opacity: 1,
+                    fillOpacity: 0.9
+                }).addTo(map);
+                map.setView(pos, 16);
+            } else {
+                marker.setLatLng(pos);
+            }
+
+            polyline.addLatLng(pos);
+            map.panTo(pos);
+            
+            document.getElementById('ride-details').innerText = `Last updated: ${new Date().toLocaleTimeString()}`;
+        }
+
+        // Subscribe to Realtime Updates
+        const channel = _supabase
+            .channel('location-updates')
+            .on(
+                'postgres_changes', 
+                { event: 'INSERT', schema: 'public', table: 'ride_live_location', filter: `ride_id=eq.${rideId}` }, 
+                (payload) => {
+                    console.log('New location received:', payload.new);
+                    updateMap(payload.new.latitude, payload.new.longitude);
+                }
+            )
+            .subscribe();
+
+        if (rideId) {
+            fetchInitialLocation();
+            document.getElementById('ride-title').innerText = `Tracking Ride: ${rideId}`;
+        }
+    </script>
+</body>
+</html>

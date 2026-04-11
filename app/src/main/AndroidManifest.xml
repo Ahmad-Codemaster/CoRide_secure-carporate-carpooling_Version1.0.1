@@ -13,6 +13,9 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.CALL_PHONE" />
     <uses-permission android:name="android.permission.SEND_SMS" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_LOCATION" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <application
         android:name=".InDriveApp"
@@ -51,6 +54,12 @@
             android:name=".ui.main.MainActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustPan" />
+
+        <!-- Ride Foreground Service (Persistent Notification + Offline Detection) -->
+        <service
+            android:name=".service.RideForegroundService"
+            android:foregroundServiceType="location"
+            android:exported="false" />
 
     </application>
 
