@@ -25,6 +25,7 @@ import com.indrive.clone.utils.SmsSafetyHelper
  */
 class SafetyCheckDialogFragment : DialogFragment() {
 
+    private var countDownTimer: CountDownTimer? = null
     private var rideId: String = ""
     private var lastKnownLat: Double = 0.0
     private var lastKnownLng: Double = 0.0

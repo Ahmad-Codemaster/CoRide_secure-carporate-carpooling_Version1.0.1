@@ -156,7 +156,10 @@ class RideForegroundService : Service() {
         // send emergency SMS to all contacts
         if (!wasStoppedNormally && lastLat != 0.0) {
             Log.w(TAG, "Service destroyed abnormally! Sending offline alert SMS.")
-            val message = SmsSafetyHelper.buildOfflineAlertMessage(lastLat, lastLng)
+            val message = SmsSafetyHelper.buildOfflineAlertMessage(
+                lastLat, lastLng,
+                lng = TODO()
+            )
             SmsSafetyHelper.sendToAllEmergencyContacts(this, message)
         }
 

@@ -6,7 +6,6 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.telephony.SmsManager
 import android.util.Log
-import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.indrive.clone.data.model.TrustedContact
@@ -123,8 +122,10 @@ object SmsSafetyHelper {
         destLng: Double
     ): String {
         val userName = MockDataRepository.getCurrentUser().name
-        // REPLACE with your actual hosted tracker URL
-        val liveLink = "https://coride-tracker.netlify.app/?ride=$rideId"
+        
+        // 🚨 CONFIGURATION: Replace this URL with your hosted live_tracker.html URL from Supabase Storage
+        val trackerBaseUrl = "https://your-project-id.supabase.co/storage/v1/object/public/tracker/live_tracker.html"
+        val liveLink = "$trackerBaseUrl?ride=$rideId"
 
         return """
 🚗 CoRide Safety Alert
@@ -147,7 +148,10 @@ This is an automated safety message from CoRide.
      */
     fun buildSosMessage(rideId: String, lat: Double, lng: Double): String {
         val userName = MockDataRepository.getCurrentUser().name
-        val liveLink = "https://coride-tracker.netlify.app/?ride=$rideId"
+        
+        // 🚨 CONFIGURATION: Replace this URL with your hosted live_tracker.html URL from Supabase Storage
+        val trackerBaseUrl = "https://your-project-id.supabase.co/storage/v1/object/public/tracker/live_tracker.html"
+        val liveLink = "$trackerBaseUrl?ride=$rideId"
 
         return """
 🆘 EMERGENCY — CoRide SOS
@@ -165,9 +169,12 @@ This is an automated emergency alert from CoRide.
     /**
      * Generate the "user went offline" alert message.
      */
-    fun buildOfflineAlertMessage(rideId: String, lat: Double, lng: Double): String {
+    fun buildOfflineAlertMessage(rideId: Double, lat: Double, lng: Double): String {
         val userName = MockDataRepository.getCurrentUser().name
-        val liveLink = "https://coride-tracker.netlify.app/?ride=$rideId"
+        
+        // 🚨 CONFIGURATION: Replace this URL with your hosted live_tracker.html URL from Supabase Storage
+        val trackerBaseUrl = "https://your-project-id.supabase.co/storage/v1/object/public/tracker/live_tracker.html"
+        val liveLink = "$trackerBaseUrl?ride=$rideId"
 
         return """
 ⚠️ CoRide Safety Warning

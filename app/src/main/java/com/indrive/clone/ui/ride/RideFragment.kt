@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.os.CountDownTimer
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -51,6 +52,7 @@ class RideFragment : Fragment() {
 
     // State machine
     private var currentState: RideState = RideState.SearchingDrivers
+    private var countDownTimer: CountDownTimer? = null
     private var rideId: String = ""
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -59,6 +61,12 @@ class RideFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        // Request Notification Permission for Android 13+ (Essential for Foreground Service)
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+            requestPermissions(arrayOf(android.Manifest.permission.POST_NOTIFICATIONS), 101)
+        }
+
 
         // Read ALL coordinates from bundle — no hardcoded defaults
         val driverName = arguments?.getString("driver_name") ?: "Driver"
@@ -148,7 +156,8 @@ class RideFragment : Fragment() {
             when (currentState) {
                 is RideState.RideCompleted -> {
                     // Navigate to completion
-                    val bundle = Bundle().apply {
+                    val bundle = Bundle()
+                    bundle.apply {
                         putString("driver_name", driverName)
                         putFloat("driver_rating", driverRating)
                         putDouble("fare", fare)
@@ -156,15 +165,18 @@ class RideFragment : Fragment() {
                         putString("vehicle_info", vehicleInfo)
                         
                         if (pickupLocation != null && destinationLocation != null) {
-                            val route = DirectionsHelper.generateRoute(pickupLocation!!, destinationLocation!!)
-                            putDouble("distance_km", route.distanceMeters / 1000.0)
-                            putInt("duration_seconds", route.durationSeconds)
+                            viewLifecycleOwner.lifecycleScope.launch {
+                                val route = DirectionsHelper.generateRoute(pickupLocation!!, destinationLocation!!)
+                                putDouble("distance_km", route.distanceMeters / 1000.0)
+                                putInt("duration_seconds", route.durationSeconds)
+                                findNavController().navigate(R.id.action_ride_to_complete, bundle)
+                            }
                         } else {
                             putDouble("distance_km", 0.0)
                             putInt("duration_seconds", 0)
+                            findNavController().navigate(R.id.action_ride_to_complete, bundle)
                         }
                     }
-                    findNavController().navigate(R.id.action_ride_to_complete, bundle)
                 }
                 is RideState.RideInProgress -> {
                     Toast.makeText(requireContext(), "Ride is in progress. Please wait until destination is reached.", Toast.LENGTH_SHORT).show()
@@ -292,9 +304,9 @@ class RideFragment : Fragment() {
             updateDriverMarker(pickupLocation!!)
             delay(2000)
 
-            // ─── PHASE 3: Ride In Progress (60 seconds for demo → auto complete) ───
+            // ─── PHASE 3: Ride In Progress (120 seconds for demo → auto complete) ───
             if (!isAdded) return@launch
-            updateState(RideState.RideInProgress(0f, 1))
+            updateState(RideState.RideInProgress(0f, 2))
 
             // ── AUTO-SEND ride details to emergency contacts via SMS ──
             val driverNameVal = arguments?.getString("driver_name") ?: "Driver"
@@ -308,8 +320,8 @@ class RideFragment : Fragment() {
 
             if (SmsSafetyHelper.hasSmsPermission(requireContext())) {
                 val rideMsg = SmsSafetyHelper.buildRideStartMessage(
-                    driverNameVal, vehicleInfoVal, plateNumberVal, destNameVal,
-                    pLat, pLng, dLat, dLng
+                    rideId, driverNameVal, vehicleInfoVal, plateNumberVal, destNameVal,
+                    dLat, dLng
                 )
                 val count = SmsSafetyHelper.sendToAllEmergencyContacts(requireContext(), rideMsg)
                 if (count > 0) {
@@ -353,8 +365,8 @@ class RideFragment : Fragment() {
                 }
             }
 
-            // Total ride = 60 seconds for demo
-            val totalRideTimeMs = 60_000L
+            // Total ride = 120 seconds for demo
+            val totalRideTimeMs = 120_000L
             val rideSteps = if (ridePath.isNotEmpty()) ridePath.size else 80
             val rideDelayPerStep = totalRideTimeMs / rideSteps
 

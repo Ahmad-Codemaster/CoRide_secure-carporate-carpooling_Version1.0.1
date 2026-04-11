@@ -52,6 +52,7 @@ class BookingFragment : Fragment() {
     private var isPickingDestination = false
     private var googleMap: GoogleMap? = null
     private var geocodeJob: Job? = null
+    private var routeJob: Job? = null
 
     // ── Permission Launcher ──
     private val locationPermissionLauncher = registerForActivityResult(
@@ -377,14 +378,22 @@ class BookingFragment : Fragment() {
         val p = pickupLocation ?: return
         val d = destinationLocation ?: return
 
-        val result = DirectionsHelper.generateRoute(p, d)
-        routePoints = result.polylinePoints
-        routeDistanceMeters = result.distanceMeters
-        routeDurationSeconds = result.durationSeconds
+        routeJob?.cancel()
+        routeJob = viewLifecycleOwner.lifecycleScope.launch {
+            try {
+                val result = DirectionsHelper.generateRoute(p, d)
+                routePoints = result.polylinePoints
+                routeDistanceMeters = result.distanceMeters
+                routeDurationSeconds = result.durationSeconds
 
-        val distanceKm = routeDistanceMeters / 1000.0
-        currentFare = MockDataRepository.getRecommendedFare(distanceKm, selectedType)
-        updateMapMarkers()
+                val distanceKm = routeDistanceMeters / 1000.0
+                currentFare = MockDataRepository.getRecommendedFare(distanceKm, selectedType)
+                updateMapMarkers()
+                refreshFareUI()
+            } catch (e: Exception) {
+                // Handle error if needed
+            }
+        }
     }
 
     private fun refreshFareUI() {
