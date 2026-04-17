@@ -274,7 +274,7 @@
                     android:layout_height="@dimen/button_height"
                     android:layout_marginTop="@dimen/spacing_xl"
                     android:text="Create Account"
-                    style="@style/Widget.InDrive.Button.Primary"
+                    style="@style/Widget.CoRide.Button.Primary"
                     android:textSize="@dimen/text_label_large" />
 
                 <LinearLayout
@@ -307,3 +307,4 @@
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
+

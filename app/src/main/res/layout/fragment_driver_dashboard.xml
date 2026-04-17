@@ -35,7 +35,7 @@
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:src="@drawable/profile"
-                app:shapeAppearanceOverlay="@style/ShapeAppearance.InDrive.Full" />
+                app:shapeAppearanceOverlay="@style/ShapeAppearance.CoRide.Full" />
 
             <LinearLayout
                 android:layout_width="0dp"
@@ -81,7 +81,7 @@
         android:layout_gravity="bottom"
         app:cardCornerRadius="32dp"
         app:cardElevation="16dp"
-        app:shapeAppearanceOverlay="@style/ShapeAppearance.InDrive.BottomSheet"
+        app:shapeAppearanceOverlay="@style/ShapeAppearance.CoRide.BottomSheet"
         app:cardBackgroundColor="@color/surface">
 
         <LinearLayout
@@ -181,7 +181,7 @@
             <!-- Online Toggle Button -->
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnGoOnline"
-                style="@style/Widget.InDrive.Button.Primary"
+                style="@style/Widget.CoRide.Button.Primary"
                 android:layout_width="match_parent"
                 android:layout_height="64dp"
                 android:text="GO ONLINE"
@@ -205,3 +205,5 @@
     </com.google.android.material.card.MaterialCardView>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+

@@ -121,7 +121,7 @@
         android:layout_height="@dimen/button_height"
         android:layout_marginTop="@dimen/spacing_lg"
         android:text="@string/sos_confirm"
-        style="@style/Widget.InDrive.Button.Error"
+        style="@style/Widget.CoRide.Button.Error"
         android:alpha="0"
         android:translationY="20dp"
         tools:alpha="1"
@@ -135,7 +135,7 @@
         android:layout_height="@dimen/button_height"
         android:layout_marginTop="@dimen/spacing_sm"
         android:text="@string/call_police"
-        style="@style/Widget.InDrive.Button.Secondary"
+        style="@style/Widget.CoRide.Button.Secondary"
         app:strokeColor="@color/error"
         android:textColor="@color/error"
         android:alpha="0"
@@ -160,3 +160,4 @@
         tools:ignore="VisualLintButtonSize" />
 
 </LinearLayout>
+

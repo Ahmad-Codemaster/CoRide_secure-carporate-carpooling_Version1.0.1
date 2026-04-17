@@ -87,10 +87,11 @@
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnSaveSettings"
-        style="@style/Widget.InDrive.Button.Primary"
+        style="@style/Widget.CoRide.Button.Primary"
         android:layout_width="match_parent"
         android:layout_height="@dimen/button_height"
         android:layout_marginTop="@dimen/spacing_xl"
         android:text="Save Preferences" />
 
 </LinearLayout>
+

@@ -178,7 +178,7 @@
                         android:layout_height="@dimen/button_height"
                         android:layout_weight="1"
                         android:text="Login"
-                        style="@style/Widget.InDrive.Button.Primary"
+                        style="@style/Widget.CoRide.Button.Primary"
                         android:textSize="@dimen/text_label_large" />
 
                     <com.google.android.material.button.MaterialButton
@@ -226,3 +226,4 @@
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
+

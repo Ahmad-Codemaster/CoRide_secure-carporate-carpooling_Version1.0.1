@@ -541,8 +541,9 @@
             android:layout_marginBottom="@dimen/spacing_lg"
             android:text="@string/sign_out"
             android:textColor="?attr/colorPrimary"
-            style="@style/Widget.InDrive.Button.Secondary"
+            style="@style/Widget.CoRide.Button.Secondary"
             app:strokeColor="?attr/colorPrimary" />
 
     </LinearLayout>
 </ScrollView>
+

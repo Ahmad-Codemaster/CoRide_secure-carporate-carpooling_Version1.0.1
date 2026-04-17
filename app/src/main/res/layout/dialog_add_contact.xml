@@ -25,7 +25,7 @@
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/tilContactName"
-        style="@style/Widget.InDrive.TextInput"
+        style="@style/Widget.CoRide.TextInput"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="@string/contact_name_hint">
@@ -38,7 +38,7 @@
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/tilContactPhone"
-        style="@style/Widget.InDrive.TextInput"
+        style="@style/Widget.CoRide.TextInput"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/spacing_md"
@@ -52,10 +52,11 @@
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnAddConfirm"
-        style="@style/Widget.InDrive.Button.Primary"
+        style="@style/Widget.CoRide.Button.Primary"
         android:layout_width="match_parent"
         android:layout_height="@dimen/button_height"
         android:layout_marginTop="@dimen/spacing_xl"
         android:text="@string/add_to_network_btn" />
 
 </LinearLayout>
+

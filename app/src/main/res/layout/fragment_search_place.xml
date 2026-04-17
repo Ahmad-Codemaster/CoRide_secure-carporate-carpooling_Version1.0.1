@@ -10,13 +10,13 @@
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        style="@style/Widget.InDrive.AppBarLayout">
+        style="@style/Widget.CoRide.AppBarLayout">
 
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            style="@style/Widget.InDrive.TopAppBar">
+            style="@style/Widget.CoRide.TopAppBar">
 
             <ImageView
                 android:id="@+id/btnBack"
@@ -116,3 +116,4 @@
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </LinearLayout>
+

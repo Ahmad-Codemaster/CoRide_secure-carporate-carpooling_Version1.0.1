@@ -28,7 +28,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/spacing_xl"
             android:text="@string/enter_otp"
-            style="@style/TextAppearance.InDrive.H1" />
+            style="@style/TextAppearance.CoRide.H1" />
 
         <!-- Subtitle -->
         <TextView
@@ -37,7 +37,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/spacing_sm"
             android:text="@string/otp_sent_to"
-            style="@style/TextAppearance.InDrive.BodySmall" />
+            style="@style/TextAppearance.CoRide.BodySmall" />
 
         <!-- OTP Input Fields -->
         <LinearLayout
@@ -111,7 +111,7 @@
             android:layout_height="@dimen/button_height"
             android:layout_marginTop="@dimen/spacing_xl"
             android:text="@string/verify_otp"
-            style="@style/Widget.InDrive.Button.Primary" />
+            style="@style/Widget.CoRide.Button.Primary" />
 
         <!-- Resend Timer -->
         <TextView
@@ -121,8 +121,9 @@
             android:layout_gravity="center"
             android:layout_marginTop="@dimen/spacing_lg"
             android:text="@string/resend_code"
-            style="@style/TextAppearance.InDrive.BodySmall"
+            style="@style/TextAppearance.CoRide.BodySmall"
             android:textColor="@color/primary" />
 
     </LinearLayout>
 </ScrollView>
+

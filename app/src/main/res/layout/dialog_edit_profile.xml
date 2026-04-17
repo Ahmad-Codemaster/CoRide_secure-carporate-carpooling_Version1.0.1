@@ -31,7 +31,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="12dp"
-                style="@style/Widget.InDrive.TextInput">
+                style="@style/Widget.CoRide.TextInput">
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/etEditName"
                     android:layout_width="match_parent"
@@ -43,7 +43,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="12dp"
-                style="@style/Widget.InDrive.TextInput">
+                style="@style/Widget.CoRide.TextInput">
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/etEditPhone"
                     android:layout_width="match_parent"
@@ -56,7 +56,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="12dp"
-                style="@style/Widget.InDrive.TextInput">
+                style="@style/Widget.CoRide.TextInput">
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/etEditEmail"
                     android:layout_width="match_parent"
@@ -71,7 +71,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="12dp"
-                style="@style/Widget.InDrive.TextInput">
+                style="@style/Widget.CoRide.TextInput">
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/etEditOrg"
                     android:layout_width="match_parent"
@@ -83,7 +83,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="12dp"
-                style="@style/Widget.InDrive.TextInput">
+                style="@style/Widget.CoRide.TextInput">
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/etEditStudentId"
                     android:layout_width="match_parent"
@@ -95,7 +95,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="12dp"
-                style="@style/Widget.InDrive.TextInput">
+                style="@style/Widget.CoRide.TextInput">
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/etEditAddress"
                     android:layout_width="match_parent"
@@ -109,7 +109,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="12dp"
-                style="@style/Widget.InDrive.TextInput">
+                style="@style/Widget.CoRide.TextInput">
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/etEditEmergencyName"
                     android:layout_width="match_parent"
@@ -121,7 +121,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="12dp"
-                style="@style/Widget.InDrive.TextInput">
+                style="@style/Widget.CoRide.TextInput">
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/etEditEmergencyPhone"
                     android:layout_width="match_parent"
@@ -146,7 +146,7 @@
             android:layout_weight="1"
             android:layout_marginEnd="8dp"
             android:text="Cancel"
-            style="@style/Widget.InDrive.Button.Secondary" />
+            style="@style/Widget.CoRide.Button.Secondary" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnSaveEdit"
@@ -155,7 +155,8 @@
             android:layout_weight="1"
             android:layout_marginStart="8dp"
             android:text="Save"
-            style="@style/Widget.InDrive.Button.Primary" />
+            style="@style/Widget.CoRide.Button.Primary" />
     </LinearLayout>
 
 </LinearLayout>
+

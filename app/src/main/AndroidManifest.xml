@@ -18,13 +18,13 @@
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <application
-        android:name=".InDriveApp"
+        android:name=".CoRideApp"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.InDriveClone"
+        android:theme="@style/Theme.CoRide"
         tools:targetApi="34">
 
         <!-- Google Maps API Key - Replace with your own key -->
@@ -36,7 +36,7 @@
         <activity
             android:name=".ui.splash.SplashActivity"
             android:exported="true"
-            android:theme="@style/Theme.InDriveClone.Splash">
+            android:theme="@style/Theme.CoRide.Splash">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -64,3 +64,4 @@
     </application>
 
 </manifest>
+

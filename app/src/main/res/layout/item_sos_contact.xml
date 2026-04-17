@@ -48,3 +48,4 @@
         app:cornerRadius="@dimen/shape_small" />
 
 </LinearLayout>
+

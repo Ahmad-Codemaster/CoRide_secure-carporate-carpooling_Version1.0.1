@@ -102,7 +102,7 @@
             app:tint="?attr/colorPrimary"
             app:backgroundTint="?attr/colorSurface"
             app:fabSize="mini"
-            app:shapeAppearanceOverlay="@style/ShapeAppearance.InDrive.Full"
+            app:shapeAppearanceOverlay="@style/ShapeAppearance.CoRide.Full"
             app:elevation="@dimen/elevation_md"
             android:alpha="0"
             android:scaleX="0.5"
@@ -118,7 +118,7 @@
             app:tint="?attr/colorOnError"
             app:backgroundTint="?attr/colorError"
             app:fabSize="mini"
-            app:shapeAppearanceOverlay="@style/ShapeAppearance.InDrive.Full"
+            app:shapeAppearanceOverlay="@style/ShapeAppearance.CoRide.Full"
             app:elevation="@dimen/elevation_md"
             android:alpha="0"
             android:scaleX="0.5"
@@ -160,7 +160,7 @@
                 android:layout_height="56dp"
                 android:src="@drawable/profile"
                 android:scaleType="centerCrop"
-                app:shapeAppearanceOverlay="@style/ShapeAppearance.InDrive.Full" />
+                app:shapeAppearanceOverlay="@style/ShapeAppearance.CoRide.Full" />
 
             <LinearLayout
                 android:layout_width="0dp"
@@ -319,7 +319,7 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnCancelRide"
-            style="@style/Widget.InDrive.Button.Text"
+            style="@style/Widget.CoRide.Button.Text"
             android:layout_width="match_parent"
             android:layout_height="48dp"
             android:layout_marginTop="@dimen/spacing_md"
@@ -379,8 +379,10 @@
                 app:backgroundTint="?attr/colorSurface"
                 app:fabSize="mini"
                 app:elevation="0dp"
-                app:shapeAppearanceOverlay="@style/ShapeAppearance.InDrive.Full" />
+                app:shapeAppearanceOverlay="@style/ShapeAppearance.CoRide.Full" />
         </FrameLayout>
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
+
+

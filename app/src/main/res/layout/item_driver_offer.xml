@@ -36,7 +36,7 @@
                 android:tint="@color/on_surface_variant"
                 android:padding="@dimen/spacing_md"
                 android:background="@color/surface_container"
-                app:shapeAppearanceOverlay="@style/ShapeAppearance.InDrive.Full"
+                app:shapeAppearanceOverlay="@style/ShapeAppearance.CoRide.Full"
                 android:contentDescription="Driver" />
 
             <!-- Name + Rating + Trips -->
@@ -162,7 +162,7 @@
                 android:layout_weight="1"
                 android:layout_marginEnd="@dimen/spacing_sm"
                 android:text="@string/decline"
-                style="@style/Widget.InDrive.Button.Secondary" />
+                style="@style/Widget.CoRide.Button.Secondary" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnAccept"
@@ -171,7 +171,9 @@
                 android:layout_weight="1"
                 android:layout_marginStart="@dimen/spacing_sm"
                 android:text="@string/accept"
-                style="@style/Widget.InDrive.Button.Primary" />
+                style="@style/Widget.CoRide.Button.Primary" />
         </LinearLayout>
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>
+
+

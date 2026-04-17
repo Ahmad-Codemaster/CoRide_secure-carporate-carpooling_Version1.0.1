@@ -344,7 +344,8 @@
             android:layout_marginTop="@dimen/spacing_lg"
             android:text="Confirm Payment"
             app:icon="@drawable/ic_check"
-            style="@style/Widget.InDrive.Button.Primary" />
+            style="@style/Widget.CoRide.Button.Primary" />
 
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
+

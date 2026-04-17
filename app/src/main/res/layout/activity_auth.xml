@@ -14,3 +14,4 @@
         app:navGraph="@navigation/auth_nav_graph" />
 
 </FrameLayout>
+

@@ -10,3 +10,4 @@
         android:toAlpha="1.0"
         android:interpolator="@android:anim/accelerate_decelerate_interpolator" />
 </set>
+

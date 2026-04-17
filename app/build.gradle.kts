@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace = "com.indrive.clone"
+    namespace = "com.coride"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.indrive.clone"
+        applicationId = "com.coride"
         minSdk = 26
         targetSdk = 34
         versionCode = 1

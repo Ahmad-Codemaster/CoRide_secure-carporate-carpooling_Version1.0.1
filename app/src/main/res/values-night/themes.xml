@@ -4,7 +4,7 @@
     <!-- =====================================================
          M3 EXPRESSIVE DARK THEME
          ===================================================== -->
-    <style name="Theme.InDriveClone" parent="Theme.Material3.Dark.NoActionBar">
+    <style name="Theme.CoRide" parent="Theme.Material3.Dark.NoActionBar">
         <!-- M3 Color Roles -->
         <item name="colorPrimary">@color/primary</item>
         <item name="colorOnPrimary">@color/on_primary</item>
@@ -37,15 +37,24 @@
         <item name="android:windowLightNavigationBar" tools:targetApi="27">false</item>
 
         <!-- Component Style Overrides -->
-        <item name="materialButtonStyle">@style/Widget.InDrive.Button.Primary</item>
-        <item name="materialButtonOutlinedStyle">@style/Widget.InDrive.Button.Secondary</item>
-        <item name="textInputStyle">@style/Widget.InDrive.TextInput</item>
-        <item name="chipStyle">@style/Widget.InDrive.Chip</item>
-        <item name="floatingActionButtonStyle">@style/Widget.InDrive.FAB</item>
-        <item name="extendedFloatingActionButtonStyle">@style/Widget.InDrive.ExtendedFAB</item>
-        <item name="bottomNavigationStyle">@style/Widget.InDrive.BottomNavigation</item>
-        <item name="toolbarStyle">@style/Widget.InDrive.TopAppBar</item>
-        <item name="appBarLayoutStyle">@style/Widget.InDrive.AppBarLayout</item>
+        <item name="materialButtonStyle">@style/Widget.CoRide.Button.Primary</item>
+        <item name="materialButtonOutlinedStyle">@style/Widget.CoRide.Button.Secondary</item>
+        <item name="textInputStyle">@style/Widget.CoRide.TextInput</item>
+        <item name="chipStyle">@style/Widget.CoRide.Chip</item>
+        <item name="floatingActionButtonStyle">@style/Widget.CoRide.FAB</item>
+        <item name="extendedFloatingActionButtonStyle">@style/Widget.CoRide.ExtendedFAB</item>
+        <item name="bottomNavigationStyle">@style/Widget.CoRide.BottomNavigation</item>
+        <item name="toolbarStyle">@style/Widget.CoRide.TopAppBar</item>
+        <item name="appBarLayoutStyle">@style/Widget.CoRide.AppBarLayout</item>
+    </style>
+
+    <!-- SPLASH THEME (Night Mode) -->
+    <style name="Theme.CoRide.Splash" parent="Theme.Material3.Dark.NoActionBar">
+        <item name="android:statusBarColor">#000000</item>
+        <item name="android:navigationBarColor">#000000</item>
+        <item name="android:windowBackground">#000000</item>
+        <item name="android:windowLightStatusBar" tools:targetApi="23">false</item>
     </style>
 
 </resources>
+

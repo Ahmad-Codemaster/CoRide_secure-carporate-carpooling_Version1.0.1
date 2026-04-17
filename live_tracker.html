@@ -114,19 +114,23 @@
 
     <!-- Leaflet JS -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <!-- Supabase JS -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- Firebase JS (Modules) -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js";
+        import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-database.js";
 
-    <script>
         // --- CONFIGURATION ---
-        const SUPABASE_URL = 'https://ollduovaiqlcmmqebliv.supabase.co';
-        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9sbGR1b3ZhaXFsY21tcWVibGl2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU2NDgzMzUsImV4cCI6MjA5MTIyNDMzNX0.6LMQNW6kHgiRrHc-MPp-6xvYLwA8h07UGB8nrnCTkPc';
+        const firebaseConfig = {
+            databaseURL: "https://coride-demo-default-rtdb.firebaseio.com/"
+        };
         
-        const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
 
         // Get Ride ID from URL parameters
         const urlParams = new URLSearchParams(window.location.search);
-        const rideId = urlParams.get('ride');
+        // Supports both 'ride' and 'ride_id' for backward compatibility, but 'ride_id' is preferred
+        const rideId = urlParams.get('ride_id') || urlParams.get('ride');
 
         if (!rideId) {
             document.getElementById('info-card').style.display = 'none';
@@ -134,66 +138,80 @@
         }
 
         // Initialize Map
-        const map = L.map('map').setView([31.5204, 74.3587], 15); // Default Lahore
+        // Parse initial lat/lng from URL if available to show pickup immediately
+        const initLat = parseFloat(urlParams.get('lat')) || 31.5204;
+        const initLng = parseFloat(urlParams.get('lng')) || 74.3587;
+
+        const map = L.map('map').setView([initLat, initLng], 15);
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '© OpenStreetMap contributors'
         }).addTo(map);
 
-        let marker = null;
-        let polyline = L.polyline([], {color: '#00B14F', weight: 5, opacity: 0.7}).addTo(map);
-
-        async function fetchInitialLocation() {
-            const { data, error } = await _supabase
-                .from('ride_live_location')
-                .select('*')
-                .eq('ride_id', rideId)
-                .order('timestamp', { ascending: false })
-                .limit(1);
-
-            if (data && data.length > 0) {
-                updateMap(data[0].latitude, data[0].longitude);
-            }
+        if (urlParams.get('lat')) {
+            L.circle([initLat, initLng], {
+                color: '#00B14F',
+                fillColor: '#00B14F',
+                fillOpacity: 0.1,
+                radius: 100
+            }).addTo(map).bindPopup("Pickup Point").openPopup();
         }
 
-        function updateMap(lat, lng) {
+        // Store markers by role
+        const markers = {
+            user: null,
+            driver: null
+        };
+        const polyline = L.polyline([], {color: '#00B14F', weight: 5, opacity: 0.7}).addTo(map);
+
+        function createIcon(role) {
+            const color = role === 'driver' ? '#000' : '#00B14F';
+            const iconHtml = role === 'driver' 
+                ? `<div style="background:${color}; width:30px; height:30px; border-radius:50%; border:3px solid white; box-shadow:0 0 10px rgba(0,0,0,0.5); display:flex; align-items:center; justify-content:center; color:white; font-size:16px;">🚗</div>`
+                : `<div style="background:${color}; width:24px; height:24px; border-radius:50%; border:3px solid white; box-shadow:0 0 10px rgba(0,0,0,0.5); display:flex; align-items:center; justify-content:center; color:white; font-size:12px;">👤</div>`;
+
+            return L.divIcon({
+                html: iconHtml,
+                className: '',
+                iconSize: [30, 30],
+                iconAnchor: [15, 15]
+            });
+        }
+
+        function updateMap(lat, lng, role) {
             const pos = [lat, lng];
             
-            if (!marker) {
-                marker = L.circleMarker(pos, {
-                    radius: 10,
-                    fillColor: "#00B14F",
-                    color: "#fff",
-                    weight: 3,
-                    opacity: 1,
-                    fillOpacity: 0.9
-                }).addTo(map);
-                map.setView(pos, 16);
+            if (!markers[role]) {
+                markers[role] = L.marker(pos, { icon: createIcon(role) }).addTo(map);
+                if (role === 'user') map.setView(pos, 16);
             } else {
-                marker.setLatLng(pos);
+                markers[role].setLatLng(pos);
             }
 
-            polyline.addLatLng(pos);
-            map.panTo(pos);
+            if (role === 'user') {
+                polyline.addLatLng(pos);
+                map.panTo(pos);
+            }
             
             document.getElementById('ride-details').innerText = `Last updated: ${new Date().toLocaleTimeString()}`;
         }
 
-        // Subscribe to Realtime Updates
-        const channel = _supabase
-            .channel('location-updates')
-            .on(
-                'postgres_changes', 
-                { event: 'INSERT', schema: 'public', table: 'ride_live_location', filter: `ride_id=eq.${rideId}` }, 
-                (payload) => {
-                    console.log('New location received:', payload.new);
-                    updateMap(payload.new.latitude, payload.new.longitude);
-                }
-            )
-            .subscribe();
-
+        // Subscribe to Realtime Updates via Firebase
         if (rideId) {
-            fetchInitialLocation();
             document.getElementById('ride-title').innerText = `Tracking Ride: ${rideId}`;
+            
+            const rideRef = ref(db, `rides/${rideId}/locations`);
+            onValue(rideRef, (snapshot) => {
+                const data = snapshot.val();
+                if (data) {
+                    console.log('New location received:', data);
+                    if (data.user) {
+                        updateMap(data.user.latitude, data.user.longitude, 'user');
+                    }
+                    if (data.driver) {
+                        updateMap(data.driver.latitude, data.driver.longitude, 'driver');
+                    }
+                }
+            });
         }
     </script>
 </body>

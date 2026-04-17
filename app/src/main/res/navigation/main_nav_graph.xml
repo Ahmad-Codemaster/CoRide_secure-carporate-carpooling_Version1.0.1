@@ -21,7 +21,7 @@
 
     <fragment
         android:id="@+id/homeFragment"
-        android:name="com.indrive.clone.ui.home.HomeFragment"
+        android:name="com.coride.ui.home.HomeFragment"
         android:label="Home">
 
         <action
@@ -63,7 +63,7 @@
 
     <fragment
         android:id="@+id/searchPlaceFragment"
-        android:name="com.indrive.clone.ui.home.SearchPlaceFragment"
+        android:name="com.coride.ui.home.SearchPlaceFragment"
         android:label="Search">
 
         <action
@@ -75,7 +75,7 @@
 
     <fragment
         android:id="@+id/bookingFragment"
-        android:name="com.indrive.clone.ui.booking.BookingFragment"
+        android:name="com.coride.ui.booking.BookingFragment"
         android:label="Book Ride">
 
         <action
@@ -87,7 +87,7 @@
 
     <fragment
         android:id="@+id/driverOffersFragment"
-        android:name="com.indrive.clone.ui.booking.DriverOffersFragment"
+        android:name="com.coride.ui.booking.DriverOffersFragment"
         android:label="Driver Offers">
 
         <action
@@ -99,7 +99,7 @@
 
     <fragment
         android:id="@+id/rideFragment"
-        android:name="com.indrive.clone.ui.ride.RideFragment"
+        android:name="com.coride.ui.ride.RideFragment"
         android:label="Ride">
 
         <action
@@ -111,7 +111,7 @@
 
     <fragment
         android:id="@+id/rideCompleteFragment"
-        android:name="com.indrive.clone.ui.ride.RideCompleteFragment"
+        android:name="com.coride.ui.ride.RideCompleteFragment"
         android:label="Ride Complete">
 
         <action
@@ -123,12 +123,12 @@
 
     <fragment
         android:id="@+id/historyFragment"
-        android:name="com.indrive.clone.ui.history.HistoryFragment"
+        android:name="com.coride.ui.history.HistoryFragment"
         android:label="Activity" />
 
     <fragment
         android:id="@+id/profileFragment"
-        android:name="com.indrive.clone.ui.profile.ProfileFragment"
+        android:name="com.coride.ui.profile.ProfileFragment"
         android:label="Profile">
         <action
             android:id="@+id/action_profile_to_trusted_contacts"
@@ -141,23 +141,25 @@
 
     <fragment
         android:id="@+id/trustedContactsFragment"
-        android:name="com.indrive.clone.ui.profile.TrustedContactsFragment"
+        android:name="com.coride.ui.profile.TrustedContactsFragment"
         android:label="Security Center" />
         
     <fragment
         android:id="@+id/homeMapFragment"
-        android:name="com.indrive.clone.ui.home.HomeMapFragment"
+        android:name="com.coride.ui.home.HomeMapFragment"
         android:label="Home Map Focus" />
 
     <!-- ── Driver Interface Destinations ── -->
     <fragment
         android:id="@+id/driverRegistrationFragment"
-        android:name="com.indrive.clone.ui.driver.DriverRegistrationFragment"
+        android:name="com.coride.ui.driver.DriverRegistrationFragment"
         android:label="Driver Registration" />
 
     <fragment
         android:id="@+id/driverDashboardFragment"
-        android:name="com.indrive.clone.ui.driver.DriverDashboardFragment"
+        android:name="com.coride.ui.driver.DriverDashboardFragment"
         android:label="Driver Dashboard" />
 
 </navigation>
+
+

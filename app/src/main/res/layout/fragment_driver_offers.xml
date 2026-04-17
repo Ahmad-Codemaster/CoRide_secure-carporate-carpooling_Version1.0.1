@@ -9,13 +9,13 @@
 
     <!-- M3 Small Top App Bar -->
     <com.google.android.material.appbar.AppBarLayout
-        style="@style/Widget.InDrive.AppBarLayout"
+        style="@style/Widget.CoRide.AppBarLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/toolbar"
-            style="@style/Widget.InDrive.TopAppBar"
+            style="@style/Widget.CoRide.TopAppBar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             app:navigationIcon="@drawable/ic_arrow_back"
@@ -33,40 +33,22 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
-<!--            &lt;!&ndash; Nearby Drivers Map Widget &ndash;&gt;-->
-<!--            <com.google.android.material.card.MaterialCardView-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="280dp"-->
-<!--                android:layout_margin="@dimen/spacing_md"-->
-<!--                app:cardCornerRadius="@dimen/shape_large"-->
-<!--                app:cardElevation="@dimen/elevation_sm"-->
-<!--                app:strokeColor="@color/outline_variant"-->
-<!--                app:strokeWidth="1dp">-->
-
-<!--                <androidx.fragment.app.FragmentContainerView-->
-<!--                    android:id="@+id/offersMapView"-->
-<!--                    android:name="com.google.android.gms.maps.SupportMapFragment"-->
-<!--                    android:layout_width="match_parent"-->
-<!--                    android:layout_height="match_parent"-->
-<!--                    tools:layout="@layout/view_map_placeholder" />-->
-<!--            </com.google.android.material.card.MaterialCardView>-->
-
-            <!-- Ride Summary Card -->
+            <!-- Ride Summary (The "Fare Rate Box") -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/spacing_md"
-                android:layout_marginTop="40dp"
+                android:layout_margin="@dimen/spacing_md"
                 app:cardCornerRadius="@dimen/shape_medium"
                 app:cardElevation="0dp"
                 app:strokeColor="@color/outline_variant"
-                app:strokeWidth="1dp">
+                app:strokeWidth="1.5dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:padding="@dimen/spacing_md">
+                    android:gravity="center_vertical"
+                    android:padding="@dimen/spacing_lg">
 
                     <LinearLayout
                         android:layout_width="0dp"
@@ -79,14 +61,15 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Destination"
-                            android:textAppearance="@style/TextAppearance.InDrive.TitleMedium"
+                            android:textAppearance="@style/TextAppearance.CoRide.TitleLarge"
                             android:textColor="@color/on_surface" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:layout_marginTop="2dp"
                             android:text="Your request"
-                            android:textAppearance="@style/TextAppearance.InDrive.BodySmall"
+                            android:textAppearance="@style/TextAppearance.CoRide.BodyMedium"
                             android:textColor="@color/on_surface_variant" />
                     </LinearLayout>
 
@@ -94,9 +77,9 @@
                         android:id="@+id/tvYourFare"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
                         android:text="Rs. 0"
-                        android:textAppearance="@style/TextAppearance.InDrive.HeadlineSmall"
+                        android:textStyle="bold"
+                        android:textAppearance="@style/TextAppearance.CoRide.HeadlineMedium"
                         android:textColor="@color/primary" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
@@ -149,7 +132,8 @@
                 android:layout_height="@dimen/button_height"
                 android:layout_margin="@dimen/spacing_md"
                 android:text="@string/cancel"
-                style="@style/Widget.InDrive.Button.Secondary" />
+                style="@style/Widget.CoRide.Button.Secondary" />
         </LinearLayout>
     </FrameLayout>
 </LinearLayout>
+

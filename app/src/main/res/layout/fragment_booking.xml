@@ -103,7 +103,7 @@
                 app:tint="?attr/colorPrimary"
                 app:backgroundTint="?attr/colorSurface"
                 app:fabSize="mini"
-                app:shapeAppearanceOverlay="@style/ShapeAppearance.InDrive.Full" />
+                app:shapeAppearanceOverlay="@style/ShapeAppearance.CoRide.Full" />
 
             <ProgressBar
                 android:id="@+id/locationProgressBar"
@@ -124,7 +124,7 @@
             android:layout_marginBottom="@dimen/spacing_lg"
             android:text="Confirm Location"
             android:visibility="gone"
-            style="@style/Widget.InDrive.Button.Primary"
+            style="@style/Widget.CoRide.Button.Primary"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
@@ -406,9 +406,11 @@
                 android:layout_height="@dimen/button_height"
                 android:layout_marginTop="@dimen/spacing_lg"
                 android:text="@string/find_driver"
-                style="@style/Widget.InDrive.Button.Primary" />
+                style="@style/Widget.CoRide.Button.Primary" />
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+

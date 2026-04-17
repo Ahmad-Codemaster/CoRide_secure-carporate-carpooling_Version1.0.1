@@ -6,7 +6,7 @@
 
     <fragment
         android:id="@+id/loginFragment"
-        android:name="com.indrive.clone.ui.auth.LoginFragment"
+        android:name="com.coride.ui.auth.LoginFragment"
         android:label="Login">
 
         <action
@@ -28,7 +28,7 @@
 
     <fragment
         android:id="@+id/forgotPasswordFragment"
-        android:name="com.indrive.clone.ui.auth.ForgotPasswordFragment"
+        android:name="com.coride.ui.auth.ForgotPasswordFragment"
         android:label="Identity Check">
         <action
             android:id="@+id/action_forgot_to_reset"
@@ -41,12 +41,12 @@
 
     <fragment
         android:id="@+id/resetPasswordFragment"
-        android:name="com.indrive.clone.ui.auth.ResetPasswordFragment"
+        android:name="com.coride.ui.auth.ResetPasswordFragment"
         android:label="Verify &amp; Reset" />
 
     <fragment
         android:id="@+id/registerFragment"
-        android:name="com.indrive.clone.ui.auth.RegisterFragment"
+        android:name="com.coride.ui.auth.RegisterFragment"
         android:label="Create Account">
 
         <action
@@ -60,7 +60,7 @@
 
     <fragment
         android:id="@+id/otpVerificationFragment"
-        android:name="com.indrive.clone.ui.auth.OtpVerificationFragment"
+        android:name="com.coride.ui.auth.OtpVerificationFragment"
         android:label="OTP Verification">
 
         <argument
@@ -70,3 +70,5 @@
     </fragment>
 
 </navigation>
+
+

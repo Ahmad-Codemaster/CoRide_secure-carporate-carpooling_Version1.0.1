@@ -184,8 +184,9 @@
         android:layout_height="@dimen/button_height"
         android:layout_marginTop="@dimen/spacing_lg"
         android:text="@string/cancel"
-        style="@style/Widget.InDrive.Button.Secondary"
+        style="@style/Widget.CoRide.Button.Secondary"
         android:alpha="0"
         android:translationY="20dp" />
 
 </LinearLayout>
+
