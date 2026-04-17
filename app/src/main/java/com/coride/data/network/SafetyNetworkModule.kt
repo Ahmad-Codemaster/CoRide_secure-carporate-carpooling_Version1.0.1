@@ -15,8 +15,8 @@ object SafetyNetworkModule {
     // --- KEYS (Provided by User) ---
     private const val ORS_API_KEY = "eyJvcmciOiI1YjNjZTM1OTc4NTExMTAwMDFjZjYyNDgiLCJpZCI6ImRkZmEzZDRhYzdmNDQ1NjQ4OTA1YjFmY2U0MGU5ZDExIiwiaCI6Im11cm11cjY0In0="
     
-    // 🔥 FIREBASE PROJECT URL: Replace with your actual Firebase Realtime DB URL
-    private const val FIREBASE_DATABASE_URL = "https://coride-demo-default-rtdb.firebaseio.com/"
+    // 🔥 FIREBASE PROJECT URL: Actual user-provided URL
+    private const val FIREBASE_DATABASE_URL = "https://my-first-project-d0eac-default-rtdb.firebaseio.com/"
 
     private val logging = HttpLoggingInterceptor().apply {
         level = HttpLoggingInterceptor.Level.BODY

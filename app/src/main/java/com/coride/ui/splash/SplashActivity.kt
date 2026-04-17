@@ -11,12 +11,14 @@ import com.coride.R
 import com.coride.data.repository.MockDataRepository
 import com.coride.ui.auth.AuthActivity
 import com.coride.ui.common.SpringPhysicsHelper
+import com.coride.ui.common.ThemeHelper
 import com.coride.ui.main.MainActivity
 
 @SuppressLint("CustomSplashScreen")
 class SplashActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        ThemeHelper.applyThemeState(this)
         super.onCreate(savedInstanceState)
         com.coride.data.local.LocalPreferences.init(this)
         setContentView(R.layout.activity_splash)

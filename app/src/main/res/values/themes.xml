@@ -2,7 +2,7 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
 
     <!-- =====================================================
-         M3 EXPRESSIVE BASE THEME (Eco Kelly Green)
+         M3 EXPRESSIVE BASE THEME (Monochrome Obsidian)
          ===================================================== -->
     <style name="Theme.CoRide" parent="Theme.Material3.Light.NoActionBar">
         <!-- M3 Color Roles -->

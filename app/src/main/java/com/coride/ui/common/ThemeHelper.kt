@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.appcompat.app.AppCompatDelegate
 
 /**
- * Utility to enforce the exact "Eco & Trustworthy" Kelly Green design
+ * Utility to enforce the "Monochrome & Obsidian" dark/light design
  * and completely prevent system Dark Mode overrides.
  */
 object ThemeHelper {
@@ -14,8 +14,8 @@ object ThemeHelper {
      * MUST be called before super.onCreate().
      */
     fun applyThemeState(activity: android.app.Activity) {
-        activity.setTheme(com.coride.R.style.Theme_CoRideClone)
-        // Permanently enforce light mode styling
+        activity.setTheme(com.coride.R.style.Theme_CoRide)
+        // Permanently enforce light mode styling (with monochrome design)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
     }
 

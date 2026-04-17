@@ -123,12 +123,10 @@ object SmsSafetyHelper {
     ): String {
         val userName = MockDataRepository.getCurrentUser().name
         
-        // 🚀 LIVE FIXED: Hosted URL for the board presentation
-        val projectRef = "ollduovaiqlcmmqebliv"
-        val storageUrl = "https://$projectRef.supabase.co/storage/v1/object/public/Tracker/index.html"
-        val proxyPrefix = "https://htmlpreview.github.io/?"
+        // 🚀 LIVE FIXED: Hosted on GitHub Pages for the board presentation
+        val baseUrl = "https://ahmad-codemaster.github.io/CoRide_secure-carporate-carpooling_Version1.0.1/live_tracker.html"
         // Including lat/lng so the map renders immediately
-        val liveLink = "$proxyPrefix$storageUrl&ride_id=$rideId&lat=$destLat&lng=$destLng"
+        val liveLink = "$baseUrl?ride_id=$rideId&lat=$destLat&lng=$destLng"
 
         return """
 🚗 CoRide Safety Alert
@@ -152,11 +150,9 @@ This is an automated safety message from CoRide.
     fun buildSosMessage(rideId: String, lat: Double, lng: Double): String {
         val userName = MockDataRepository.getCurrentUser().name
         
-        val projectRef = "ollduovaiqlcmmqebliv"
-        val storageUrl = "https://$projectRef.supabase.co/storage/v1/object/public/Tracker/index.html"
-        val proxyPrefix = "https://htmlpreview.github.io/?"
+        val baseUrl = "https://ahmad-codemaster.github.io/CoRide_secure-carporate-carpooling_Version1.0.1/live_tracker.html"
         // Including lat/lng for instant SOS visualization
-        val liveLink = "$proxyPrefix$storageUrl&ride_id=$rideId&lat=$lat&lng=$lng"
+        val liveLink = "$baseUrl?ride_id=$rideId&lat=$lat&lng=$lng"
 
         return """
 🆘 EMERGENCY — CoRide SOS
@@ -177,11 +173,9 @@ This is an automated emergency alert from CoRide.
     fun buildOfflineAlertMessage(rideId: String, lat: Double, lng: Double): String {
         val userName = MockDataRepository.getCurrentUser().name
         
-        val projectRef = "ollduovaiqlcmmqebliv"
-        val storageUrl = "https://$projectRef.supabase.co/storage/v1/object/public/Tracker/index.html"
-        val proxyPrefix = "https://htmlpreview.github.io/?"
+        val baseUrl = "https://ahmad-codemaster.github.io/CoRide_secure-carporate-carpooling_Version1.0.1/live_tracker.html"
         // Including lat/lng for instant offline last-known-location
-        val liveLink = "$proxyPrefix$storageUrl&ride_id=$rideId&lat=$lat&lng=$lng"
+        val liveLink = "$baseUrl?ride_id=$rideId&lat=$lat&lng=$lng"
 
         return """
 ⚠️ CoRide Safety Warning
