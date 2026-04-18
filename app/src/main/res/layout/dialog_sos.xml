@@ -4,160 +4,179 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/bg_top_sheet"
+    android:background="@drawable/bg_bottom_sheet"
     android:orientation="vertical"
-    android:paddingTop="@dimen/spacing_lg"
+    android:paddingTop="@dimen/spacing_md"
     android:paddingBottom="@dimen/spacing_xl"
     android:paddingHorizontal="@dimen/spacing_lg">
 
-    <!-- SOS Hero Icon — red alert circle -->
-    <LinearLayout
-        android:id="@+id/sosHeroIcon"
-        android:layout_width="72dp"
-        android:layout_height="72dp"
+    <!-- Professional Drag Handle -->
+    <View
+        android:layout_width="32dp"
+        android:layout_height="4dp"
         android:layout_gravity="center"
-        android:background="@drawable/bg_button_danger"
-        android:gravity="center"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/indicator_m3_drag"
+        android:alpha="0.6" />
+
+    <!-- SOS Hero Icon — Dynamic Pulse -->
+    <FrameLayout
+        android:id="@+id/sosHeroIcon"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_gravity="center"
         android:alpha="0"
         android:scaleX="0.5"
         android:scaleY="0.5"
         tools:alpha="1">
 
-        <ImageView
-            android:layout_width="36dp"
-            android:layout_height="36dp"
-            android:src="@drawable/ic_warning"
-            android:contentDescription="SOS"
-            app:tint="@color/on_error" />
-    </LinearLayout>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/bg_circle_error"
+            android:alpha="0.2" />
 
-    <!-- Drag Handle — moved below hero icon for top-sheet consistency -->
-    <View
-        android:layout_width="@dimen/drag_handle_width"
-        android:layout_height="@dimen/drag_handle_height"
-        android:layout_gravity="center"
-        android:layout_marginTop="@dimen/spacing_md"
-        android:layout_marginBottom="@dimen/spacing_sm"
-        android:background="@drawable/indicator_m3_drag" />
+        <LinearLayout
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_gravity="center"
+            android:background="@drawable/bg_circle_error"
+            android:gravity="center">
 
-    <!-- Title -->
+            <ImageView
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:src="@drawable/ic_warning"
+                app:tint="#E64646" />
+        </LinearLayout>
+    </FrameLayout>
+
+    <!-- Message & Status -->
     <TextView
         android:id="@+id/tvSosTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/spacing_sm"
+        android:layout_marginTop="12dp"
         android:gravity="center"
-        android:text="@string/sos_title"
+        android:text="EMERGENCY SOS"
         android:textColor="@color/error"
-        android:textSize="@dimen/text_headline_small"
-        android:fontFamily="sans-serif-bold"
-        android:alpha="0"
-        android:translationY="20dp"
-        tools:alpha="1"
-        tools:translationY="0dp" />
+        android:textSize="20sp"
+        android:fontFamily="sans-serif-black"
+        android:letterSpacing="0.05"
+        android:alpha="0" />
 
-    <!-- Message -->
     <TextView
         android:id="@+id/tvSosMessage"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/spacing_sm"
+        android:layout_marginTop="4dp"
         android:gravity="center"
-        android:text="@string/sos_message"
+        android:text="Instant alert will be sent to your emergency contacts."
         android:textColor="@color/on_surface_variant"
-        android:textSize="@dimen/text_body_small"
-        android:lineSpacingMultiplier="1.4"
-        android:alpha="0"
-        android:translationY="20dp"
-        tools:alpha="1"
-        tools:translationY="0dp" />
+        android:textSize="13sp"
+        android:alpha="0" />
 
-    <!-- Emergency Contact Info Card -->
+    <!-- Emergency Contacts Card (Legacy Style) -->
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/cardEmergencyContact"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/spacing_lg"
-        app:cardCornerRadius="@dimen/shape_medium"
-        app:cardElevation="@dimen/elevation_none"
-        app:strokeColor="@color/error"
+        android:layout_marginTop="20dp"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="0dp"
+        app:strokeColor="@color/outline_variant"
         app:strokeWidth="1dp"
-        app:cardBackgroundColor="@color/error_container"
-        android:alpha="0"
-        android:translationY="30dp"
-        tools:alpha="1"
-        tools:translationY="0dp">
+        app:cardBackgroundColor="@color/surface_container_lowest"
+        android:alpha="0">
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="@dimen/spacing_md">
+            android:padding="16dp">
 
-            <!-- Fallback text when no contacts exist -->
             <TextView
-                android:id="@+id/tvEmergencyContactInfo"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="Notifying your trusted contacts..."
-                android:textColor="@color/on_error_container"
-                android:textSize="@dimen/text_body_medium"
-                android:visibility="gone" />
+                android:text="Trusted Contacts (Max 3)"
+                android:textColor="@color/on_surface_variant"
+                android:textSize="12sp"
+                android:fontFamily="sans-serif-medium"
+                android:textAllCaps="true"
+                android:letterSpacing="0.05" />
 
-            <!-- Container for dynamic trusted contact items -->
             <LinearLayout
                 android:id="@+id/containerTrustedContacts"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical" />
-                
+                android:layout_marginTop="8dp"
+                android:orientation="vertical"
+                android:divider="?android:dividerHorizontal"
+                android:showDividers="middle" />
+
+            <TextView
+                android:id="@+id/tvEmergencyContactInfo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="No contacts added in settings."
+                android:textColor="@color/error"
+                android:textSize="13sp"
+                android:textStyle="italic"
+                android:visibility="gone" />
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
 
-    <!-- Send Alert Button -->
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btnSendAlert"
+    <!-- ACTION BUTTONS -->
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="@dimen/button_height"
-        android:layout_marginTop="@dimen/spacing_lg"
-        android:text="@string/sos_confirm"
-        style="@style/Widget.CoRide.Button.Error"
-        android:alpha="0"
-        android:translationY="20dp"
-        tools:alpha="1"
-        tools:translationY="0dp"
-        tools:ignore="VisualLintButtonSize" />
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:orientation="vertical">
 
-    <!-- Call Police -->
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btnCallPolice"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/button_height"
-        android:layout_marginTop="@dimen/spacing_sm"
-        android:text="@string/call_police"
-        style="@style/Widget.CoRide.Button.Secondary"
-        app:strokeColor="@color/error"
-        android:textColor="@color/error"
-        android:alpha="0"
-        android:translationY="20dp"
-        tools:alpha="1"
-        tools:translationY="0dp"
-        tools:ignore="VisualLintButtonSize" />
+        <!-- Notify Contacts Button -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnSendAlert"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:text="NOTIFY ALL CONTACTS"
+            style="@style/Widget.CoRide.Button.Error"
+            app:cornerRadius="28dp"
+            android:alpha="0" />
 
-    <!-- Go Back -->
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btnGoBack"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/button_height"
-        android:textColor="#FFFFFF"
-        android:layout_marginTop="@dimen/spacing_sm"
-        android:background="@drawable/go_back"
-        android:text="@string/sos_cancel"
-        android:alpha="0"
-        android:translationY="20dp"
-        tools:alpha="1"
-        tools:translationY="0dp"
-        tools:ignore="VisualLintButtonSize" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:orientation="horizontal">
+
+            <!-- Call Police (15) -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnCallPolice"
+                android:layout_width="0dp"
+                android:layout_height="56dp"
+                android:layout_weight="1"
+                android:layout_marginEnd="6dp"
+                android:text="CALL 15"
+                style="@style/Widget.CoRide.Button.Secondary"
+                app:strokeColor="@color/error"
+                android:textColor="@color/error"
+                app:cornerRadius="28dp"
+                android:alpha="0" />
+
+            <!-- Go Back -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnGoBack"
+                android:layout_width="0dp"
+                android:layout_height="56dp"
+                android:layout_weight="1"
+                android:layout_marginStart="6dp"
+                android:text="CANCEL"
+                style="@style/Widget.CoRide.Button.Secondary"
+                app:cornerRadius="28dp"
+                android:alpha="0" />
+        </LinearLayout>
+    </LinearLayout>
 
 </LinearLayout>
 

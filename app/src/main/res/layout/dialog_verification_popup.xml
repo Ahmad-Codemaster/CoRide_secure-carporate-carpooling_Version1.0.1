@@ -3,11 +3,19 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/bg_top_sheet"
+    android:background="@drawable/bg_bottom_sheet"
     android:orientation="vertical"
-    android:paddingTop="@dimen/spacing_lg"
+    android:paddingTop="@dimen/spacing_md"
     android:paddingBottom="@dimen/spacing_xl"
     android:paddingHorizontal="@dimen/spacing_lg">
+
+    <!-- Professional Drag Handle -->
+    <View
+        android:layout_width="@dimen/drag_handle_width"
+        android:layout_height="@dimen/drag_handle_height"
+        android:layout_gravity="center"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/indicator_m3_drag" />
 
     <!-- Shield Icon — premium animated hero -->
     <LinearLayout
@@ -29,15 +37,6 @@
             android:contentDescription="@string/verify"
             app:tint="@color/on_primary" />
     </LinearLayout>
-
-    <!-- Drag Handle — moved below hero icon -->
-    <View
-        android:layout_width="@dimen/drag_handle_width"
-        android:layout_height="@dimen/drag_handle_height"
-        android:layout_gravity="center"
-        android:layout_marginTop="@dimen/spacing_md"
-        android:layout_marginBottom="@dimen/spacing_sm"
-        android:background="@drawable/indicator_m3_drag" />
 
     <!-- Title -->
     <TextView

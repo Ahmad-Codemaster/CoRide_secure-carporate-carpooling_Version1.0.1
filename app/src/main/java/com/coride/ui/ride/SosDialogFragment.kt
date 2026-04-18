@@ -8,41 +8,22 @@ import android.view.View
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
-import androidx.fragment.app.DialogFragment
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.button.MaterialButton
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.coride.R
 import com.coride.data.repository.MockDataRepository
 import com.coride.ui.common.SpringPhysicsHelper
+import com.coride.utils.SmsSafetyHelper
 
-class SosDialogFragment : DialogFragment() {
+class SosDialogFragment : BottomSheetDialogFragment() {
 
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val view = layoutInflater.inflate(R.layout.dialog_sos, null)
+    override fun onCreateView(inflater: android.view.LayoutInflater, container: android.view.ViewGroup?, savedInstanceState: Bundle?): View? {
+        return inflater.inflate(R.layout.dialog_sos, container, false)
+    }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         setupView(view)
-
-        val dialog = MaterialAlertDialogBuilder(requireContext())
-            .setView(view)
-            .create()
-
-        dialog.window?.apply {
-            setBackgroundDrawable(android.graphics.drawable.ColorDrawable(android.graphics.Color.TRANSPARENT))
-            setGravity(android.view.Gravity.TOP)
-            setWindowAnimations(R.style.DialogAnimation_SlideFromTop)
-            
-            // Force full width and zero top margin for "Top Sheet" look
-            setLayout(android.view.ViewGroup.LayoutParams.MATCH_PARENT, android.view.ViewGroup.LayoutParams.WRAP_CONTENT)
-            val params = attributes
-            params.horizontalMargin = 0f
-            params.verticalMargin = 0f
-            params.y = 0 
-            attributes = params
-        }
-        dialog.setCanceledOnTouchOutside(true)
-        dialog.setCancelable(true)
-
-        return dialog
     }
 
     private fun setupView(view: View) {
@@ -50,110 +31,94 @@ class SosDialogFragment : DialogFragment() {
         val tvTitle = view.findViewById<TextView>(R.id.tvSosTitle)
         val tvMessage = view.findViewById<TextView>(R.id.tvSosMessage)
         val cardEmergency = view.findViewById<View>(R.id.cardEmergencyContact)
-        val tvEmergencyInfo = view.findViewById<TextView>(R.id.tvEmergencyContactInfo)
-        val btnSendAlert = view.findViewById<MaterialButton>(R.id.btnSendAlert)
-        val btnCallPolice = view.findViewById<MaterialButton>(R.id.btnCallPolice)
-        val btnGoBack = view.findViewById<MaterialButton>(R.id.btnGoBack)
-
-        // Populate emergency contacts from the Security Center
         val containerContacts = view.findViewById<LinearLayout>(R.id.containerTrustedContacts)
-        val trustedContacts = MockDataRepository.getTrustedContacts()
+        val tvNoContacts = view.findViewById<TextView>(R.id.tvEmergencyContactInfo)
+        
+        val btnNotifyAll = view.findViewById<MaterialButton>(R.id.btnSendAlert)
+        val btnCall15 = view.findViewById<MaterialButton>(R.id.btnCallPolice)
+        val btnCancel = view.findViewById<MaterialButton>(R.id.btnGoBack)
+
+        // Get actual contacts from repository (limiting to 3 as requested)
+        val trustedContacts = MockDataRepository.getTrustedContacts().take(3)
         
         if (trustedContacts.isEmpty()) {
-            tvEmergencyInfo.visibility = View.VISIBLE
-            tvEmergencyInfo.text = getString(R.string.sos_no_contacts)
-            tvEmergencyInfo.setTextColor(resources.getColor(R.color.error, null))
-            btnSendAlert.isEnabled = false
-            btnSendAlert.alpha = 0.5f 
+            tvNoContacts.visibility = View.VISIBLE
+            btnNotifyAll.isEnabled = false
+            btnNotifyAll.alpha = 0.5f
         } else {
-            tvEmergencyInfo.visibility = View.GONE
+            tvNoContacts.visibility = View.GONE
             containerContacts.removeAllViews()
             
             trustedContacts.forEach { contact ->
-                val contactView = layoutInflater.inflate(R.layout.item_sos_contact, containerContacts, false)
-                contactView.findViewById<TextView>(R.id.tvSosContactName).text = contact.name
-                contactView.findViewById<TextView>(R.id.tvSosContactPhone).text = contact.phone
-                
-                contactView.findViewById<MaterialButton>(R.id.btnSosNotifyWhatsApp).setOnClickListener {
-                    SpringPhysicsHelper.springPressFeedback(it)
-                    val message = MockDataRepository.getSosMessageTemplate()
-                    sendDirectWhatsAppAlert(contact.phone, message)
-                }
-                
-                containerContacts.addView(contactView)
+                val row = layoutInflater.inflate(R.layout.item_sos_contact, containerContacts, false)
+                row.findViewById<TextView>(R.id.tvSosContactName).text = contact.name
+                row.findViewById<TextView>(R.id.tvSosContactPhone).text = contact.phone
+                containerContacts.addView(row)
             }
-            
-            btnSendAlert.text = "Share Alert to Other Apps"
-            btnSendAlert.isEnabled = true
-            btnSendAlert.alpha = 1.0f
         }
 
-        // ── Spring Entrance Animations ──
-        SpringPhysicsHelper.springScale(heroIcon, 1f, 900f, 0.40f, startDelay = 80L)
-        SpringPhysicsHelper.springAlpha(heroIcon, 1f, startDelay = 80L)
-        SpringPhysicsHelper.springSlideUpFadeIn(tvTitle, 600f, 0.70f, startDelay = 180L)
-        SpringPhysicsHelper.springSlideUpFadeIn(tvMessage, 550f, 0.72f, startDelay = 260L)
-        SpringPhysicsHelper.springSlideUpFadeIn(cardEmergency, 500f, 0.75f, startDelay = 350L)
-        SpringPhysicsHelper.springSlideUpFadeIn(btnSendAlert, 480f, 0.78f, startDelay = 440L)
-        SpringPhysicsHelper.springSlideUpFadeIn(btnCallPolice, 460f, 0.78f, startDelay = 520L)
-        SpringPhysicsHelper.springSlideUpFadeIn(btnGoBack, 440f, 0.80f, startDelay = 600L)
+        // ── Professional Animations ──
+        SpringPhysicsHelper.springScale(heroIcon, 1f, 1000f, 0.40f, startDelay = 50L)
+        SpringPhysicsHelper.springAlpha(heroIcon, 1f, startDelay = 50L)
+        
+        SpringPhysicsHelper.springSlideUpFadeIn(tvTitle, 700f, 0.70f, startDelay = 150L)
+        SpringPhysicsHelper.springSlideUpFadeIn(tvMessage, 650f, 0.72f, startDelay = 220L)
+        SpringPhysicsHelper.springSlideUpFadeIn(cardEmergency, 600f, 0.75f, startDelay = 300L)
+        
+        SpringPhysicsHelper.springSlideUpFadeIn(btnNotifyAll, 550f, 0.78f, startDelay = 400L)
+        SpringPhysicsHelper.springAlpha(btnCall15, 1f, startDelay = 480L)
+        SpringPhysicsHelper.springAlpha(btnCancel, 1f, startDelay = 550L)
 
-        // ── Button Actions ──
-        btnSendAlert.setOnClickListener {
+        // ── Actions ──
+        btnNotifyAll.setOnClickListener {
             SpringPhysicsHelper.springPressFeedback(it)
-            MockDataRepository.triggerSOS()
             
-            it.postDelayed({
-                val message = MockDataRepository.getSosMessageTemplate()
-                sendWhatsAppAlert(message)
+            // 🚀 REAL SOS TRIGGER: Send SMS to all using SmsSafetyHelper
+            val rideId = arguments?.getString("ride_id") ?: "active_ride"
+            val lat = arguments?.getDouble("lat") ?: 0.0
+            val lng = arguments?.getDouble("lng") ?: 0.0
+            
+            val sosMessage = SmsSafetyHelper.buildSosMessage(rideId, lat, lng)
+            val sentCount = SmsSafetyHelper.sendToAllEmergencyContacts(requireContext(), sosMessage)
+            
+            if (sentCount > 0) {
+                Toast.makeText(requireContext(), "🆘 SOS Alerts dispatched to $sentCount real contacts!", Toast.LENGTH_LONG).show()
+                btnNotifyAll.text = "NOTIFIED ✅"
+                btnNotifyAll.isEnabled = false
                 
-                // Show success state locally
-                btnSendAlert.text = getString(R.string.sos_sent_title)
-                btnSendAlert.isEnabled = false
-            }, 150)
+                // Also trigger internal SOS state
+                MockDataRepository.triggerSOS()
+            } else {
+                Toast.makeText(requireContext(), "No contacts chosen to notify.", Toast.LENGTH_SHORT).show()
+            }
         }
 
-        btnCallPolice.setOnClickListener {
+        btnCall15.setOnClickListener {
             SpringPhysicsHelper.springPressFeedback(it)
             try {
+                // Open Dialer as requested (safer for accidental taps)
                 val intent = Intent(Intent.ACTION_DIAL, Uri.parse("tel:15"))
                 startActivity(intent)
             } catch (e: Exception) {
-                Toast.makeText(requireContext(), "Cannot make call", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Could not open dialer", Toast.LENGTH_SHORT).show()
             }
         }
 
-        btnGoBack.setOnClickListener {
+        btnCancel.setOnClickListener {
+            SpringPhysicsHelper.springPressFeedback(it)
             dismiss()
         }
     }
 
-    private fun sendDirectWhatsAppAlert(phone: String, message: String) {
-        try {
-            val cleanPhone = phone.replace(Regex("[^0-9]"), "")
-            // For Pakistan, if it starts with 0, replace with 92. If it starts with +, clean it.
-            val finalPhone = if (cleanPhone.startsWith("0")) "92" + cleanPhone.substring(1) else cleanPhone
-            
-            val intent = Intent(Intent.ACTION_VIEW)
-            intent.data = Uri.parse("https://wa.me/$finalPhone?text=" + Uri.encode(message))
-            startActivity(intent)
-        } catch (e: Exception) {
-            sendWhatsAppAlert(message) // Fallback to general share
-        }
-    }
-
-    private fun sendWhatsAppAlert(message: String) {
-        try {
-            val intent = Intent(Intent.ACTION_VIEW)
-            intent.data = Uri.parse("https://wa.me/?text=" + Uri.encode(message))
-            startActivity(intent)
-        } catch (e: Exception) {
-            // Fallback to generic share
-            val shareIntent = Intent(Intent.ACTION_SEND)
-            shareIntent.type = "text/plain"
-            shareIntent.putExtra(Intent.EXTRA_TEXT, message)
-            startActivity(Intent.createChooser(shareIntent, "Share Emergency Alert"))
+    companion object {
+        fun newInstance(rideId: String, lat: Double, lng: Double): SosDialogFragment {
+            return SosDialogFragment().apply {
+                arguments = Bundle().apply {
+                    putString("ride_id", rideId)
+                    putDouble("lat", lat)
+                    putDouble("lng", lng)
+                }
+            }
         }
     }
 }
-

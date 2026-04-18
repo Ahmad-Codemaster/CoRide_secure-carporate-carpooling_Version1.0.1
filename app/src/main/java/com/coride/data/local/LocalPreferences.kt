@@ -126,6 +126,12 @@ object LocalPreferences {
         prefs.edit().putBoolean("isBiometricEnabled", value).apply()
     }
 
+    fun isShakeSosEnabled(): Boolean = prefs.getBoolean("isShakeSosEnabled", false)
+
+    fun setShakeSosEnabled(value: Boolean) {
+        prefs.edit().putBoolean("isShakeSosEnabled", value).apply()
+    }
+
     fun clearUser() {
         prefs.edit().putBoolean("isLoggedIn", false).apply()
     }

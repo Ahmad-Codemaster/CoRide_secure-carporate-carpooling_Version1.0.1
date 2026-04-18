@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/surface_container_low"
+    android:background="#A7D3D3D3"
     android:orientation="vertical">
 
     <!-- M3 Small Top App Bar for Search -->
@@ -30,10 +30,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="44dp"
                 android:layout_marginEnd="@dimen/spacing_md"
-                app:cardBackgroundColor="@color/surface_container_highest"
+                app:cardBackgroundColor="#FFFFFF"
                 app:cardCornerRadius="@dimen/shape_medium"
-                app:cardElevation="0dp"
-                app:strokeWidth="0dp">
+                app:cardElevation="2dp"
+                app:strokeWidth="1dp"
+                app:strokeColor="#e2e8f0">
 
                 <EditText
                     android:id="@+id/etSearch"
@@ -65,9 +66,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/spacing_md"
+                app:cardBackgroundColor="#FFFFFF"
                 app:cardCornerRadius="@dimen/shape_large"
-                app:cardElevation="@dimen/elevation_sm"
-                app:strokeColor="@color/primary"
+                app:cardElevation="2dp"
+                app:strokeColor="#e2e8f0"
                 app:strokeWidth="1dp">
 
                 <LinearLayout

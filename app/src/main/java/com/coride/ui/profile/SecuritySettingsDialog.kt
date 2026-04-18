@@ -23,10 +23,11 @@ class SecuritySettingsDialog : BottomSheetDialogFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val switchBiometric = view.findViewById<MaterialSwitch>(R.id.switchBiometric)
+        val switchShakeSos = view.findViewById<MaterialSwitch>(R.id.switchShakeSos)
         val btnDeleteAccount = view.findViewById<MaterialButton>(R.id.btnDeleteAccount)
         val btnClose = view.findViewById<MaterialButton>(R.id.btnCloseSecurity)
 
-        // Initialize state
+        // Initialize Biometric state
         val isHardwareAvailable = BiometricHelper.isBiometricAvailable(requireContext())
         switchBiometric.isEnabled = isHardwareAvailable
         switchBiometric.isChecked = LocalPreferences.isBiometricEnabled()
@@ -39,6 +40,14 @@ class SecuritySettingsDialog : BottomSheetDialogFragment() {
             LocalPreferences.setBiometricEnabled(isChecked)
             val status = if (isChecked) "Enabled" else "Disabled"
             Toast.makeText(requireContext(), "Biometric Login $status", Toast.LENGTH_SHORT).show()
+        }
+
+        // Initialize Shake SOS state
+        switchShakeSos.isChecked = LocalPreferences.isShakeSosEnabled()
+        switchShakeSos.setOnCheckedChangeListener { _, isChecked ->
+            LocalPreferences.setShakeSosEnabled(isChecked)
+            val status = if (isChecked) "Enabled" else "Disabled"
+            Toast.makeText(requireContext(), "Shake to SOS $status", Toast.LENGTH_SHORT).show()
         }
 
         btnDeleteAccount.setOnClickListener {

@@ -8,17 +8,16 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
-import androidx.fragment.app.DialogFragment
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.card.MaterialCardView
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.progressindicator.CircularProgressIndicator
 import com.coride.R
 import com.coride.data.model.VerificationDocType
 import com.coride.data.repository.MockDataRepository
 import com.coride.ui.common.SpringPhysicsHelper
 
-class VerificationPopupDialogFragment : DialogFragment() {
+class VerificationPopupDialogFragment : BottomSheetDialogFragment() {
 
     private var onVerified: (() -> Unit)? = null
     private var countDownTimer: CountDownTimer? = null
@@ -31,32 +30,13 @@ class VerificationPopupDialogFragment : DialogFragment() {
         }
     }
 
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val view = layoutInflater.inflate(R.layout.dialog_verification_popup, null)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        return inflater.inflate(R.layout.dialog_verification_popup, container, false)
+    }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         setupView(view)
-
-        val dialog = MaterialAlertDialogBuilder(requireContext())
-            .setView(view)
-            .create()
-
-        dialog.window?.apply {
-            setBackgroundDrawable(android.graphics.drawable.ColorDrawable(android.graphics.Color.TRANSPARENT))
-            setGravity(android.view.Gravity.TOP)
-            setWindowAnimations(R.style.DialogAnimation_SlideFromTop)
-            
-            // Force full width and zero top margin for "Top Sheet" look
-            setLayout(android.view.ViewGroup.LayoutParams.MATCH_PARENT, android.view.ViewGroup.LayoutParams.WRAP_CONTENT)
-            val params = attributes
-            params.horizontalMargin = 0f
-            params.verticalMargin = 0f
-            params.y = 0 
-            attributes = params
-        }
-        dialog.setCanceledOnTouchOutside(true)
-        dialog.setCancelable(true)
-
-        return dialog
     }
 
     private fun setupView(view: View) {

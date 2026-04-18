@@ -16,6 +16,8 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.SupportMapFragment
@@ -25,19 +27,23 @@ import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.gms.maps.model.PolylineOptions
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.button.MaterialButton
+import com.google.android.material.chip.ChipGroup
+import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.android.material.search.SearchBar
+import com.google.android.material.search.SearchView
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import com.google.android.material.button.MaterialButton
-import com.google.android.material.chip.ChipGroup
-import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.coride.R
 import com.coride.data.model.VehicleType
 import com.coride.data.repository.MockDataRepository
 import com.coride.ui.common.DirectionsHelper
 import com.coride.ui.common.LocationHelper
+import com.coride.ui.common.PlacesAutocompleteHelper
 import com.coride.ui.common.SpringPhysicsHelper
+import com.coride.ui.home.PlaceAdapter
 import java.util.Locale
 
 class BookingFragment : Fragment() {
@@ -53,6 +59,7 @@ class BookingFragment : Fragment() {
     private var googleMap: GoogleMap? = null
     private var geocodeJob: Job? = null
     private var routeJob: Job? = null
+    private var autocompleteHelper: PlacesAutocompleteHelper? = null
 
     // ── Permission Launcher ──
     private val locationPermissionLauncher = registerForActivityResult(
@@ -64,11 +71,9 @@ class BookingFragment : Fragment() {
         } else {
             val shouldShowRationale = shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION)
             if (!shouldShowRationale) {
-                // Permanently denied
                 showPermissionSettingsDialog()
             } else {
                 Toast.makeText(requireContext(), "Location permission required for pickup", Toast.LENGTH_LONG).show()
-                // Fall back to first mock place
                 val fallback = MockDataRepository.getPlaces().firstOrNull()
                 pickupLocation = fallback?.let { LatLng(it.latitude, it.longitude) }
                 view?.findViewById<TextView>(R.id.tvPickupLocation)?.text = fallback?.name ?: "Unknown"
@@ -132,13 +137,16 @@ class BookingFragment : Fragment() {
         view.findViewById<TextView>(R.id.tvDestinationLocation).text =
             if (destName.isNotEmpty()) destName else "Tap to set destination"
 
-        // Destination tap → enter pick mode
+        // Destination tap → open search view
         view.findViewById<View>(R.id.tvDestinationLocation).setOnClickListener {
-            enterPickMode()
+            val searchView = view.findViewById<SearchView>(R.id.bookingSearchView)
+            searchView.show()
         }
 
+        autocompleteHelper = PlacesAutocompleteHelper(requireContext())
         setupUI(view)
         setupMap()
+        setupSearch(view)
 
         // Request location permission or fetch immediately
         if (LocationHelper.hasLocationPermission(requireContext())) {
@@ -236,7 +244,6 @@ class BookingFragment : Fragment() {
     private fun setupUI(view: View) {
         val etFare = view.findViewById<EditText>(R.id.etFare)
         val tvRecommended = view.findViewById<TextView>(R.id.tvRecommendedFare)
-        val btnBack = view.findViewById<View>(R.id.btnBackContainer)
         val btnPlus = view.findViewById<View>(R.id.btnPlus)
         val btnMinus = view.findViewById<View>(R.id.btnMinus)
         val btnConfirmLocation = view.findViewById<MaterialButton>(R.id.btnConfirmLocation)
@@ -245,10 +252,6 @@ class BookingFragment : Fragment() {
 
         etFare.setText(currentFare.toInt().toString())
         refreshFareText(tvRecommended)
-
-        btnBack.setOnClickListener {
-            if (isPickingDestination) exitPickMode() else findNavController().navigateUp()
-        }
 
         btnPlus.setOnClickListener {
             SpringPhysicsHelper.springPressFeedback(view.findViewById(R.id.btnPlusContainer))
@@ -299,6 +302,49 @@ class BookingFragment : Fragment() {
         setupServiceTypes(view, etFare, tvRecommended)
     }
 
+    private fun setupSearch(view: View) {
+        val searchBar = view.findViewById<SearchBar>(R.id.bookingSearchBar)
+        val searchView = view.findViewById<SearchView>(R.id.bookingSearchView)
+        val rvSuggestions = view.findViewById<RecyclerView>(R.id.rvSearchSuggestions)
+        val btnPickOnMap = view.findViewById<View>(R.id.btnPickOnMap)
+
+        // SearchBar back arrow navigates back or exits pick mode
+        searchBar.setNavigationOnClickListener {
+            if (isPickingDestination) exitPickMode() else findNavController().navigateUp()
+        }
+
+        val searchAdapter = PlaceAdapter(emptyList()) { place ->
+            autocompleteHelper?.resolvePlace(place.id) { latLng ->
+                if (latLng != null) {
+                    destinationLocation = latLng
+                    searchBar.setText(place.name)
+                    view.findViewById<TextView>(R.id.tvDestinationLocation).text = place.name
+                    searchView.hide()
+                    computeRouteAndFare()
+                }
+            }
+        }
+
+        rvSuggestions.layoutManager = LinearLayoutManager(requireContext())
+        rvSuggestions.adapter = searchAdapter
+
+        searchView.editText.addTextChangedListener(object : android.text.TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+            override fun afterTextChanged(s: android.text.Editable?) {
+                autocompleteHelper?.search(s.toString().trim()) { suggestions ->
+                    searchAdapter.updatePlaces(suggestions)
+                }
+            }
+        })
+
+        btnPickOnMap.setOnClickListener {
+            searchView.hide()
+            enterPickMode()
+            searchBar.setText("Drop pin on map")
+        }
+    }
+
     private fun setupServiceTypes(view: View, etFare: EditText, tvRecommended: TextView) {
         val chipGroup = view.findViewById<ChipGroup>(R.id.rideTypeChipGroup)
         chipGroup.setOnCheckedStateChangeListener { _, checkedIds ->
@@ -322,8 +368,10 @@ class BookingFragment : Fragment() {
             findViewById<View>(R.id.pickingHeader).visibility = View.VISIBLE
             findViewById<TextView>(R.id.tvPickingTask).text = "Drop pin to select"
             findViewById<View>(R.id.btnConfirmLocation).visibility = View.VISIBLE
-            
-            // Hide the bottom sheet to focus on map
+
+            // Hide the bottom sheet and search bar to focus on map
+            findViewById<View>(R.id.bookingSearchBar).visibility = View.GONE
+
             val sheet = findViewById<View>(R.id.bookingSheet)
             val behavior = BottomSheetBehavior.from(sheet)
             behavior.isHideable = true
@@ -344,8 +392,10 @@ class BookingFragment : Fragment() {
             findViewById<View>(R.id.ivCenterPin).visibility = View.GONE
             findViewById<View>(R.id.pickingHeader).visibility = View.GONE
             findViewById<View>(R.id.btnConfirmLocation).visibility = View.GONE
-            
-            // Bring sheet back up
+
+            // Bring sheet and search bar back
+            findViewById<View>(R.id.bookingSearchBar).visibility = View.VISIBLE
+
             val sheet = findViewById<View>(R.id.bookingSheet)
             val behavior = BottomSheetBehavior.from(sheet)
             behavior.state = BottomSheetBehavior.STATE_EXPANDED
@@ -358,7 +408,6 @@ class BookingFragment : Fragment() {
         val target = googleMap?.cameraPosition?.target ?: return
         destinationLocation = target
 
-        // Use the live preview text we already fetched in the background
         val liveText = view?.findViewById<TextView>(R.id.tvPickingTask)?.text?.toString()
         val finalName = if (liveText.isNullOrEmpty() || liveText == "Locating..." || liveText == "Drop pin to select") {
             "Selected Location"
@@ -367,6 +416,7 @@ class BookingFragment : Fragment() {
         }
         
         view?.findViewById<TextView>(R.id.tvDestinationLocation)?.text = finalName
+        view?.findViewById<SearchBar>(R.id.bookingSearchBar)?.setText(finalName)
 
         exitPickMode()
         computeRouteAndFare()
@@ -428,14 +478,12 @@ class BookingFragment : Fragment() {
             map.setOnCameraMoveStartedListener {
                 if (isPickingDestination) {
                     view?.findViewById<TextView>(R.id.tvPickingTask)?.text = "Locating..."
-                    // Hop the pin up
                     view?.findViewById<View>(R.id.ivCenterPin)?.animate()?.translationY(-40f)?.setDuration(150)?.start()
                 }
             }
 
             map.setOnCameraIdleListener {
                 if (isPickingDestination) {
-                    // Drop the pin back
                     view?.findViewById<View>(R.id.ivCenterPin)?.animate()?.translationY(0f)?.setDuration(150)?.start()
                     geocodeLiveAddress(map.cameraPosition.target)
                 }
@@ -455,7 +503,7 @@ class BookingFragment : Fragment() {
     private fun geocodeLiveAddress(latLng: LatLng) {
         geocodeJob?.cancel()
         geocodeJob = viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
-            delay(350) // Debounce rapid map movement
+            delay(350)
             try {
                 val geocoder = Geocoder(requireContext(), Locale.getDefault())
                 @Suppress("DEPRECATION")
@@ -517,4 +565,3 @@ class BookingFragment : Fragment() {
         }
     }
 }
-

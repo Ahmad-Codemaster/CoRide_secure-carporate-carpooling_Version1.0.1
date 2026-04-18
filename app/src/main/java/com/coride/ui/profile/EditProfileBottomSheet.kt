@@ -26,20 +26,49 @@ class EditProfileBottomSheet : BottomSheetDialogFragment() {
         val etName = view.findViewById<TextInputEditText>(R.id.etEditName)
         val etPhone = view.findViewById<TextInputEditText>(R.id.etEditPhone)
         val etEmail = view.findViewById<TextInputEditText>(R.id.etEditEmail)
+        val etOrg = view.findViewById<TextInputEditText>(R.id.etEditOrg)
+        val etStudentId = view.findViewById<TextInputEditText>(R.id.etEditStudentId)
+        val etAddress = view.findViewById<TextInputEditText>(R.id.etEditAddress)
+        val etEmerName = view.findViewById<TextInputEditText>(R.id.etEditEmergencyName)
+        val etEmerPhone = view.findViewById<TextInputEditText>(R.id.etEditEmergencyPhone)
 
         etName?.setText(user.name)
         etPhone?.setText(user.phone)
         etEmail?.setText(user.email)
+        etOrg?.setText(user.organizationName)
+        etStudentId?.setText(user.cnicNumber)
+        etAddress?.setText(user.homeAddress)
+        etEmerName?.setText(user.emergencyContactName)
+        etEmerPhone?.setText(user.emergencyContactPhone)
 
         view.findViewById<MaterialButton>(R.id.btnCancelEdit)?.setOnClickListener {
             dismiss()
         }
 
         view.findViewById<MaterialButton>(R.id.btnSaveEdit)?.setOnClickListener {
+            val name = etName?.text.toString().trim()
+            val phone = etPhone?.text.toString().trim()
+            val email = etEmail?.text.toString().trim()
+            val org = etOrg?.text.toString().trim()
+            val studentId = etStudentId?.text.toString().trim()
+            val address = etAddress?.text.toString().trim()
+            val emerName = etName?.text.toString().trim()
+            val emerPhone = etPhone?.text.toString().trim()
+
+            if (name.isEmpty() || phone.isEmpty() || org.isEmpty() || studentId.isEmpty() || address.isEmpty()) {
+                Toast.makeText(requireContext(), "Mandatory fields cannot be empty", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
             val updatedUser = user.copy(
-                name = etName?.text.toString().trim(),
-                phone = etPhone?.text.toString().trim(),
-                email = etEmail?.text.toString().trim()
+                name = name,
+                phone = phone,
+                email = email,
+                organizationName = org,
+                cnicNumber = studentId,
+                homeAddress = address,
+                emergencyContactName = emerName,
+                emergencyContactPhone = emerPhone
             )
             MockDataRepository.updateUser(updatedUser)
             

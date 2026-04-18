@@ -7,14 +7,35 @@
     android:background="@drawable/bg_bottom_sheet"
     android:padding="24dp">
 
-    <!-- Warning Icon -->
-    <ImageView
-        android:id="@+id/ivSafetyIcon"
-        android:layout_width="64dp"
-        android:layout_height="64dp"
+    <!-- Professional Bottom Sheet Drag Handle -->
+    <View
+        android:layout_width="32dp"
+        android:layout_height="4dp"
         android:layout_gravity="center"
-        android:src="@drawable/ic_warning"
-        app:tint="@color/warning" />
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/indicator_m3_drag"
+        android:alpha="0.4" />
+
+    <!-- Warning Icon — Animated Hero -->
+    <FrameLayout
+        android:layout_width="72dp"
+        android:layout_height="72dp"
+        android:layout_gravity="center">
+        
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/bg_circle_primary_container"
+            android:alpha="0.5" />
+
+        <ImageView
+            android:id="@+id/ivSafetyIcon"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_gravity="center"
+            android:src="@drawable/ic_warning"
+            app:tint="@color/primary" />
+    </FrameLayout>
 
     <!-- Title -->
     <TextView

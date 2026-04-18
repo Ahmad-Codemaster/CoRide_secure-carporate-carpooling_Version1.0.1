@@ -1,46 +1,78 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@color/background_light"
+    android:background="#A7D3D3D3"
     android:orientation="vertical">
 
-    <!-- Header -->
-    <LinearLayout
+    <!-- Premium Light Header -->
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/primary"
-        android:gravity="center_vertical"
-        android:padding="@dimen/spacing_md">
+        android:paddingTop="32dp"
+        android:paddingHorizontal="20dp"
+        android:paddingBottom="16dp">
 
         <TextView
+            android:id="@+id/tvHeaderTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/ride_history"
-            android:textColor="@color/text_white"
-            android:textSize="@dimen/text_h3"
-            android:fontFamily="sans-serif-medium" />
-    </LinearLayout>
+            android:text="Activity"
+            android:textColor="#0f172a"
+            android:textSize="24sp"
+            android:fontFamily="sans-serif-bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
 
-    <TextView
-        android:id="@+id/tvEmptyState"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:text="No rides have been taken yet"
-        android:textColor="@color/text_secondary"
-        android:textSize="@dimen/text_body_large"
-        android:visibility="gone" />
+        <!-- Optional: Filter or Sort Icon for visual premium feel -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            app:cardCornerRadius="20dp"
+            app:cardBackgroundColor="#FFFFFF"
+            app:cardElevation="2dp"
+            app:strokeWidth="1dp"
+            app:strokeColor="#e2e8f0"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent">
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_settings"
+                app:tint="#64748b" />
+        </com.google.android.material.card.MaterialCardView>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvHistory"
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:clipToPadding="false"
-        android:paddingTop="@dimen/spacing_sm"
-        android:paddingBottom="100dp"
-        android:layoutAnimation="@anim/layout_animation_fall_down" />
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/tvEmptyState"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="no rides have been taken yet"
+            android:textColor="#94a3b8"
+            android:textSize="15sp"
+            android:fontFamily="sans-serif"
+            android:visibility="gone" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvHistory"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:paddingHorizontal="16dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="100dp" />
+
+    </FrameLayout>
 
 </LinearLayout>
-

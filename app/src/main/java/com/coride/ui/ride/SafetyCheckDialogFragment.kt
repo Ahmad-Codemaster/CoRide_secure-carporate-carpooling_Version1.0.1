@@ -6,24 +6,25 @@ import android.os.CountDownTimer
 import android.view.View
 import android.widget.TextView
 import android.widget.Toast
-import androidx.fragment.app.DialogFragment
-import com.google.android.material.button.MaterialButton
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import android.view.LayoutInflater
+import android.view.ViewGroup
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.coride.R
 import com.coride.data.repository.MockDataRepository
 import com.coride.ui.common.SpringPhysicsHelper
 import com.coride.utils.EmailNotificationHelper
 import com.coride.utils.SmsSafetyHelper
+import com.google.android.material.button.MaterialButton
 
 /**
- * "Are You OK?" Safety Check dialog.
+ * "Are You OK?" Safety Check Bottom Sheet.
  * Appears when the ride stops moving for too long.
  *
  * - "I'm OK" → Dismisses
- * - "Help" → SOS triggered, email to admin, SMS to emergency contacts
- * - Auto-alert after 30 seconds if no response
+ * - "Help" → SOS triggered instantly
+ * - Auto-alert after 15 seconds if no response
  */
-class SafetyCheckDialogFragment : DialogFragment() {
+class SafetyCheckDialogFragment : BottomSheetDialogFragment() {
 
     private var countDownTimer: CountDownTimer? = null
     private var rideId: String = ""
@@ -45,38 +46,31 @@ class SafetyCheckDialogFragment : DialogFragment() {
         }
     }
 
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        return inflater.inflate(R.layout.dialog_safety_check, container, false)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        
         rideId = arguments?.getString("ride_id") ?: "demo_ride"
         lastKnownLat = arguments?.getDouble("lat") ?: 0.0
         lastKnownLng = arguments?.getDouble("lng") ?: 0.0
 
-        val view = layoutInflater.inflate(R.layout.dialog_safety_check, null)
         setupView(view)
-
-        val dialog = MaterialAlertDialogBuilder(requireContext())
-            .setView(view)
-            .create()
-
-        dialog.window?.apply {
-            setBackgroundDrawable(android.graphics.drawable.ColorDrawable(android.graphics.Color.TRANSPARENT))
-        }
-        dialog.setCanceledOnTouchOutside(false)
-        dialog.setCancelable(false)
-
-        return dialog
     }
 
     private fun setupView(view: View) {
         val tvTimer = view.findViewById<TextView>(R.id.tvSafetyTimer)
         val btnOk = view.findViewById<MaterialButton>(R.id.btnSafetyOk)
         val btnHelp = view.findViewById<MaterialButton>(R.id.btnSafetyHelp)
-
-        // Spring entrance animations
         val icon = view.findViewById<View>(R.id.ivSafetyIcon)
+
+        // ── Professional Flow ──
         SpringPhysicsHelper.springScale(icon, 1f, 800f, 0.45f, startDelay = 100L)
 
-        // Start 30-second countdown. If no response, auto-trigger SOS.
-        countDownTimer = object : CountDownTimer(30_000, 1_000) {
+        // Start 15-second countdown as requested
+        countDownTimer = object : CountDownTimer(15_000, 1_000) {
             override fun onTick(millisUntilFinished: Long) {
                 val seconds = (millisUntilFinished / 1000).toInt()
                 tvTimer.text = "Auto-alerting in ${seconds}s"

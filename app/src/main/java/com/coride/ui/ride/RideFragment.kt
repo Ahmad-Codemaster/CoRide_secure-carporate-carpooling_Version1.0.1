@@ -130,6 +130,8 @@ class RideFragment : Fragment() {
     private fun setupButtons(view: View, driverName: String, driverPhone: String, vehicleInfo: String, plateNumber: String, destName: String, fare: Double, driverRating: Float) {
         val fabShare = view.findViewById<FloatingActionButton>(R.id.fabShare)
         val fabSos = view.findViewById<FloatingActionButton>(R.id.fabSos)
+        val fabSosInfo = view.findViewById<FloatingActionButton>(R.id.fabSosInfo)
+        val cvSosInfoPopup = view.findViewById<View>(R.id.cvSosInfoPopup)
         val btnActionRide = view.findViewById<MaterialButton>(R.id.btnCancelRide)
 
         view.findViewById<ImageView>(R.id.btnCall).setOnClickListener {
@@ -150,12 +152,24 @@ class RideFragment : Fragment() {
         }
 
         fabSos.setOnClickListener {
-            val safetyDialog = SafetyCheckDialogFragment.newInstance(
+            val sosDialog = SosDialogFragment.newInstance(
                 rideId, 
                 currentDriverPosition?.latitude ?: 0.0, 
                 currentDriverPosition?.longitude ?: 0.0
             )
-            safetyDialog.show(childFragmentManager, "sos_dialog")
+            sosDialog.show(childFragmentManager, "sos_dialog")
+        }
+
+        fabSosInfo.setOnClickListener {
+            SpringPhysicsHelper.springPressFeedback(it)
+            if (cvSosInfoPopup.visibility == View.VISIBLE) {
+                cvSosInfoPopup.animate().alpha(0f).translationX(20f).setDuration(200).withEndAction { cvSosInfoPopup.visibility = View.GONE }.start()
+            } else {
+                cvSosInfoPopup.visibility = View.VISIBLE
+                cvSosInfoPopup.alpha = 0f
+                cvSosInfoPopup.translationX = 20f
+                cvSosInfoPopup.animate().alpha(1f).translationX(0f).setDuration(300).setInterpolator(android.view.animation.OvershootInterpolator()).start()
+            }
         }
 
         btnActionRide.setOnClickListener {
@@ -207,6 +221,7 @@ class RideFragment : Fragment() {
 
         SpringPhysicsHelper.springFabEntrance(fabShare, delay = 200L)
         SpringPhysicsHelper.springFabEntrance(fabSos, delay = 300L)
+        SpringPhysicsHelper.springFabEntrance(fabSosInfo, delay = 400L)
     }
 
     // ── Map Setup ──

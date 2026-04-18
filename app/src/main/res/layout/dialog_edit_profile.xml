@@ -5,7 +5,19 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:padding="24dp"
-    android:background="@drawable/bg_bottom_sheet">
+    android:background="@drawable/bg_bottom_sheet"
+    android:paddingTop="@dimen/spacing_md"
+    android:paddingBottom="@dimen/spacing_xl"
+    android:paddingHorizontal="@dimen/spacing_lg">
+
+    <!-- Professional Drag Handle -->
+    <View
+        android:layout_width="32dp"
+        android:layout_height="4dp"
+        android:layout_gravity="center"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/indicator_m3_drag"
+        android:alpha="0.6" />
 
     <TextView
         android:layout_width="wrap_content"

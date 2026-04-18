@@ -35,17 +35,7 @@
             android:alpha="0.8" />
     </LinearLayout>
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btnSosNotifyWhatsApp"
-        android:layout_width="wrap_content"
-        android:layout_height="36dp"
-        android:text="Notify"
-        android:textSize="12sp"
-        app:icon="@drawable/ic_bolt"
-        app:iconSize="14dp"
-        app:iconPadding="4dp"
-        style="@style/Widget.Material3.Button.TonalButton"
-        app:cornerRadius="@dimen/shape_small" />
+    <!-- Individual buttons removed to focus on NOTIFY ALL -->
 
 </LinearLayout>
 

@@ -13,17 +13,15 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.coride.R
+import com.coride.data.model.RideStatus
 import com.coride.data.repository.MockDataRepository
 import com.coride.ui.common.SpringPhysicsHelper
 import com.coride.ui.verification.VerificationPopupDialogFragment
 import kotlinx.coroutines.launch
 
 class HomeFragment : Fragment() {
-
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_home, container, false)
@@ -35,7 +33,7 @@ class HomeFragment : Fragment() {
         setupHeader(view)
         setupSearchBar(view)
         setupQuickActions(view)
-        setupRecentPlaces(view)
+        setupRecentRides(view)
         setupSavedPlaceButtons(view)
         updateDynamicContext(view)
         setupScrollEffects(view)
@@ -54,10 +52,7 @@ class HomeFragment : Fragment() {
         val fabWeather = view.findViewById<FloatingActionButton>(R.id.fabWeatherHome)
         val cvWeatherPopup = view.findViewById<View>(R.id.cvWeatherPopupHome)
         val layoutWeatherDays = view.findViewById<LinearLayout>(R.id.layoutWeatherDaysHome)
-        val ivGlow = view.findViewById<View>(R.id.ivWeatherGlowHome)
 
-        // Weather Outline (Static Blue)
-        // Animation removed as requested.
         lifecycleScope.launch {
             try {
                 // Lahore Default Coords
@@ -73,7 +68,6 @@ class HomeFragment : Fragment() {
                     tvTemp.text = weather.temp
                     ivIcon.setImageResource(weather.iconRes)
                     
-                    // Highlight Present Day (First item)
                     if (index == 0) {
                         row.setBackgroundResource(R.drawable.bg_weather_today)
                         tvDay.setTextColor(android.graphics.Color.WHITE)
@@ -91,7 +85,6 @@ class HomeFragment : Fragment() {
         fabWeather.setOnClickListener {
             SpringPhysicsHelper.springPressFeedback(it)
             if (cvWeatherPopup.visibility == View.VISIBLE) {
-                // Animate Out (Slide Down)
                 cvWeatherPopup.animate()
                     .alpha(0f)
                     .translationY(20f)
@@ -101,7 +94,6 @@ class HomeFragment : Fragment() {
                     .withEndAction { cvWeatherPopup.visibility = View.GONE }
                     .start()
             } else {
-                // Animate In (Slide Up)
                 cvWeatherPopup.visibility = View.VISIBLE
                 cvWeatherPopup.alpha = 0f
                 cvWeatherPopup.translationY = 40f
@@ -124,18 +116,16 @@ class HomeFragment : Fragment() {
         val user = MockDataRepository.getCurrentUser()
         view.findViewById<TextView>(R.id.tvUserName).text = user.name
         view.findViewById<View>(R.id.btnToggleMap).setOnClickListener {
+            SpringPhysicsHelper.springPressFeedback(it)
             findNavController().navigate(R.id.action_home_to_home_map)
         }
         
-        view.findViewById<View>(R.id.ivUserAvatar).setOnClickListener {
+        view.findViewById<View>(R.id.ivUserAvatarCard).setOnClickListener {
+            SpringPhysicsHelper.springPressFeedback(it)
             findNavController().navigate(R.id.action_home_to_profile)
         }
     }
 
-    /**
-     * Gate critical riding actions behind verification.
-     * Returns true if user is verified and can proceed.
-     */
     private fun requireVerification(onVerified: (() -> Unit)? = null): Boolean {
         if (MockDataRepository.isUserVerified()) {
             return true
@@ -148,27 +138,29 @@ class HomeFragment : Fragment() {
     }
 
     private fun playEntranceAnimations(view: View) {
+        val spendingCard = view.findViewById<View>(R.id.spendingCard)
         val searchCard = view.findViewById<View>(R.id.searchCard)
         val quickActions = view.findViewById<View>(R.id.quickActionsGrid)
-        val safetyBanner = view.findViewById<View>(R.id.safetyBanner)
-        val destinationsCard = view.findViewById<View>(R.id.destinationsCard)
+        val layoutRecentRides = view.findViewById<View>(R.id.layoutRecentRides)
         val savedAddresses = view.findViewById<View>(R.id.savedAddressesSection)
-        val background = view.findViewById<View>(R.id.ivHomeBackground)
 
-        // Background fade
-        background.alpha = 0f
-        background.animate().alpha(1f).setDuration(1000).start()
+        // Reset states for spring entrance
+        val views = listOf(spendingCard, searchCard, quickActions, layoutRecentRides, savedAddresses)
+        views.forEach { 
+            it?.alpha = 0f
+            it?.translationY = 100f
+        }
 
-        // Sequencing animations for a premium "cascade" effect
-        SpringPhysicsHelper.springSlideUpFadeIn(searchCard, 550f, 0.75f, startDelay = 200L)
-        SpringPhysicsHelper.springSlideUpFadeIn(quickActions, 520f, 0.78f, startDelay = 350L)
-        SpringPhysicsHelper.springSlideUpFadeIn(safetyBanner, 500f, 0.80f, startDelay = 500L)
-        SpringPhysicsHelper.springSlideUpFadeIn(destinationsCard, 480f, 0.82f, startDelay = 650L)
-        SpringPhysicsHelper.springSlideUpFadeIn(savedAddresses, 450f, 0.85f, startDelay = 800L)
+        SpringPhysicsHelper.staggerSpringEntrance(
+            views.filterNotNull(),
+            staggerDelayMs = 120L,
+            stiffness = 600f,
+            dampingRatio = 0.72f
+        )
     }
 
     private fun setupQuickActions(view: View) {
-        view.findViewById<View>(R.id.actionRideNow).setOnClickListener {
+        view.findViewById<View>(R.id.actionRideNow)?.setOnClickListener {
             SpringPhysicsHelper.springPressFeedback(it)
             it.postDelayed({
                 if (requireVerification()) {
@@ -177,57 +169,89 @@ class HomeFragment : Fragment() {
             }, 100)
         }
 
-        view.findViewById<View>(R.id.actionSchedule).setOnClickListener {
+        view.findViewById<View>(R.id.actionBookNow)?.setOnClickListener {
+            SpringPhysicsHelper.springPressFeedback(it)
+            it.postDelayed({
+                if (requireVerification()) {
+                    findNavController().navigate(R.id.action_home_to_search)
+                }
+            }, 100)
+        }
+
+        view.findViewById<View>(R.id.actionSchedule)?.setOnClickListener {
             SpringPhysicsHelper.springPressFeedback(it)
             Toast.makeText(requireContext(), "Scheduling is coming soon!", Toast.LENGTH_SHORT).show()
-        }
-
-        view.findViewById<View>(R.id.actionSecurity).setOnClickListener {
-            SpringPhysicsHelper.springPressFeedback(it)
-            findNavController().navigate(R.id.action_home_to_profile) // Example routing
-        }
-
-        view.findViewById<View>(R.id.btnLearnMoreSafety).setOnClickListener {
-            Toast.makeText(requireContext(), "Safety is our #1 priority.", Toast.LENGTH_SHORT).show()
         }
     }
 
     private fun setupScrollEffects(view: View) {
         val scrollView = view.findViewById<androidx.core.widget.NestedScrollView>(R.id.homeContentScroll)
-        val header = view.findViewById<View>(R.id.homeHeader)
-        val background = view.findViewById<View>(R.id.ivHomeBackground)
-        
-        val searchCard = view.findViewById<View>(R.id.searchCard)
-        val quickActions = view.findViewById<View>(R.id.quickActionsGrid)
-        val safetyBanner = view.findViewById<View>(R.id.safetyBanner)
+        val headerPill = view.findViewById<com.google.android.material.card.MaterialCardView>(R.id.headerPill)
+        val avatarCard = view.findViewById<View>(R.id.ivUserAvatarCard)
+        val tvGreeting = view.findViewById<View>(R.id.tvGreeting)
+        val tvUserName = view.findViewById<View>(R.id.tvUserName)
+        val btnMap = view.findViewById<View>(R.id.btnToggleMap)
+        val spendingCard = view.findViewById<View>(R.id.spendingCard)
+
+        // Threshold for full condensation
+        val scrollThreshold = 100f
 
         scrollView.setOnScrollChangeListener { _, _, scrollY, _, _ ->
-            // Progressive Content Fading as they hit the top bound
-            // Each item has a slightly different threshold for a staggered "feel good" transition
+            val factor = (scrollY.toFloat() / scrollThreshold).coerceIn(0f, 1f)
+
+            // 1. Stable Header Morphing (95% Opacity White as requested)
+            // Background: Transparent -> 95% White (#F2FFFFFF)
+            val alpha = (factor * 242).toInt() // 95% of 255 is approx 242
+            headerPill?.setCardBackgroundColor(android.graphics.Color.argb(alpha, 255, 255, 255))
             
-            // Search Card Fades first
-            searchCard.alpha = (1f - (scrollY / 80f)).coerceIn(0f, 1f)
+            // Corner Radius morphing: 0dp -> 100dp
+            val radius = factor * 100f * resources.displayMetrics.density
+            headerPill?.radius = radius
             
-            // Grid Fades a bit later
-            quickActions.alpha = (1f - ((scrollY - 60f) / 100f)).coerceIn(0f, 1f)
+            // Elevation for shadow depth
+            headerPill?.cardElevation = factor * 4f * resources.displayMetrics.density
             
-            // Safety Banner Fades last in the top block
-            safetyBanner.alpha = (1f - ((scrollY - 140f) / 100f)).coerceIn(0f, 1f)
+            // Horizontal Margins: 0dp -> 16dp
+            val margin = (factor * 16f * resources.displayMetrics.density).toInt()
+            val topMargin = (factor * 8f * resources.displayMetrics.density).toInt()
+            val lp = headerPill?.layoutParams as? ViewGroup.MarginLayoutParams
+            lp?.setMargins(margin, topMargin, margin, 0)
+            headerPill?.layoutParams = lp
+
+            // 2. Element Shrinking (Stays Sharp)
+            val avatarScale = 1f - (factor * 0.25f)
+            avatarCard?.scaleX = avatarScale
+            avatarCard?.scaleY = avatarScale
+            
+            val btnScale = 1f - (factor * 0.15f)
+            btnMap?.scaleX = btnScale
+            btnMap?.scaleY = btnScale
+            
+            // 3. Subtle Translation
+            headerPill?.translationY = factor * 5f * resources.displayMetrics.density
+
+            // 4. Parallax Depth for Spending Card
+            spendingCard?.translationY = scrollY * 0.35f
         }
     }
 
     private fun updateDynamicContext(view: View) {
         val user = MockDataRepository.getCurrentUser()
         val microWidget = view.findViewById<TextView>(R.id.tvHomeMicroWidget)
-        val safetyStats = view.findViewById<TextView>(R.id.tvSafetyStats)
+        val tvTotalSpending = view.findViewById<TextView>(R.id.tvTotalSpending)
 
-        microWidget.text = "Hi ${user.name.split(" ").first()}, Start your new journey here"
-        safetyStats.text = "98% Drivers Verified Today"
+        microWidget?.text = "Hi ${user.name.split(" ").first()}, Start your new journey here"
+
+        val completedRides = MockDataRepository.getRideHistory().filter { it.status == RideStatus.COMPLETED }
+        val totalAmount = completedRides.sumOf { it.finalFare }
+        
+        // Format to decimal
+        tvTotalSpending?.text = String.format("$%.2f", totalAmount)
     }
 
     private fun setupSearchBar(view: View) {
         val searchCard = view.findViewById<View>(R.id.searchCard)
-        searchCard.setOnClickListener {
+        searchCard?.setOnClickListener {
             SpringPhysicsHelper.springPressFeedback(it)
             it.postDelayed({
                 if (requireVerification {
@@ -239,28 +263,45 @@ class HomeFragment : Fragment() {
         }
     }
 
-    private fun setupRecentPlaces(view: View) {
-        val rvRecent = view.findViewById<RecyclerView>(R.id.rvRecentPlaces)
-        val recentPlaces = MockDataRepository.getRecentPlaces().take(3)
+    private fun setupRecentRides(view: View) {
+        val layoutRecentRides = view.findViewById<LinearLayout>(R.id.layoutRecentRides)
+        val tvNoRides = view.findViewById<TextView>(R.id.tvNoRides)
+        
+        view.findViewById<View>(R.id.tvViewAllHistory)?.setOnClickListener {
+            SpringPhysicsHelper.springPressFeedback(it)
+            it.postDelayed({
+                findNavController().navigate(R.id.action_home_to_history)
+            }, 100)
+        }
 
-        rvRecent.layoutManager = LinearLayoutManager(requireContext())
-        rvRecent.adapter = PlaceAdapter(recentPlaces) { place ->
-            if (requireVerification {
-                val bundle = bundleOf(
-                    "destination_name" to place.name,
-                    "destination_address" to place.address,
-                    "destination_lat" to place.latitude,
-                    "destination_lng" to place.longitude
-                )
-                findNavController().navigate(R.id.action_home_to_booking, bundle)
-            }) {
-                val bundle = bundleOf(
-                    "destination_name" to place.name,
-                    "destination_address" to place.address,
-                    "destination_lat" to place.latitude,
-                    "destination_lng" to place.longitude
-                )
-                findNavController().navigate(R.id.action_home_to_booking, bundle)
+        val recentRides = MockDataRepository.getRideHistory().filter { it.status == RideStatus.COMPLETED }.take(2)
+
+        if (recentRides.isEmpty()) {
+            tvNoRides?.visibility = View.VISIBLE
+        } else {
+            tvNoRides?.visibility = View.GONE
+            for (ride in recentRides) {
+                val item = LayoutInflater.from(requireContext()).inflate(R.layout.item_recent_ride_home, layoutRecentRides, false)
+                
+                val tvRoute = item.findViewById<TextView>(R.id.tvRideRoute)
+                val tvDate = item.findViewById<TextView>(R.id.tvRideDate)
+                val tvPrice = item.findViewById<TextView>(R.id.tvRidePrice)
+                
+                // Assuming format: Downtown → Airport
+                val origin = ride.pickup.name.takeIf { it.isNotBlank() } ?: "Origin"
+                val dest = ride.destination.name.takeIf { it.isNotBlank() } ?: "Destination"
+                tvRoute.text = "$origin → $dest"
+                tvDate.text = ride.date
+                tvPrice.text = String.format("$%.0f", ride.finalFare)
+                
+                item.setOnClickListener {
+                    SpringPhysicsHelper.springPressFeedback(it)
+                    it.postDelayed({
+                        findNavController().navigate(R.id.action_home_to_history)
+                    }, 100)
+                }
+                
+                layoutRecentRides?.addView(item)
             }
         }
     }
@@ -270,8 +311,11 @@ class HomeFragment : Fragment() {
         val home = savedPlaces.firstOrNull { it.type == com.coride.data.model.PlaceType.HOME }
         val work = savedPlaces.firstOrNull { it.type == com.coride.data.model.PlaceType.WORK }
 
-        view.findViewById<View>(R.id.btnAddAddress)?.setOnClickListener {
-            findNavController().navigate(R.id.action_home_to_home_map)
+        view.findViewById<View>(R.id.btnAddAddress)?.setOnClickListener { v ->
+            SpringPhysicsHelper.springPressFeedback(v)
+            v.postDelayed({
+                findNavController().navigate(R.id.action_home_to_home_map)
+            }, 100)
         }
 
         view.findViewById<View>(R.id.btnHome)?.setOnClickListener { v ->
@@ -323,8 +367,5 @@ class HomeFragment : Fragment() {
                 }, 100)
             }
         }
-        }
     }
-
-
-
+}

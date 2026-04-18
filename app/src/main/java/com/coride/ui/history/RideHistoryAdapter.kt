@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.coride.ui.common.SpringPhysicsHelper
 import com.coride.R
 import com.coride.data.model.Ride
 import com.coride.data.model.RideStatus
@@ -24,6 +25,7 @@ class RideHistoryAdapter(
     }
 
     inner class RideViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+        val cardRide: View = view.findViewById(R.id.cardRideHistory)
         val tvDate: TextView = view.findViewById(R.id.tvRideDate)
         val tvPickup: TextView = view.findViewById(R.id.tvPickup)
         val tvDest: TextView = view.findViewById(R.id.tvDest)
@@ -42,16 +44,29 @@ class RideHistoryAdapter(
             val farePrefix = itemView.resources.getString(R.string.currency_symbol)
             tvFare.text = "$farePrefix ${ride.finalFare.toInt()}"
 
+            cardRide.setOnClickListener {
+                SpringPhysicsHelper.springPressFeedback(it)
+            }
+
             btnBookAgain.setOnClickListener {
-                Toast.makeText(itemView.context, "🚖 Book Again feature is coming soon!", Toast.LENGTH_SHORT).show()
+                SpringPhysicsHelper.springPressFeedback(it)
+                it.postDelayed({
+                    Toast.makeText(itemView.context, "🚖 Book Again feature is coming soon!", Toast.LENGTH_SHORT).show()
+                }, 100)
             }
 
             btnViewReceipt.setOnClickListener {
-                showReceiptDialog(ride)
+                SpringPhysicsHelper.springPressFeedback(it)
+                it.postDelayed({
+                    showReceiptDialog(ride)
+                }, 100)
             }
 
             btnDelete.setOnClickListener {
-                showDeleteConfirmation(ride)
+                SpringPhysicsHelper.springPressFeedback(it)
+                it.postDelayed({
+                    showDeleteConfirmation(ride)
+                }, 100)
             }
         }
 

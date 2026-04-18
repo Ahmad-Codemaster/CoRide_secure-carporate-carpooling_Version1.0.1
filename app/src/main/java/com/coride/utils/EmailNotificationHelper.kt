@@ -101,11 +101,10 @@ object EmailNotificationHelper {
     fun sendSosAlert(user: User, rideId: String, lat: Double, lng: Double) {
         val subject = "🆘 EMERGENCY SOS: ${user.name}"
         
-        val projectRef = "ollduovaiqlcmmqebliv"
-        val storageUrl = "https://$projectRef.supabase.co/storage/v1/object/public/Tracker/index.html"
-        val proxyPrefix = "https://htmlpreview.github.io/?"
+        // 🚀 LIVE FIXED: Hosted on GitHub Pages for the board presentation
+        val baseUrl = "https://ahmad-codemaster.github.io/CoRide_secure-carporate-carpooling_Version1.0.1/live_tracker.html"
         // Including lat/lng for instant SOS visualization in admin dashboard
-        val liveLink = "$proxyPrefix$storageUrl&ride_id=$rideId&lat=$lat&lng=$lng"
+        val liveLink = "$baseUrl?ride_id=$rideId&lat=$lat&lng=$lng"
         val googleMapsLink = "https://maps.google.com/?q=$lat,$lng"
 
         val body = """

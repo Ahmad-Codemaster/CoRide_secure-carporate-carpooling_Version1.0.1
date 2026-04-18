@@ -48,10 +48,10 @@ dependencies {
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
     implementation("androidx.recyclerview:recyclerview:1.3.2")
 
-    // Material Design 3 Expressive (1.13.0 — spring physics tokens)
-    implementation("com.google.android.material:material:1.13.0-alpha11")
+    // Material Design 3
+    implementation("com.google.android.material:material:1.12.0")
 
-    // Spring-physics motion (M3 Expressive DynamicAnimation)
+    // Spring-physics motion (DynamicAnimation)
     implementation("androidx.dynamicanimation:dynamicanimation-ktx:1.0.0-alpha03")
     implementation("androidx.dynamicanimation:dynamicanimation:1.0.0")
 
@@ -70,6 +70,9 @@ dependencies {
     // Google Maps & Location
     implementation("com.google.android.gms:play-services-maps:18.2.0")
     implementation("com.google.android.gms:play-services-location:21.0.1")
+
+    // Google Places SDK (Search & Autocomplete)
+    implementation("com.google.android.libraries.places:places:3.2.0")
 
     // Image Loading
     implementation("com.github.bumptech.glide:glide:4.16.0")

@@ -53,7 +53,8 @@ class ProfileFragment : Fragment() {
         }
 
         view.findViewById<View>(R.id.btnSettings)?.setOnClickListener {
-            SettingsDialog().show(childFragmentManager, "settings_dialog")
+            SpringPhysicsHelper.springPressFeedback(it)
+            showSettings()
         }
 
         view.findViewById<View>(R.id.btnSecurityCenter)?.setOnClickListener {
@@ -162,12 +163,15 @@ class ProfileFragment : Fragment() {
         tvRole?.visibility = View.VISIBLE
     }
 
+    private fun showSettings() {
+        SettingsBottomSheet().show(childFragmentManager, "settings_sheet")
+    }
+
     private fun showEditProfileDialog() {
-        val dialog = EditProfileDialog()
-        dialog.onProfileUpdated = {
+        val editBottomSheet = EditProfileBottomSheet()
+        editBottomSheet.onProfileUpdated = {
             this.view?.let { root -> populateUserData(root, MockDataRepository.getCurrentUser()) }
         }
-        dialog.show(childFragmentManager, "edit_profile_dialog")
+        editBottomSheet.show(childFragmentManager, "edit_profile_sheet")
     }
 }
-

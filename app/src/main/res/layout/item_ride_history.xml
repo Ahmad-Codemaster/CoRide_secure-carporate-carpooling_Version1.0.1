@@ -1,182 +1,171 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/cardRideHistory"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginHorizontal="@dimen/spacing_md"
-    android:layout_marginVertical="@dimen/spacing_sm"
-    app:cardCornerRadius="@dimen/shape_large"
-    app:cardElevation="@dimen/elevation_none"
-    app:strokeColor="@color/outline_variant"
-    app:strokeWidth="1dp"
-    app:cardBackgroundColor="@color/surface_container_lowest">
+    android:layout_marginVertical="8sp"
+    app:cardBackgroundColor="@color/accent_light"
+    app:cardCornerRadius="20dp"
+    app:cardElevation="2dp"
+    app:strokeColor="#e2e8f0"
+    app:strokeWidth="1dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="@dimen/spacing_md">
+        android:padding="16dp">
 
-        <!-- Header: Date and Price -->
+        <!-- Top Row: Date and Delete -->
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <ImageView
-                android:id="@+id/ivDateIcon"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:layout_centerVertical="true"
-                android:src="@drawable/ic_calendar"
-                app:tint="@color/on_surface_variant" />
-
-            <TextView
-                android:id="@+id/tvRideDate"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_toEndOf="@id/ivDateIcon"
-                android:layout_marginStart="@dimen/spacing_sm"
-                android:layout_centerVertical="true"
-                android:text="Today, 2:30 PM"
-                android:textColor="@color/on_surface_variant"
-                android:textSize="@dimen/text_label_large" />
-
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_centerVertical="true"
-                android:orientation="horizontal"
-                android:gravity="center_vertical">
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    app:cardCornerRadius="16dp"
+                    app:cardBackgroundColor="#F1F5F9"
+                    app:cardElevation="0dp"
+                    app:strokeWidth="0dp">
+                    <ImageView
+                        android:layout_width="16dp"
+                        android:layout_height="16dp"
+                        android:layout_gravity="center"
+                        android:src="@drawable/ic_calendar"
+                        app:tint="#64748b" />
+                </com.google.android.material.card.MaterialCardView>
 
                 <TextView
-                    android:id="@+id/tvRideFare"
+                    android:id="@+id/tvRideDate"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="₨ 1,250"
-                    android:textColor="@color/on_surface"
-                    android:textSize="@dimen/text_title_large"
-                    android:fontFamily="sans-serif-bold" />
+                    android:layout_marginStart="10dp"
+                    android:text="Today, 2:30 PM"
+                    android:textColor="#64748b"
+                    android:textSize="12sp"
+                    android:fontFamily="sans-serif-medium" />
+            </LinearLayout>
 
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/btnDeleteRideCard"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_alignParentEnd="true"
+                app:cardCornerRadius="16dp"
+                app:cardBackgroundColor="#FEF2F2"
+                app:cardElevation="0dp"
+                app:strokeWidth="0dp">
                 <ImageView
                     android:id="@+id/btnDeleteRide"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:layout_marginStart="@dimen/spacing_sm"
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:layout_gravity="center"
                     android:src="@drawable/ic_delete"
-                    android:padding="4dp"
-                    android:contentDescription="Delete"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    app:tint="@color/error" />
-            </LinearLayout>
+                    app:tint="#EF4444" />
+            </com.google.android.material.card.MaterialCardView>
         </RelativeLayout>
 
-        <!-- Sub-header: Brand and Duration -->
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/coride_brand"
-                android:textColor="@color/primary"
-                android:textSize="@dimen/text_label_medium"
-                android:fontFamily="sans-serif-medium" />
-
-            <TextView
-                android:id="@+id/tvDuration"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:text="12 min"
-                android:textColor="@color/on_surface_variant"
-                android:textSize="@dimen/text_label_small" />
-        </RelativeLayout>
-
-        <!-- Route Section: Vertical Line and Addresses -->
+        <!-- Route Section -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/spacing_lg"
-            android:orientation="horizontal">
+            android:layout_marginTop="16dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
 
-            <!-- Route Indicator (Vertical Dots/Line) -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                app:cardCornerRadius="24dp"
+                app:cardBackgroundColor="#EFF6FF"
+                app:cardElevation="0dp"
+                app:strokeWidth="0dp">
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/location"
+                    app:tint="#3B82F6" />
+            </com.google.android.material.card.MaterialCardView>
+
             <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:gravity="center_horizontal"
-                android:orientation="vertical"
-                android:paddingTop="6dp"
-                android:paddingBottom="6dp">
-
-                <View
-                    android:layout_width="8dp"
-                    android:layout_height="8dp"
-                    android:background="@drawable/bg_circle_primary" />
-
-                <View
-                    android:layout_width="1dp"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"
-                    android:layout_marginVertical="4dp"
-                    android:background="@color/outline_variant" />
-
-                <View
-                    android:layout_width="8dp"
-                    android:layout_height="8dp"
-                    android:background="@drawable/bg_circle_primary"
-                    android:backgroundTint="@color/primary_dark" />
-            </LinearLayout>
-
-            <!-- Address Details -->
-            <LinearLayout
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/spacing_md"
+                android:layout_weight="1"
+                android:layout_marginStart="16dp"
                 android:orientation="vertical">
-
-                <!-- Pickup -->
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/pickup_label"
-                    android:textColor="@color/on_surface_variant"
-                    android:textSize="@dimen/text_label_small" />
 
                 <TextView
                     android:id="@+id/tvPickup"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="2dp"
-                    android:text="123 Main Street"
-                    android:textColor="@color/on_surface"
-                    android:textSize="@dimen/text_body_medium"
+                    android:text="Pickup Address"
+                    android:textColor="#0f172a"
+                    android:textSize="15sp"
                     android:fontFamily="sans-serif-medium"
                     android:maxLines="1"
                     android:ellipsize="end" />
 
-                <!-- Drop-off -->
-                <TextView
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/spacing_md"
-                    android:text="@string/dropoff_label"
-                    android:textColor="@color/on_surface_variant"
-                    android:textSize="@dimen/text_label_small" />
+                    android:gravity="center_vertical"
+                    android:layout_marginVertical="4dp"
+                    android:orientation="horizontal">
+                    <View
+                        android:layout_width="1dp"
+                        android:layout_height="12dp"
+                        android:background="#e2e8f0" />
+                    <ImageView
+                        android:layout_width="12dp"
+                        android:layout_height="12dp"
+                        android:layout_marginStart="4dp"
+                        android:src="@drawable/ic_chevron_right"
+                        android:rotation="90"
+                        app:tint="#cbd5e1" />
+                </LinearLayout>
 
                 <TextView
                     android:id="@+id/tvDest"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="2dp"
-                    android:text="456 Office Avenue"
-                    android:textColor="@color/on_surface"
-                    android:textSize="@dimen/text_body_medium"
+                    android:text="Destination Address"
+                    android:textColor="#0f172a"
+                    android:textSize="15sp"
                     android:fontFamily="sans-serif-medium"
                     android:maxLines="1"
                     android:ellipsize="end" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="end"
+                android:orientation="vertical">
+                <TextView
+                    android:id="@+id/tvRideFare"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="₨ 1,250"
+                    android:textColor="#0f172a"
+                    android:textSize="18sp"
+                    android:fontFamily="sans-serif-bold" />
+                <TextView
+                    android:id="@+id/tvDuration"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="12 min"
+                    android:textColor="#94a3b8"
+                    android:textSize="11sp" />
             </LinearLayout>
         </LinearLayout>
 
@@ -184,40 +173,43 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:layout_marginTop="@dimen/spacing_lg"
-            android:background="@color/surface_container_highest" />
+            android:layout_marginTop="20dp"
+            android:background="#f1f5f9" />
 
         <!-- Footer Actions -->
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginTop="@dimen/spacing_sm"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
             android:orientation="horizontal">
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnBookAgain"
-                style="@style/Widget.Material3.Button"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="44dp"
                 android:layout_weight="1"
-                android:text="@string/btn_book_again"
-                android:textSize="@dimen/text_label_large"
-                app:backgroundTint="@color/primary_dark"
-                android:textColor="@color/text_white"
-                app:cornerRadius="@dimen/shape_small" />
+                android:text="Book Again"
+                android:textAllCaps="false"
+                android:textSize="12sp"
+                app:cornerRadius="12dp"
+                app:backgroundTint="#0f172a"
+                android:fontFamily="sans-serif-medium" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnViewReceipt"
-                style="@style/Widget.Material3.Button.TextButton"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/spacing_sm"
+                android:layout_height="44dp"
+                android:layout_marginStart="12dp"
                 android:layout_weight="1"
-                android:text="@string/btn_view_receipt"
-                android:textColor="@color/on_surface"
-                android:textSize="@dimen/text_label_large"
-                app:cornerRadius="@dimen/shape_small" />
+                android:text="View Receipt"
+                android:textAllCaps="false"
+                android:textSize="12sp"
+                android:textColor="#64748b"
+                app:cornerRadius="12dp"
+                app:strokeColor="#e2e8f0"
+                app:strokeWidth="1dp"
+                android:fontFamily="sans-serif-medium" />
         </LinearLayout>
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>
-
