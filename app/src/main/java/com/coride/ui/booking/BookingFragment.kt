@@ -48,7 +48,7 @@ import java.util.Locale
 
 class BookingFragment : Fragment() {
 
-    private var selectedType = VehicleType.ECONOMY
+    private var selectedType = VehicleType.CAR
     private var currentFare = 0.0
     private var pickupLocation: LatLng? = null
     private var destinationLocation: LatLng? = null
@@ -250,15 +250,35 @@ class BookingFragment : Fragment() {
         val fabMyLocation = view.findViewById<FloatingActionButton>(R.id.fabMyLocation)
         val btnFindDriver = view.findViewById<MaterialButton>(R.id.btnFindDriver)
 
-        etFare.setText(currentFare.toInt().toString())
-        refreshFareText(tvRecommended)
+        // Vehicle Card Selection Logic
+        val cardBike = view.findViewById<com.google.android.material.card.MaterialCardView>(R.id.cardBike)
+        val cardRickshaw = view.findViewById<com.google.android.material.card.MaterialCardView>(R.id.cardRickshaw)
+        val cardCar = view.findViewById<com.google.android.material.card.MaterialCardView>(R.id.cardCar)
 
+        fun updateVehicleSelectionUI() {
+            val cards = listOf(cardBike to VehicleType.BIKE, cardRickshaw to VehicleType.RICKSHAW, cardCar to VehicleType.CAR)
+            cards.forEach { (card, type) ->
+                val isSelected = selectedType == type
+                card.strokeWidth = if (isSelected) 6 else 2
+                card.strokeColor = ContextCompat.getColor(requireContext(), 
+                    if (isSelected) R.color.primary else android.R.color.darker_gray)
+                card.cardElevation = if (isSelected) 8f else 2f
+            }
+            computeRouteAndFare()
+            etFare.setText(currentFare.toInt().toString())
+            refreshFareText(tvRecommended)
+        }
+
+        cardBike.setOnClickListener { selectedType = VehicleType.BIKE; updateVehicleSelectionUI(); SpringPhysicsHelper.springPressFeedback(it) }
+        cardRickshaw.setOnClickListener { selectedType = VehicleType.RICKSHAW; updateVehicleSelectionUI(); SpringPhysicsHelper.springPressFeedback(it) }
+        cardCar.setOnClickListener { selectedType = VehicleType.CAR; updateVehicleSelectionUI(); SpringPhysicsHelper.springPressFeedback(it) }
+
+        // Additional Controls Restore
         btnPlus.setOnClickListener {
             SpringPhysicsHelper.springPressFeedback(view.findViewById(R.id.btnPlusContainer))
             currentFare += 10
             etFare.setText(currentFare.toInt().toString())
         }
-
         btnMinus.setOnClickListener {
             if (currentFare > 50) {
                 SpringPhysicsHelper.springPressFeedback(view.findViewById(R.id.btnMinusContainer))
@@ -266,12 +286,37 @@ class BookingFragment : Fragment() {
                 etFare.setText(currentFare.toInt().toString())
             }
         }
-
         btnConfirmLocation.setOnClickListener { confirmPickedDestination() }
-
         fabMyLocation.setOnClickListener {
             SpringPhysicsHelper.springPressFeedback(it)
             fetchLiveLocation()
+        }
+
+        // Passenger Stepper Logic
+        val tvPassengerCount = view.findViewById<TextView>(R.id.tvPassengerCount)
+        var passengerCount = 1
+        
+        view.findViewById<View>(R.id.btnPlusPassenger).setOnClickListener {
+            val max = when(selectedType) {
+                VehicleType.BIKE -> 1
+                VehicleType.RICKSHAW -> 3
+                else -> 4
+            }
+            if (passengerCount < max) {
+                passengerCount++
+                tvPassengerCount.text = passengerCount.toString()
+                SpringPhysicsHelper.springPressFeedback(it)
+            } else {
+                Toast.makeText(requireContext(), "Max passengers for this vehicle reached", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        view.findViewById<View>(R.id.btnMinusPassenger).setOnClickListener {
+            if (passengerCount > 1) {
+                passengerCount--
+                tvPassengerCount.text = passengerCount.toString()
+                SpringPhysicsHelper.springPressFeedback(it)
+            }
         }
 
         btnFindDriver.setOnClickListener { btn ->
@@ -294,12 +339,15 @@ class BookingFragment : Fragment() {
                 "destination_lng" to destinationLocation!!.longitude,
                 "pickup_lat" to pickupLocation!!.latitude,
                 "pickup_lng" to pickupLocation!!.longitude,
-                "ride_type" to selectedType.name
+                "ride_type" to selectedType.name,
+                "passenger_count" to passengerCount
             )
             findNavController().navigate(R.id.action_booking_to_offers, bundle)
         }
 
-        setupServiceTypes(view, etFare, tvRecommended)
+        // Initialize UI state
+        selectedType = VehicleType.CAR
+        updateVehicleSelectionUI()
     }
 
     private fun setupSearch(view: View) {
@@ -332,7 +380,8 @@ class BookingFragment : Fragment() {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
             override fun afterTextChanged(s: android.text.Editable?) {
-                autocompleteHelper?.search(s.toString().trim()) { suggestions ->
+                val query = s.toString().trim()
+                autocompleteHelper?.search(query, pickupLocation) { suggestions ->
                     searchAdapter.updatePlaces(suggestions)
                 }
             }
@@ -345,20 +394,7 @@ class BookingFragment : Fragment() {
         }
     }
 
-    private fun setupServiceTypes(view: View, etFare: EditText, tvRecommended: TextView) {
-        val chipGroup = view.findViewById<ChipGroup>(R.id.rideTypeChipGroup)
-        chipGroup.setOnCheckedStateChangeListener { _, checkedIds ->
-            selectedType = when {
-                checkedIds.contains(R.id.chipEconomy) -> VehicleType.ECONOMY
-                checkedIds.contains(R.id.chipComfort) -> VehicleType.COMFORT
-                checkedIds.contains(R.id.chipXL) -> VehicleType.XL
-                else -> VehicleType.ECONOMY
-            }
-            computeRouteAndFare()
-            etFare.setText(currentFare.toInt().toString())
-            refreshFareText(tvRecommended)
-        }
-    }
+
 
     // ── Map Pick Destination ──
     private fun enterPickMode() {

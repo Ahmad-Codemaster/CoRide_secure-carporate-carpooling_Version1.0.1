@@ -37,6 +37,7 @@ class ProfileFragment : Fragment() {
         }
 
         view.findViewById<View>(R.id.btnVerification)?.setOnClickListener {
+            SpringPhysicsHelper.springPressFeedback(it)
             if (MockDataRepository.isUserVerified()) {
                 Toast.makeText(requireContext(), "✅ You are already verified!", Toast.LENGTH_SHORT).show()
             } else {
@@ -58,6 +59,7 @@ class ProfileFragment : Fragment() {
         }
 
         view.findViewById<View>(R.id.btnSecurityCenter)?.setOnClickListener {
+            SpringPhysicsHelper.springPressFeedback(it)
             findNavController().navigate(R.id.action_profile_to_trusted_contacts)
         }
 
@@ -73,10 +75,12 @@ class ProfileFragment : Fragment() {
         }
 
         view.findViewById<View>(R.id.btnSecuritySettings)?.setOnClickListener {
+            SpringPhysicsHelper.springPressFeedback(it)
             SecuritySettingsDialog.newInstance().show(childFragmentManager, SecuritySettingsDialog.TAG)
         }
 
         view.findViewById<View>(R.id.btnHelp)?.setOnClickListener {
+            SpringPhysicsHelper.springPressFeedback(it)
             com.google.android.material.dialog.MaterialAlertDialogBuilder(requireContext())
                 .setTitle("📞 Help & Support")
                 .setMessage(
@@ -102,6 +106,7 @@ class ProfileFragment : Fragment() {
         }
 
         view.findViewById<View>(R.id.btnAbout)?.setOnClickListener {
+            SpringPhysicsHelper.springPressFeedback(it)
             com.google.android.material.dialog.MaterialAlertDialogBuilder(requireContext())
                 .setTitle("About CoRide")
                 .setMessage("CoRide v1.0\n\nA secure, identity-verified ride-sharing platform exclusively designed for students and employees.\n\nAll drivers and riders go through mandatory background checks and institutional ID verification to ensure maximum safety on campus and commutes.")
@@ -111,6 +116,7 @@ class ProfileFragment : Fragment() {
 
         // Sign Out
         view.findViewById<MaterialButton>(R.id.btnSignOut)?.setOnClickListener {
+            SpringPhysicsHelper.springPressFeedback(it)
             com.google.android.material.dialog.MaterialAlertDialogBuilder(requireContext())
                 .setTitle("⚠️ Logout")
                 .setMessage("Are you sure you want to logout?\n\nDon't worry — your profile data, ride history, and verification status will be safely saved for when you return.")
@@ -125,6 +131,38 @@ class ProfileFragment : Fragment() {
                 .show()
         }
 
+        // --- Entrance Animations ---
+        view.viewTreeObserver.addOnGlobalLayoutListener(object : android.view.ViewTreeObserver.OnGlobalLayoutListener {
+            override fun onGlobalLayout() {
+                view.viewTreeObserver.removeOnGlobalLayoutListener(this)
+                playProfileEntranceAnimations(view)
+            }
+        })
+    }
+
+    private fun playProfileEntranceAnimations(view: View) {
+        val tvName = view.findViewById<View>(R.id.tvUserName)
+        val tvPhone = view.findViewById<View>(R.id.tvUserPhone)
+        val statsCard = view.findViewById<View>(R.id.cardProfileStats)
+        val verificationBanner = view.findViewById<View>(R.id.bannerUnverified)
+        val menuCard = view.findViewById<View>(R.id.cardProfileMenu)
+        val btnSignOut = view.findViewById<View>(R.id.btnSignOut)
+
+        val viewsToAnimate = listOf(tvName, tvPhone, statsCard, verificationBanner, menuCard, btnSignOut)
+            .filterNotNull()
+
+        // Reset to initial state (Hidden -> Ready for Spring)
+        viewsToAnimate.forEach {
+            it.alpha = 0f
+            it.translationY = 100f
+        }
+
+        SpringPhysicsHelper.staggerSpringEntrance(
+            viewsToAnimate,
+            staggerDelayMs = 95L,
+            stiffness = 550f,
+            dampingRatio = 0.78f
+        )
     }
 
     private fun updateVerificationUI(view: View) {

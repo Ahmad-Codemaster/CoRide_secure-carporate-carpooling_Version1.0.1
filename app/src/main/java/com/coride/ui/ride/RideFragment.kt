@@ -189,12 +189,16 @@ class RideFragment : Fragment() {
                                 val route = DirectionsHelper.generateRoute(pickupLocation!!, destinationLocation!!)
                                 putDouble("distance_km", route.distanceMeters / 1000.0)
                                 putInt("duration_seconds", route.durationSeconds)
-                                findNavController().navigate(R.id.action_ride_to_complete, bundle)
+                                if (findNavController().currentDestination?.id == R.id.rideFragment) {
+                                    findNavController().navigate(R.id.action_ride_to_complete, bundle)
+                                }
                             }
                         } else {
                             putDouble("distance_km", 0.0)
                             putInt("duration_seconds", 0)
-                            findNavController().navigate(R.id.action_ride_to_complete, bundle)
+                            if (findNavController().currentDestination?.id == R.id.rideFragment) {
+                                findNavController().navigate(R.id.action_ride_to_complete, bundle)
+                            }
                         }
                     }
                 }
@@ -416,14 +420,31 @@ class RideFragment : Fragment() {
 
             // Safety check: trigger at ~40% progress (simulate a stop)
             val safetyTriggerStep = (rideSteps * 0.4).toInt()
+            // Deviation Warning: trigger at ~65% progress (simulate a wrong turn)
+            val deviationTriggerStep = (rideSteps * 0.65).toInt()
+            var isDeviating = false
+            var deviationCounter = 0
 
             for (i in 0 until rideSteps) {
                 if (!isAdded) return@launch
 
-                val pos = if (currentRide.isNotEmpty()) {
+                var pos = if (currentRide.isNotEmpty()) {
                     currentRide[minOf(i, currentRide.size - 1)]
                 } else {
                     interpolateLatLng(pickupLocation!!, destinationLocation!!, i.toFloat() / rideSteps)
+                }
+
+                // Simulate Route Deviation Jitter/Offset
+                if (i == deviationTriggerStep) {
+                    isDeviating = true
+                    deviationCounter = 5 // Deviate for 5 steps
+                    showDeviationWarning()
+                }
+
+                if (isDeviating && deviationCounter > 0) {
+                    pos = LatLng(pos.latitude + 0.0005, pos.longitude + 0.0005)
+                    deviationCounter--
+                    if (deviationCounter == 0) isDeviating = false
                 }
 
                 currentDriverPosition = pos
@@ -616,6 +637,37 @@ class RideFragment : Fragment() {
                     .start()
             }
         }
+    }
+
+    private fun showDeviationWarning() {
+        val warningCard = view?.findViewById<View>(R.id.cvDeviationWarning) ?: return
+        
+        warningCard.visibility = View.VISIBLE
+        warningCard.alpha = 0f
+        warningCard.translationY = -40f
+        
+        warningCard.animate()
+            .alpha(1f)
+            .translationY(0f)
+            .setDuration(400)
+            .setInterpolator(android.view.animation.OvershootInterpolator())
+            .withEndAction {
+                // Auto-hide after 5 seconds
+                warningCard.postDelayed({
+                    if (isAdded) {
+                        warningCard.animate()
+                            .alpha(0f)
+                            .translationY(-40f)
+                            .setDuration(400)
+                            .withEndAction { warningCard.visibility = View.GONE }
+                            .start()
+                    }
+                }, 5000)
+            }
+            .start()
+            
+        // Trigger a tiny haptic or toast for additional awareness
+        Toast.makeText(requireContext(), "Safety Alert: Route change detected", Toast.LENGTH_SHORT).show()
     }
 }
 

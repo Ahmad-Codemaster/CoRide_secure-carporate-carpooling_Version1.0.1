@@ -27,7 +27,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:text="A"
-                android:textColor="@color/primary"
+                android:textColor="#2196F3"
                 android:textSize="18sp"
                 android:fontFamily="sans-serif-bold" />
         </FrameLayout>

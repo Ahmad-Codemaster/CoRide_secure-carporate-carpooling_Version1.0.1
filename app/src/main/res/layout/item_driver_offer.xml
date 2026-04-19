@@ -32,11 +32,10 @@
                 android:id="@+id/ivDriverAvatar"
                 android:layout_width="52dp"
                 android:layout_height="52dp"
-                android:src="@drawable/ic_location_pin"
+                android:src="@drawable/profile"
                 android:tint="@color/on_surface_variant"
                 android:padding="@dimen/spacing_md"
                 android:background="@color/surface_container"
-                app:shapeAppearanceOverlay="@style/ShapeAppearance.CoRide.Full"
                 android:contentDescription="Driver" />
 
             <!-- Name + Rating + Trips -->

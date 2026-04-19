@@ -1,10 +1,15 @@
 package com.coride.ui.home
 
+import android.animation.AnimatorSet
+import android.animation.ObjectAnimator
+import android.animation.ValueAnimator
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewTreeObserver
+import android.view.animation.AccelerateDecelerateInterpolator
+import android.view.animation.LinearInterpolator
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -38,6 +43,7 @@ class HomeFragment : Fragment() {
         updateDynamicContext(view)
         setupScrollEffects(view)
         setupWeatherFeature(view)
+        setupSpendingIconAnimation(view)
 
         // ── M3 Expressive entrance animations after layout ──
         view.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
@@ -367,5 +373,33 @@ class HomeFragment : Fragment() {
                 }, 100)
             }
         }
+    }
+
+    private fun setupSpendingIconAnimation(view: View) {
+        val icon = view.findViewById<ImageView>(R.id.ivPaidIcon) ?: return
+
+        // 1. Horizontal Rotation (Coin Spin)
+        val rotationAnim = ObjectAnimator.ofFloat(icon, "rotationY", 0f, 360f).apply {
+            duration = 3500
+            repeatCount = ValueAnimator.INFINITE
+            interpolator = LinearInterpolator()
+        }
+
+        // 2. Automated "Shine" Effect (Periodic Brightness/Alpha pulse)
+        val shimmerAnim = ValueAnimator.ofFloat(1.0f, 1.4f, 1.0f).apply {
+            duration = 1500
+            repeatCount = ValueAnimator.INFINITE
+            startDelay = 2000 // Shine every few seconds
+            interpolator = AccelerateDecelerateInterpolator()
+            addUpdateListener { animator ->
+                val scale = animator.animatedValue as Float
+                icon.scaleX = scale * 0.8f // Slight scale pulse too
+                icon.scaleY = scale * 0.8f
+                icon.alpha = if (scale > 1.2f) 1.0f else 0.85f
+            }
+        }
+
+        rotationAnim.start()
+        shimmerAnim.start()
     }
 }

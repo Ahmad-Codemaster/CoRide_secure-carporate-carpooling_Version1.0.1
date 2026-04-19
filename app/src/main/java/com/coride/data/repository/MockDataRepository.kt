@@ -36,7 +36,7 @@ object MockDataRepository {
             avatarUrl = "",
             rating = 4.9f,
             totalTrips = 1247,
-            vehicle = Vehicle("Toyota", "Corolla", "White", "LEA-1234", 2021, VehicleType.ECONOMY),
+            vehicle = Vehicle("Toyota", "Corolla", "White", "LEA-1234", 2021, VehicleType.CAR),
             cnicNumber = "35201-7654321-3",
             licenseNumber = "LHR-DL-2021-4567",
             verificationStatus = VerificationStatus.VERIFIED,
@@ -50,7 +50,7 @@ object MockDataRepository {
             avatarUrl = "",
             rating = 4.7f,
             totalTrips = 892,
-            vehicle = Vehicle("Honda", "Civic", "Black", "LEB-5678", 2022, VehicleType.COMFORT),
+            vehicle = Vehicle("Honda", "Civic", "Black", "LEB-5678", 2022, VehicleType.CAR),
             cnicNumber = "35202-8765432-1",
             licenseNumber = "LHR-DL-2020-8901",
             verificationStatus = VerificationStatus.VERIFIED,
@@ -64,7 +64,7 @@ object MockDataRepository {
             avatarUrl = "",
             rating = 4.8f,
             totalTrips = 2103,
-            vehicle = Vehicle("Suzuki", "Cultus", "Silver", "LEC-9012", 2020, VehicleType.ECONOMY),
+            vehicle = Vehicle("Road Prince", "70cc", "Red", "LEC-9012", 2020, VehicleType.BIKE),
             cnicNumber = "35203-9876543-5",
             licenseNumber = "LHR-DL-2019-2345",
             verificationStatus = VerificationStatus.VERIFIED,
@@ -78,7 +78,7 @@ object MockDataRepository {
             avatarUrl = "",
             rating = 4.6f,
             totalTrips = 567,
-            vehicle = Vehicle("Toyota", "Yaris", "Gray", "LED-3456", 2023, VehicleType.ECONOMY),
+            vehicle = Vehicle("Sazgar", "7-Seater", "Yellow", "LED-3456", 2023, VehicleType.RICKSHAW),
             cnicNumber = "35204-1234567-7",
             licenseNumber = "LHR-DL-2022-6789",
             verificationStatus = VerificationStatus.VERIFIED,
@@ -92,7 +92,7 @@ object MockDataRepository {
             avatarUrl = "",
             rating = 4.9f,
             totalTrips = 3456,
-            vehicle = Vehicle("Honda", "City", "White", "LEE-7890", 2022, VehicleType.COMFORT),
+            vehicle = Vehicle("Honda", "City", "White", "LEE-7890", 2022, VehicleType.CAR),
             cnicNumber = "35205-2345678-9",
             licenseNumber = "LHR-DL-2021-0123",
             verificationStatus = VerificationStatus.VERIFIED,
@@ -125,7 +125,7 @@ object MockDataRepository {
             finalFare = 380.0,
             distance = 12.5,
             duration = 25,
-            rideType = VehicleType.ECONOMY,
+            rideType = VehicleType.CAR,
             driverRating = 5f,
             date = "Today, 8:30 AM"
         ),
@@ -139,7 +139,7 @@ object MockDataRepository {
             finalFare = 250.0,
             distance = 8.3,
             duration = 18,
-            rideType = VehicleType.COMFORT,
+            rideType = VehicleType.CAR,
             driverRating = 4f,
             date = "Yesterday, 6:15 PM"
         ),
@@ -153,7 +153,7 @@ object MockDataRepository {
             finalFare = 550.0,
             distance = 18.7,
             duration = 35,
-            rideType = VehicleType.ECONOMY,
+            rideType = VehicleType.BIKE,
             driverRating = 5f,
             date = "Mar 10, 2:45 PM"
         ),
@@ -167,7 +167,7 @@ object MockDataRepository {
             finalFare = 0.0,
             distance = 15.2,
             duration = 0,
-            rideType = VehicleType.ECONOMY,
+            rideType = VehicleType.CAR,
             date = "Mar 8, 11:00 AM"
         ),
         Ride(
@@ -180,7 +180,7 @@ object MockDataRepository {
             finalFare = 220.0,
             distance = 6.1,
             duration = 14,
-            rideType = VehicleType.COMFORT,
+            rideType = VehicleType.CAR,
             driverRating = 5f,
             date = "Mar 5, 9:20 AM"
         )
@@ -376,11 +376,11 @@ object MockDataRepository {
 
     fun getRecommendedFare(distance: Double, vehicleType: VehicleType): Double {
         val baseRate = when (vehicleType) {
-            VehicleType.ECONOMY -> 25.0
-            VehicleType.COMFORT -> 35.0
-            VehicleType.XL -> 45.0
+            VehicleType.BIKE -> 15.0
+            VehicleType.RICKSHAW -> 22.0
+            VehicleType.CAR -> 35.0
         }
-        val fare = 100 + (distance * baseRate)
+        val fare = 80 + (distance * baseRate)
         return Math.round(fare / 10.0) * 10.0
     }
 

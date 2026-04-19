@@ -91,6 +91,7 @@
 
         <!-- Stats Card (Rider Level / Rating) -->
         <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardProfileStats"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="20dp"
@@ -225,6 +226,7 @@
 
         <!-- Main Menu List -->
         <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardProfileMenu"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="20dp"

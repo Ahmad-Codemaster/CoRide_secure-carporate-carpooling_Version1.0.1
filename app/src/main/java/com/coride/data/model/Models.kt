@@ -61,11 +61,11 @@ data class Vehicle(
     val color: String,
     val plateNumber: String,
     val year: Int,
-    val type: VehicleType = VehicleType.ECONOMY
+    val type: VehicleType = VehicleType.CAR
 )
 
 enum class VehicleType {
-    ECONOMY, COMFORT, XL
+    BIKE, RICKSHAW, CAR
 }
 
 data class Place(
@@ -101,7 +101,7 @@ data class Ride(
     val finalFare: Double = 0.0,
     val distance: Double = 0.0, // km
     val duration: Int = 0, // minutes
-    val rideType: VehicleType = VehicleType.ECONOMY,
+    val rideType: VehicleType = VehicleType.CAR,
     val driverRating: Float = 0f,
     val date: String = "",
     val comment: String = ""

@@ -34,10 +34,10 @@ class DriverOfferAdapter(
             tvPrice.text = "Rs. ${offer.offeredPrice.toInt()}"
             tvVehicle.text = "${offer.driver.vehicle.color} ${offer.driver.vehicle.make} ${offer.driver.vehicle.model} • ${offer.driver.vehicle.plateNumber}"
             
-            val iconRes = if (offer.driver.vehicle.type == com.coride.data.model.VehicleType.ECONOMY) {
-                R.drawable.car_economy
-            } else {
-                R.drawable.car_comfort
+            val iconRes = when (offer.driver.vehicle.type) {
+                com.coride.data.model.VehicleType.BIKE -> R.drawable.bike
+                com.coride.data.model.VehicleType.RICKSHAW -> R.drawable.rikshaw
+                else -> R.drawable.car
             }
             ivCarImage.setImageResource(iconRes)
 

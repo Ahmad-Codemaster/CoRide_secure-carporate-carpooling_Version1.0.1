@@ -42,7 +42,7 @@
                 android:layout_marginTop="20dp"
                 android:src="@drawable/ic_shield_check"
                 android:contentDescription="@string/security_shield"
-                app:tint="@color/primary" />
+                app:tint="#2196F3" />
 
             <TextView
                 android:layout_width="match_parent"

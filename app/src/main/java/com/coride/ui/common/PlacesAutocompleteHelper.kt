@@ -19,25 +19,35 @@ class PlacesAutocompleteHelper(context: Context) {
 
     /**
      * Search both local mock data and Google Places.
+     * @param location Current location to bias results (Google Maps feature)
      */
-    fun search(query: String, onResult: (List<CoRidePlace>) -> Unit) {
+    fun search(query: String, biasLocation: LatLng? = null, onResult: (List<CoRidePlace>) -> Unit) {
         if (query.isEmpty()) {
             onResult(MockDataRepository.getSavedPlaces())
             return
         }
 
-        // 1. Search Local First
+        // 1. Search Local First (Saved/Mocked)
         val localResults = MockDataRepository.searchPlaces(query)
         
         // 2. Search Google Places
         if (sessionToken == null) sessionToken = AutocompleteSessionToken.newInstance()
         
-        val request = FindAutocompletePredictionsRequest.builder()
+        val requestBuilder = FindAutocompletePredictionsRequest.builder()
             .setSessionToken(sessionToken)
             .setQuery(query)
-            .build()
 
-        placesClient.findAutocompletePredictions(request)
+        // Apply Location Biasing (The "Professional" fix)
+        // This ensures "Restaurant" shows local ones first
+        biasLocation?.let { latLng ->
+            val bias = com.google.android.libraries.places.api.model.RectangularBounds.newInstance(
+                LatLng(latLng.latitude - 0.1, latLng.longitude - 0.1),
+                LatLng(latLng.latitude + 0.1, latLng.longitude + 0.1)
+            )
+            requestBuilder.setLocationBias(bias)
+        }
+        
+        placesClient.findAutocompletePredictions(requestBuilder.build())
             .addOnSuccessListener { response ->
                 val googlePlaces = response.autocompletePredictions.map { prediction ->
                     CoRidePlace(
