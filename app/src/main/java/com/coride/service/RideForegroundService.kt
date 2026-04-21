@@ -104,6 +104,8 @@ class RideForegroundService : Service() {
     private var volumePressCount = 0
     private var lastVolumePressTime = 0L
     private val VOLUME_SOS_WINDOW_MS = 3000L
+    private val DEBOUNCE_MS = 300L
+    private var lastVolumeEventTime = 0L
     private var volumeReceiver: android.content.BroadcastReceiver? = null
 
     private var sensorManager: android.hardware.SensorManager? = null
@@ -128,12 +130,20 @@ class RideForegroundService : Service() {
         volumeReceiver = object : android.content.BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
                 val currentTime = System.currentTimeMillis()
+                
+                // --- DEBOUNCE LOGIC ---
+                // Ignore multiple system events within 300ms of a previous event
+                if (currentTime - lastVolumeEventTime < DEBOUNCE_MS) return
+                lastVolumeEventTime = currentTime
+
                 if (currentTime - lastVolumePressTime > VOLUME_SOS_WINDOW_MS) {
                     volumePressCount = 1
                 } else {
                     volumePressCount++
                 }
                 lastVolumePressTime = currentTime
+                
+                Log.d(TAG, "🔊 Volume press count: $volumePressCount")
                 
                 if (volumePressCount >= 3) {
                     Log.i(TAG, "🔊 Volume SOS Triggered!")

@@ -177,20 +177,41 @@
             });
         }
 
+        function updateMapBounds() {
+            const currentMarkers = [];
+            if (markers.user) currentMarkers.push(markers.user.getLatLng());
+            if (markers.driver) currentMarkers.push(markers.driver.getLatLng());
+            
+            // Include initial pickup if available
+            if (urlParams.get('lat')) {
+                currentMarkers.push([initLat, initLng]);
+            }
+
+            if (currentMarkers.length > 0) {
+                const group = new L.featureGroup(currentMarkers.map(p => L.marker(p)));
+                map.fitBounds(group.getBounds(), { 
+                    padding: [70, 70], 
+                    maxZoom: 16,
+                    animate: true 
+                });
+            }
+        }
+
         function updateMap(lat, lng, role) {
             const pos = [lat, lng];
             
             if (!markers[role]) {
                 markers[role] = L.marker(pos, { icon: createIcon(role) }).addTo(map);
-                if (role === 'user') map.setView(pos, 16);
             } else {
                 markers[role].setLatLng(pos);
             }
 
             if (role === 'user') {
                 polyline.addLatLng(pos);
-                map.panTo(pos);
             }
+            
+            // Smart Tracking: Auto-adjust view to show all participants
+            updateMapBounds();
             
             document.getElementById('ride-details').innerText = `Last updated: ${new Date().toLocaleTimeString()}`;
         }

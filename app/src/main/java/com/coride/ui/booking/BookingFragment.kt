@@ -4,10 +4,13 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.location.Geocoder
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
@@ -18,24 +21,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.gms.maps.CameraUpdateFactory
-import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.LatLngBounds
-import com.google.android.gms.maps.model.MarkerOptions
-import com.google.android.gms.maps.model.PolylineOptions
-import com.google.android.gms.maps.model.BitmapDescriptorFactory
-import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.google.android.material.button.MaterialButton
-import com.google.android.material.chip.ChipGroup
-import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.google.android.material.search.SearchBar
-import com.google.android.material.search.SearchView
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import com.coride.R
 import com.coride.data.model.VehicleType
 import com.coride.data.repository.MockDataRepository
@@ -44,6 +29,17 @@ import com.coride.ui.common.LocationHelper
 import com.coride.ui.common.PlacesAutocompleteHelper
 import com.coride.ui.common.SpringPhysicsHelper
 import com.coride.ui.home.PlaceAdapter
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.*
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.button.MaterialButton
+import com.google.android.material.floatingactionbutton.FloatingActionButton
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import java.util.Locale
 
 class BookingFragment : Fragment() {
@@ -61,36 +57,19 @@ class BookingFragment : Fragment() {
     private var routeJob: Job? = null
     private var autocompleteHelper: PlacesAutocompleteHelper? = null
 
-    // ── Permission Launcher ──
-    private val locationPermissionLauncher = registerForActivityResult(
-        ActivityResultContracts.RequestMultiplePermissions()
-    ) { permissions ->
-        val fineGranted = permissions[Manifest.permission.ACCESS_FINE_LOCATION] == true
-        if (fineGranted) {
-            fetchLiveLocation()
-        } else {
-            val shouldShowRationale = shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION)
-            if (!shouldShowRationale) {
-                showPermissionSettingsDialog()
-            } else {
-                Toast.makeText(requireContext(), "Location permission required for pickup", Toast.LENGTH_LONG).show()
-                val fallback = MockDataRepository.getPlaces().firstOrNull()
-                pickupLocation = fallback?.let { LatLng(it.latitude, it.longitude) }
-                view?.findViewById<TextView>(R.id.tvPickupLocation)?.text = fallback?.name ?: "Unknown"
-                pickupLocation?.let { googleMap?.animateCamera(CameraUpdateFactory.newLatLngZoom(it, 15f)) }
-            }
-        }
+    // Integrated Search Views
+    private lateinit var etBookingSearch: EditText
+    private lateinit var btnClearSearchText: View
+    private lateinit var rvIntegratedSearch: RecyclerView
+    private lateinit var searchAdapter: PlaceAdapter
+    private lateinit var behavior: BottomSheetBehavior<View>
+
+    private val locationPermissionLauncher = registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
+        if (permissions[Manifest.permission.ACCESS_FINE_LOCATION] == true) fetchLiveLocation()
     }
 
-    private val gpsResolutionLauncher = registerForActivityResult(
-        ActivityResultContracts.StartIntentSenderForResult()
-    ) { result ->
-        if (result.resultCode == android.app.Activity.RESULT_OK) {
-            fetchLiveLocation()
-        } else {
-            Toast.makeText(requireContext(), "GPS is required for accurate location", Toast.LENGTH_SHORT).show()
-            hideLoading()
-        }
+    private val gpsResolutionLauncher = registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { _ ->
+        fetchLiveLocation()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -100,325 +79,234 @@ class BookingFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Ensure bottom sheet starts Expanded
+        autocompleteHelper = PlacesAutocompleteHelper(requireContext())
+        
+        // --- Bottom Sheet Setup ---
         val sheet = view.findViewById<View>(R.id.bookingSheet)
-        val behavior = BottomSheetBehavior.from(sheet)
+        behavior = BottomSheetBehavior.from(sheet)
         behavior.state = BottomSheetBehavior.STATE_EXPANDED
-        behavior.isHideable = true
 
-        val btnBringUpSheet = view.findViewById<View>(R.id.btnBringUpSheet)
-        behavior.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
-            override fun onStateChanged(bottomSheet: View, newState: Int) {
-                if (newState == BottomSheetBehavior.STATE_HIDDEN && !isPickingDestination) {
-                    btnBringUpSheet.visibility = View.VISIBLE
-                    btnBringUpSheet.alpha = 0f
-                    btnBringUpSheet.animate().alpha(1f).setDuration(200).start()
-                } else {
-                    btnBringUpSheet.visibility = View.GONE
-                }
+        // View Bindings
+        etBookingSearch = view.findViewById(R.id.etBookingSearch)
+        btnClearSearchText = view.findViewById(R.id.btnClearSearchText)
+        rvIntegratedSearch = view.findViewById(R.id.rvIntegratedSearch)
+        val btnBack = view.findViewById<View>(R.id.btnBack)
+
+        btnBack.setOnClickListener {
+            if (rvIntegratedSearch.visibility == View.VISIBLE) {
+                closeSearchMode()
+            } else if (isPickingDestination) {
+                exitPickMode()
+            } else {
+                findNavController().navigateUp()
             }
-            override fun onSlide(bottomSheet: View, slideOffset: Float) {}
-        })
-
-        btnBringUpSheet.setOnClickListener {
-            behavior.state = BottomSheetBehavior.STATE_EXPANDED
         }
 
+        btnClearSearchText.setOnClickListener {
+            etBookingSearch.setText("")
+        }
+
+        setupIntegratedSearch(view)
+        setupUI(view)
+        setupMap()
+
         // Read destination from arguments (if coming from search)
-        val destName = arguments?.getString("destination_name") ?: ""
+        val destName = arguments?.getString("destination_name")
         val destLat = arguments?.getDouble("destination_lat") ?: 0.0
         val destLng = arguments?.getDouble("destination_lng") ?: 0.0
 
         if (destLat != 0.0 && destLng != 0.0) {
             destinationLocation = LatLng(destLat, destLng)
+            view.findViewById<TextView>(R.id.tvDestinationLocation).text = destName ?: "Destination Set"
+            etBookingSearch.setText(destName ?: "")
         }
 
-        view.findViewById<TextView>(R.id.tvPickupLocation).text = "Locating you…"
-        view.findViewById<TextView>(R.id.tvDestinationLocation).text =
-            if (destName.isNotEmpty()) destName else "Tap to set destination"
-
-        // Destination tap → open search view
-        view.findViewById<View>(R.id.tvDestinationLocation).setOnClickListener {
-            val searchView = view.findViewById<SearchView>(R.id.bookingSearchView)
-            searchView.show()
-        }
-
-        autocompleteHelper = PlacesAutocompleteHelper(requireContext())
-        setupUI(view)
-        setupMap()
-        setupSearch(view)
-
-        // Request location permission or fetch immediately
         if (LocationHelper.hasLocationPermission(requireContext())) {
             fetchLiveLocation()
         } else {
-            locationPermissionLauncher.launch(arrayOf(
-                Manifest.permission.ACCESS_FINE_LOCATION,
-                Manifest.permission.ACCESS_COARSE_LOCATION
-            ))
+            locationPermissionLauncher.launch(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION))
         }
     }
 
-    // ── Live GPS Fetch ──
-    @SuppressLint("SetTextI18n")
-    private fun fetchLiveLocation() {
-        if (!LocationHelper.hasLocationPermission(requireContext())) {
-            locationPermissionLauncher.launch(
-                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION)
-            )
-            return
-        }
+    private fun setupIntegratedSearch(view: View) {
+        val tvDest = view.findViewById<TextView>(R.id.tvDestinationLocation)
 
-        showLoading()
-
-        LocationHelper.checkLocationSettings(
-            context = requireContext(),
-            onSuccess = {
-                LocationHelper.getCurrentLocation(requireContext()) { location ->
-                    if (!isAdded) return@getCurrentLocation
-                    hideLoading()
-                    location?.let {
-                        pickupLocation = LatLng(it.latitude, it.longitude)
-
-                        // Reverse geocode for address
-                        try {
-                            val geocoder = Geocoder(requireContext(), Locale.getDefault())
-                            @Suppress("DEPRECATION")
-                            val addresses = geocoder.getFromLocation(it.latitude, it.longitude, 1)
-                            val addressText = addresses?.firstOrNull()?.let { addr ->
-                                addr.getAddressLine(0) ?: "Your Location"
-                            } ?: "Your Location"
-                            view?.findViewById<TextView>(R.id.tvPickupLocation)?.text = addressText
-                        } catch (e: Exception) {
-                            view?.findViewById<TextView>(R.id.tvPickupLocation)?.text = "Your Location"
-                        }
-
-                        googleMap?.animateCamera(CameraUpdateFactory.newLatLngZoom(pickupLocation!!, 16f))
-                        computeRouteAndFare()
-                        updateMapMarkers()
-                    } ?: run {
-                        Toast.makeText(requireContext(), "Weak GPS signal. Tap again.", Toast.LENGTH_SHORT).show()
-                    }
-                }
-            },
-            onResolutionRequired = { exception ->
-                try {
-                    val intentSenderRequest = androidx.activity.result.IntentSenderRequest.Builder(exception.resolution.intentSender).build()
-                    gpsResolutionLauncher.launch(intentSenderRequest)
-                } catch (e: Exception) {
-                    hideLoading()
-                }
-            },
-            onFailure = {
-                hideLoading()
-                Toast.makeText(requireContext(), "GPS error", Toast.LENGTH_SHORT).show()
-            }
-        )
-    }
-
-    private fun showLoading() {
-        view?.findViewById<View>(R.id.locationProgressBar)?.visibility = View.VISIBLE
-        view?.findViewById<View>(R.id.fabMyLocation)?.isEnabled = false
-        view?.findViewById<TextView>(R.id.tvPickupLocation)?.text = "Locating you…"
-    }
-
-    private fun hideLoading() {
-        view?.findViewById<View>(R.id.locationProgressBar)?.visibility = View.GONE
-        view?.findViewById<View>(R.id.fabMyLocation)?.isEnabled = true
-    }
-
-    private fun showPermissionSettingsDialog() {
-        com.google.android.material.dialog.MaterialAlertDialogBuilder(requireContext())
-            .setTitle("Location Permission Needed")
-            .setMessage("Location access is permanently denied. Please enable it in app settings to calculate fares and pickup points.")
-            .setPositiveButton("Settings") { _, _ ->
-                val intent = android.content.Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
-                    data = android.net.Uri.fromParts("package", requireContext().packageName, null)
-                }
-                startActivity(intent)
-            }
-            .setNegativeButton("Cancel", null)
-            .show()
-    }
-
-    private fun setupUI(view: View) {
-        val etFare = view.findViewById<EditText>(R.id.etFare)
-        val tvRecommended = view.findViewById<TextView>(R.id.tvRecommendedFare)
-        val btnPlus = view.findViewById<View>(R.id.btnPlus)
-        val btnMinus = view.findViewById<View>(R.id.btnMinus)
-        val btnConfirmLocation = view.findViewById<MaterialButton>(R.id.btnConfirmLocation)
-        val fabMyLocation = view.findViewById<FloatingActionButton>(R.id.fabMyLocation)
-        val btnFindDriver = view.findViewById<MaterialButton>(R.id.btnFindDriver)
-
-        // Vehicle Card Selection Logic
-        val cardBike = view.findViewById<com.google.android.material.card.MaterialCardView>(R.id.cardBike)
-        val cardRickshaw = view.findViewById<com.google.android.material.card.MaterialCardView>(R.id.cardRickshaw)
-        val cardCar = view.findViewById<com.google.android.material.card.MaterialCardView>(R.id.cardCar)
-
-        fun updateVehicleSelectionUI() {
-            val cards = listOf(cardBike to VehicleType.BIKE, cardRickshaw to VehicleType.RICKSHAW, cardCar to VehicleType.CAR)
-            cards.forEach { (card, type) ->
-                val isSelected = selectedType == type
-                card.strokeWidth = if (isSelected) 6 else 2
-                card.strokeColor = ContextCompat.getColor(requireContext(), 
-                    if (isSelected) R.color.primary else android.R.color.darker_gray)
-                card.cardElevation = if (isSelected) 8f else 2f
-            }
-            computeRouteAndFare()
-            etFare.setText(currentFare.toInt().toString())
-            refreshFareText(tvRecommended)
-        }
-
-        cardBike.setOnClickListener { selectedType = VehicleType.BIKE; updateVehicleSelectionUI(); SpringPhysicsHelper.springPressFeedback(it) }
-        cardRickshaw.setOnClickListener { selectedType = VehicleType.RICKSHAW; updateVehicleSelectionUI(); SpringPhysicsHelper.springPressFeedback(it) }
-        cardCar.setOnClickListener { selectedType = VehicleType.CAR; updateVehicleSelectionUI(); SpringPhysicsHelper.springPressFeedback(it) }
-
-        // Additional Controls Restore
-        btnPlus.setOnClickListener {
-            SpringPhysicsHelper.springPressFeedback(view.findViewById(R.id.btnPlusContainer))
-            currentFare += 10
-            etFare.setText(currentFare.toInt().toString())
-        }
-        btnMinus.setOnClickListener {
-            if (currentFare > 50) {
-                SpringPhysicsHelper.springPressFeedback(view.findViewById(R.id.btnMinusContainer))
-                currentFare -= 10
-                etFare.setText(currentFare.toInt().toString())
-            }
-        }
-        btnConfirmLocation.setOnClickListener { confirmPickedDestination() }
-        fabMyLocation.setOnClickListener {
-            SpringPhysicsHelper.springPressFeedback(it)
-            fetchLiveLocation()
-        }
-
-        // Passenger Stepper Logic
-        val tvPassengerCount = view.findViewById<TextView>(R.id.tvPassengerCount)
-        var passengerCount = 1
-        
-        view.findViewById<View>(R.id.btnPlusPassenger).setOnClickListener {
-            val max = when(selectedType) {
-                VehicleType.BIKE -> 1
-                VehicleType.RICKSHAW -> 3
-                else -> 4
-            }
-            if (passengerCount < max) {
-                passengerCount++
-                tvPassengerCount.text = passengerCount.toString()
-                SpringPhysicsHelper.springPressFeedback(it)
-            } else {
-                Toast.makeText(requireContext(), "Max passengers for this vehicle reached", Toast.LENGTH_SHORT).show()
-            }
-        }
-
-        view.findViewById<View>(R.id.btnMinusPassenger).setOnClickListener {
-            if (passengerCount > 1) {
-                passengerCount--
-                tvPassengerCount.text = passengerCount.toString()
-                SpringPhysicsHelper.springPressFeedback(it)
-            }
-        }
-
-        btnFindDriver.setOnClickListener { btn ->
-            if (pickupLocation == null) {
-                Toast.makeText(requireContext(), "Waiting for GPS location…", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
-            if (destinationLocation == null) {
-                Toast.makeText(requireContext(), "Please set a destination", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
-
-            SpringPhysicsHelper.springPressFeedback(btn)
-            val fareValue = etFare.text.toString().toDoubleOrNull() ?: currentFare
-
-            val bundle = bundleOf(
-                "fare" to fareValue,
-                "destination_name" to view.findViewById<TextView>(R.id.tvDestinationLocation).text.toString(),
-                "destination_lat" to destinationLocation!!.latitude,
-                "destination_lng" to destinationLocation!!.longitude,
-                "pickup_lat" to pickupLocation!!.latitude,
-                "pickup_lng" to pickupLocation!!.longitude,
-                "ride_type" to selectedType.name,
-                "passenger_count" to passengerCount
-            )
-            findNavController().navigate(R.id.action_booking_to_offers, bundle)
-        }
-
-        // Initialize UI state
-        selectedType = VehicleType.CAR
-        updateVehicleSelectionUI()
-    }
-
-    private fun setupSearch(view: View) {
-        val searchBar = view.findViewById<SearchBar>(R.id.bookingSearchBar)
-        val searchView = view.findViewById<SearchView>(R.id.bookingSearchView)
-        val rvSuggestions = view.findViewById<RecyclerView>(R.id.rvSearchSuggestions)
-        val btnPickOnMap = view.findViewById<View>(R.id.btnPickOnMap)
-
-        // SearchBar back arrow navigates back or exits pick mode
-        searchBar.setNavigationOnClickListener {
-            if (isPickingDestination) exitPickMode() else findNavController().navigateUp()
-        }
-
-        val searchAdapter = PlaceAdapter(emptyList()) { place ->
+        searchAdapter = PlaceAdapter(emptyList()) { place ->
             autocompleteHelper?.resolvePlace(place.id) { latLng ->
                 if (latLng != null) {
                     destinationLocation = latLng
-                    searchBar.setText(place.name)
-                    view.findViewById<TextView>(R.id.tvDestinationLocation).text = place.name
-                    searchView.hide()
+                    tvDest.text = place.name
+                    etBookingSearch.setText(place.name)
+                    closeSearchMode()
                     computeRouteAndFare()
                 }
             }
         }
 
-        rvSuggestions.layoutManager = LinearLayoutManager(requireContext())
-        rvSuggestions.adapter = searchAdapter
+        rvIntegratedSearch.layoutManager = LinearLayoutManager(requireContext())
+        rvIntegratedSearch.adapter = searchAdapter
 
-        searchView.editText.addTextChangedListener(object : android.text.TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-            override fun afterTextChanged(s: android.text.Editable?) {
-                val query = s.toString().trim()
-                autocompleteHelper?.search(query, pickupLocation) { suggestions ->
-                    searchAdapter.updatePlaces(suggestions)
+        etBookingSearch.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+            override fun afterTextChanged(s: Editable?) {
+                val query = s?.toString()?.trim() ?: ""
+                btnClearSearchText.visibility = if (query.isNotEmpty()) View.VISIBLE else View.GONE
+                
+                // Only trigger search visuals and network calls if the user is actively typing
+                if (etBookingSearch.hasFocus()) {
+                    if (query.isNotEmpty() && rvIntegratedSearch.visibility != View.VISIBLE) {
+                        enterSearchMode()
+                    }
+                    performSearch(query)
                 }
             }
         })
 
-        btnPickOnMap.setOnClickListener {
-            searchView.hide()
-            enterPickMode()
-            searchBar.setText("Drop pin on map")
+        etBookingSearch.setOnFocusChangeListener { _, hasFocus ->
+            if (hasFocus && rvIntegratedSearch.visibility != View.VISIBLE) {
+                enterSearchMode()
+            }
+        }
+        
+        // Deep click to navigate search mode
+        tvDest.setOnClickListener {
+            etBookingSearch.requestFocus()
         }
     }
 
+    private fun enterSearchMode() {
+        rvIntegratedSearch.visibility = View.VISIBLE
+        behavior.state = BottomSheetBehavior.STATE_COLLAPSED
+    }
 
+    private fun closeSearchMode() {
+        rvIntegratedSearch.visibility = View.GONE
+        behavior.state = BottomSheetBehavior.STATE_EXPANDED
+        etBookingSearch.clearFocus()
+    }
 
-    // ── Map Pick Destination ──
-    private fun enterPickMode() {
-        isPickingDestination = true
-        view?.apply {
-            findViewById<View>(R.id.ivCenterPin).visibility = View.VISIBLE
-            findViewById<View>(R.id.pickingHeader).visibility = View.VISIBLE
-            findViewById<TextView>(R.id.tvPickingTask).text = "Drop pin to select"
-            findViewById<View>(R.id.btnConfirmLocation).visibility = View.VISIBLE
-
-            // Hide the bottom sheet and search bar to focus on map
-            findViewById<View>(R.id.bookingSearchBar).visibility = View.GONE
-
-            val sheet = findViewById<View>(R.id.bookingSheet)
-            val behavior = BottomSheetBehavior.from(sheet)
-            behavior.isHideable = true
-            behavior.state = BottomSheetBehavior.STATE_HIDDEN
+    private fun performSearch(query: String) {
+        autocompleteHelper?.search(query, pickupLocation) { results ->
+            if (!isAdded) return@search
+            searchAdapter.updatePlaces(results)
+            
+            if (results.isNotEmpty() && rvIntegratedSearch.visibility == View.VISIBLE) {
+                rvIntegratedSearch.post {
+                    val views = mutableListOf<View>()
+                    for (i in 0 until minOf(results.size, 5)) {
+                        rvIntegratedSearch.getChildAt(i)?.let { views.add(it) }
+                    }
+                    if (views.isNotEmpty()) {
+                        SpringPhysicsHelper.staggerSpringEntrance(views, 40L)
+                    }
+                }
+            }
         }
+    }
+
+    @SuppressLint("SetTextI18n")
+    private fun fetchLiveLocation() {
+        if (!LocationHelper.hasLocationPermission(requireContext())) return
+        view?.findViewById<View>(R.id.locationProgressBar)?.visibility = View.VISIBLE
         
-        googleMap?.clear()
+        LocationHelper.checkLocationSettings(requireContext(), 
+            onSuccess = {
+                LocationHelper.getCurrentLocation(requireContext()) { location ->
+                    if (!isAdded) return@getCurrentLocation
+                    view?.findViewById<View>(R.id.locationProgressBar)?.visibility = View.GONE
+                    location?.let {
+                        pickupLocation = LatLng(it.latitude, it.longitude)
+                        try {
+                            val geocoder = Geocoder(requireContext(), Locale.getDefault())
+                            val addresses = geocoder.getFromLocation(it.latitude, it.longitude, 1)
+                            view?.findViewById<TextView>(R.id.tvPickupLocation)?.text = addresses?.firstOrNull()?.getAddressLine(0) ?: "Your Location"
+                        } catch (e: Exception) {}
+                        if (destinationLocation == null) {
+                            googleMap?.animateCamera(CameraUpdateFactory.newLatLngZoom(pickupLocation!!, 16f))
+                        } else {
+                            // If destination already exists, update camera to show the whole ride
+                            updateMapMarkers() 
+                        }
+                        computeRouteAndFare()
+                    }
+                }
+            },
+            onResolutionRequired = {},
+            onFailure = {}
+        )
+    }
+
+    private fun setupUI(view: View) {
+        val etFare = view.findViewById<EditText>(R.id.etFare)
+        val tvRecommended = view.findViewById<TextView>(R.id.tvRecommendedFare)
         
-        val focusLoc = destinationLocation ?: pickupLocation
-        if (focusLoc != null) {
-            googleMap?.animateCamera(CameraUpdateFactory.newLatLngZoom(focusLoc, 16f))
+        view.findViewById<View>(R.id.cardBike).setOnClickListener { selectedType = VehicleType.BIKE; updateVehicleSelectionUI(); SpringPhysicsHelper.springPressFeedback(it) }
+        view.findViewById<View>(R.id.cardRickshaw).setOnClickListener { selectedType = VehicleType.RICKSHAW; updateVehicleSelectionUI(); SpringPhysicsHelper.springPressFeedback(it) }
+        view.findViewById<View>(R.id.cardCar).setOnClickListener { selectedType = VehicleType.CAR; updateVehicleSelectionUI(); SpringPhysicsHelper.springPressFeedback(it) }
+
+        view.findViewById<View>(R.id.btnPlus).setOnClickListener { currentFare += 10; etFare.setText(currentFare.toInt().toString()) }
+        view.findViewById<View>(R.id.btnMinus).setOnClickListener { if (currentFare > 50) currentFare -= 10; etFare.setText(currentFare.toInt().toString()) }
+        
+        view.findViewById<MaterialButton>(R.id.btnConfirmLocation).setOnClickListener { confirmPickedDestination() }
+        view.findViewById<FloatingActionButton>(R.id.fabMyLocation).setOnClickListener { fetchLiveLocation() }
+
+        view.findViewById<MaterialButton>(R.id.btnFindDriver).setOnClickListener {
+            if (destinationLocation == null) {
+                Toast.makeText(requireContext(), "Please set a destination", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+            val bundle = bundleOf(
+                "fare" to (etFare.text.toString().toDoubleOrNull() ?: currentFare),
+                "destination_name" to view.findViewById<TextView>(R.id.tvDestinationLocation).text.toString(),
+                "destination_lat" to destinationLocation!!.latitude,
+                "destination_lng" to destinationLocation!!.longitude,
+                "pickup_lat" to (pickupLocation?.latitude ?: 0.0),
+                "pickup_lng" to (pickupLocation?.longitude ?: 0.0),
+                "ride_type" to selectedType.name
+            )
+            findNavController().navigate(R.id.action_booking_to_offers, bundle)
+        }
+        updateVehicleSelectionUI()
+    }
+
+    private fun updateVehicleSelectionUI() {
+        listOf(R.id.cardBike to VehicleType.BIKE, R.id.cardRickshaw to VehicleType.RICKSHAW, R.id.cardCar to VehicleType.CAR).forEach { (id, type) ->
+            val card = view?.findViewById<com.google.android.material.card.MaterialCardView>(id)
+            val isSelected = selectedType == type
+            
+            // Keep background colors as default (set in XML)
+            // Only update the stroke for a "less bolder" selection look
+            card?.strokeWidth = if (isSelected) 6 else 2 // Pixels (approx 2dp selected, 1dp default)
+            card?.strokeColor = if (isSelected) 0xFF000000.toInt() else 0xFFCBD5E1.toInt()
+            card?.cardElevation = if (isSelected) 6f else 1f
+        }
+        computeRouteAndFare()
+    }
+
+    private fun computeRouteAndFare() {
+        val p = pickupLocation ?: return
+        val d = destinationLocation ?: return
+        routeJob?.cancel()
+        routeJob = viewLifecycleOwner.lifecycleScope.launch {
+            try {
+                val result = DirectionsHelper.generateRoute(p, d)
+                routePoints = result.polylinePoints
+                val distanceKm = result.distanceMeters / 1000.0
+                currentFare = MockDataRepository.getRecommendedFare(distanceKm, selectedType)
+                updateMapMarkers()
+                view?.findViewById<EditText>(R.id.etFare)?.setText(currentFare.toInt().toString())
+                view?.findViewById<TextView>(R.id.tvRecommendedFare)?.text = "Recommended: Rs. ${currentFare.toInt()}  •  ${DirectionsHelper.formatDistance(result.distanceMeters)}"
+            } catch (e: Exception) {}
+        }
+    }
+
+    private fun setupMap() {
+        (childFragmentManager.findFragmentById(R.id.bookingMapView) as? SupportMapFragment)?.getMapAsync { map ->
+            googleMap = map
+            map.setOnCameraIdleListener { if (isPickingDestination) geocodeLiveAddress(map.cameraPosition.target) }
+            pickupLocation?.let { map.moveCamera(CameraUpdateFactory.newLatLngZoom(it, 15f)) }
+            updateMapMarkers()
         }
     }
 
@@ -428,112 +316,16 @@ class BookingFragment : Fragment() {
             findViewById<View>(R.id.ivCenterPin).visibility = View.GONE
             findViewById<View>(R.id.pickingHeader).visibility = View.GONE
             findViewById<View>(R.id.btnConfirmLocation).visibility = View.GONE
-
-            // Bring sheet and search bar back
-            findViewById<View>(R.id.bookingSearchBar).visibility = View.VISIBLE
-
-            val sheet = findViewById<View>(R.id.bookingSheet)
-            val behavior = BottomSheetBehavior.from(sheet)
+            findViewById<View>(R.id.layoutBookingToolbar).visibility = View.VISIBLE
             behavior.state = BottomSheetBehavior.STATE_EXPANDED
         }
         updateMapMarkers()
     }
 
-    @SuppressLint("SetTextI18n")
     private fun confirmPickedDestination() {
-        val target = googleMap?.cameraPosition?.target ?: return
-        destinationLocation = target
-
-        val liveText = view?.findViewById<TextView>(R.id.tvPickingTask)?.text?.toString()
-        val finalName = if (liveText.isNullOrEmpty() || liveText == "Locating..." || liveText == "Drop pin to select") {
-            "Selected Location"
-        } else {
-            liveText
-        }
-        
-        view?.findViewById<TextView>(R.id.tvDestinationLocation)?.text = finalName
-        view?.findViewById<SearchBar>(R.id.bookingSearchBar)?.setText(finalName)
-
+        destinationLocation = googleMap?.cameraPosition?.target ?: return
         exitPickMode()
         computeRouteAndFare()
-        refreshFareUI()
-    }
-
-    // ── Route & Fare ──
-    private fun computeRouteAndFare() {
-        val p = pickupLocation ?: return
-        val d = destinationLocation ?: return
-
-        routeJob?.cancel()
-        routeJob = viewLifecycleOwner.lifecycleScope.launch {
-            try {
-                val result = DirectionsHelper.generateRoute(p, d)
-                routePoints = result.polylinePoints
-                routeDistanceMeters = result.distanceMeters
-                routeDurationSeconds = result.durationSeconds
-
-                val distanceKm = routeDistanceMeters / 1000.0
-                currentFare = MockDataRepository.getRecommendedFare(distanceKm, selectedType)
-                updateMapMarkers()
-                refreshFareUI()
-            } catch (e: Exception) {
-                // Handle error if needed
-            }
-        }
-    }
-
-    private fun refreshFareUI() {
-        val etFare = view?.findViewById<EditText>(R.id.etFare)
-        val tvRecommended = view?.findViewById<TextView>(R.id.tvRecommendedFare)
-        etFare?.setText(currentFare.toInt().toString())
-        refreshFareText(tvRecommended)
-    }
-
-    @SuppressLint("SetTextI18n")
-    private fun refreshFareText(tvRecommended: TextView?) {
-        if (currentFare > 0 && routeDistanceMeters > 0) {
-            val distStr = DirectionsHelper.formatDistance(routeDistanceMeters)
-            val durStr = DirectionsHelper.formatDuration(routeDurationSeconds)
-            tvRecommended?.text = "Recommended: Rs. ${currentFare.toInt()}  •  $distStr  •  $durStr"
-        } else if (currentFare > 0) {
-            tvRecommended?.text = getString(R.string.recommended_fare, "Rs. ${currentFare.toInt()}")
-        } else {
-            tvRecommended?.text = "Select destination to see fare"
-        }
-    }
-
-    // ── Map ──
-    private fun setupMap() {
-        val mapFragment = childFragmentManager.findFragmentById(R.id.bookingMapView) as? SupportMapFragment
-        mapFragment?.getMapAsync { map ->
-            googleMap = map
-            map.uiSettings.isZoomControlsEnabled = false
-            map.uiSettings.isMyLocationButtonEnabled = false
-            
-            // Map picking listeners
-            map.setOnCameraMoveStartedListener {
-                if (isPickingDestination) {
-                    view?.findViewById<TextView>(R.id.tvPickingTask)?.text = "Locating..."
-                    view?.findViewById<View>(R.id.ivCenterPin)?.animate()?.translationY(-40f)?.setDuration(150)?.start()
-                }
-            }
-
-            map.setOnCameraIdleListener {
-                if (isPickingDestination) {
-                    view?.findViewById<View>(R.id.ivCenterPin)?.animate()?.translationY(0f)?.setDuration(150)?.start()
-                    geocodeLiveAddress(map.cameraPosition.target)
-                }
-            }
-
-            map.setOnMapClickListener { latLng ->
-                if (isPickingDestination) {
-                    map.animateCamera(CameraUpdateFactory.newLatLng(latLng))
-                }
-            }
-            
-            pickupLocation?.let { map.moveCamera(CameraUpdateFactory.newLatLngZoom(it, 15f)) }
-            updateMapMarkers()
-        }
     }
 
     private fun geocodeLiveAddress(latLng: LatLng) {
@@ -541,29 +333,10 @@ class BookingFragment : Fragment() {
         geocodeJob = viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
             delay(350)
             try {
-                val geocoder = Geocoder(requireContext(), Locale.getDefault())
-                @Suppress("DEPRECATION")
-                val addresses = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1)
-                
-                val addressText = if (!addresses.isNullOrEmpty()) {
-                    val addr = addresses.first()
-                    addr.thoroughfare ?: addr.featureName ?: addr.locality ?: "Selected Location"
-                } else {
-                    "Selected Location"
-                }
-
-                launch(Dispatchers.Main) {
-                    if (isAdded && isPickingDestination) {
-                        view?.findViewById<TextView>(R.id.tvPickingTask)?.text = addressText
-                    }
-                }
-            } catch (e: Exception) {
-                launch(Dispatchers.Main) {
-                    if (isAdded && isPickingDestination) {
-                        view?.findViewById<TextView>(R.id.tvPickingTask)?.text = "Selected Location"
-                    }
-                }
-            }
+                val addresses = Geocoder(requireContext(), Locale.getDefault()).getFromLocation(latLng.latitude, latLng.longitude, 1)
+                val text = addresses?.firstOrNull()?.let { it.thoroughfare ?: it.featureName } ?: "Selected Location"
+                launch(Dispatchers.Main) { if (isAdded && isPickingDestination) view?.findViewById<TextView>(R.id.tvPickingTask)?.text = text }
+            } catch (e: Exception) {}
         }
     }
 
@@ -571,33 +344,16 @@ class BookingFragment : Fragment() {
         val map = googleMap ?: return
         map.clear()
         if (isPickingDestination) return
-
-        val p = pickupLocation ?: return
-        map.addMarker(MarkerOptions()
-            .position(p)
-            .title("Pickup")
-            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)))
-
-        val d = destinationLocation
-        if (d != null) {
-            map.addMarker(MarkerOptions()
-                .position(d)
-                .title("Destination")
-                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)))
-
-            // Draw curved route polyline
-            if (routePoints.isNotEmpty()) {
-                map.addPolyline(PolylineOptions()
-                    .addAll(routePoints)
-                    .width(12f)
-                    .color(ContextCompat.getColor(requireContext(), R.color.primary))
-                    .geodesic(false))
+        pickupLocation?.let { map.addMarker(MarkerOptions().position(it).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN))) }
+        destinationLocation?.let { dest ->
+            map.addMarker(MarkerOptions().position(dest).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)))
+            if (routePoints.isNotEmpty()) map.addPolyline(PolylineOptions().addAll(routePoints).width(12f).color(ContextCompat.getColor(requireContext(), R.color.primary)))
+            
+            val p = pickupLocation
+            if (p != null) {
+                val bounds = LatLngBounds.Builder().include(p).include(dest).build()
+                map.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 150))
             }
-
-            val bounds = LatLngBounds.Builder().include(p).include(d).build()
-            map.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 150))
-        } else {
-            map.animateCamera(CameraUpdateFactory.newLatLngZoom(p, 16f))
         }
     }
 }

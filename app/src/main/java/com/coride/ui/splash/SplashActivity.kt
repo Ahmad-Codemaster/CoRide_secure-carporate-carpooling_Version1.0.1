@@ -26,10 +26,8 @@ class SplashActivity : AppCompatActivity() {
         val heroContainer = findViewById<View>(R.id.heroContainer)
         val tvAppName = findViewById<View>(R.id.tvAppName)
         val tvTagline = findViewById<View>(R.id.tvTagline)
-        val dotsContainer = findViewById<View>(R.id.dotsContainer)
-        val dot1 = findViewById<View>(R.id.dot1)
-        val dot2 = findViewById<View>(R.id.dot2)
-        val dot3 = findViewById<View>(R.id.dot3)
+        val progressTrack = findViewById<View>(R.id.progressTrack)
+        val progressFilling = findViewById<View>(R.id.progressFilling)
 
         // ── Hero Circle — M3 Expressive spatial spring (bouncy scale up) ──
         SpringPhysicsHelper.springScale(
@@ -60,14 +58,22 @@ class SplashActivity : AppCompatActivity() {
             startDelay = 380L
         )
 
-        // ── Dots container — fade in ──
+        // ── Progress Bar — fade in and fill ──
         SpringPhysicsHelper.springAlpha(
-            dotsContainer, 1f,
+            progressTrack, 1f,
             startDelay = 550L
         )
 
-        // ── Animate dots pulse ── (sequential dot highlight)
-        animateDotsPulse(listOf(dot1, dot2, dot3))
+        // ── Smooth Filling Animation (ValueAnimator) ──
+        android.animation.ValueAnimator.ofFloat(0f, 1f).apply {
+            duration = 2400
+            startDelay = 600
+            interpolator = android.view.animation.LinearInterpolator()
+            addUpdateListener { animator ->
+                progressFilling.scaleX = animator.animatedValue as Float
+            }
+            start()
+        }
 
         // ── Navigate after 2.8s ──
         Handler(Looper.getMainLooper()).postDelayed({
@@ -82,28 +88,6 @@ class SplashActivity : AppCompatActivity() {
         }, 2800)
     }
 
-    /**
-     * Cycles through dots with spring scale pulse — expressive loading indicator.
-     */
-    private fun animateDotsPulse(dots: List<View>) {
-        val handler = Handler(Looper.getMainLooper())
-        var currentIndex = 0
 
-        fun pulse() {
-            dots.forEachIndexed { index, dot ->
-                if (index == currentIndex) {
-                    SpringPhysicsHelper.springScale(dot, 1.2f, 900f, 0.4f)
-                    SpringPhysicsHelper.springAlpha(dot, 1.0f)
-                } else {
-                    SpringPhysicsHelper.springScale(dot, 0.7f, 700f, 0.8f)
-                    SpringPhysicsHelper.springAlpha(dot, 0.35f)
-                }
-            }
-            currentIndex = (currentIndex + 1) % dots.size
-            handler.postDelayed({ pulse() }, 380)
-        }
-
-        handler.postDelayed({ pulse() }, 600)
-    }
 }
 

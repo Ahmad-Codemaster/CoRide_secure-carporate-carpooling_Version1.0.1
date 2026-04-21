@@ -205,9 +205,9 @@
                 android:text="View Receipt"
                 android:textAllCaps="false"
                 android:textSize="12sp"
-                android:textColor="#64748b"
+                android:textColor="#2196F3"
                 app:cornerRadius="12dp"
-                app:strokeColor="#e2e8f0"
+                app:strokeColor="#2196F3"
                 app:strokeWidth="1dp"
                 android:fontFamily="sans-serif-medium" />
         </LinearLayout>

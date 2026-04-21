@@ -33,7 +33,6 @@
                 android:layout_width="52dp"
                 android:layout_height="52dp"
                 android:src="@drawable/profile"
-                android:tint="@color/on_surface_variant"
                 android:padding="@dimen/spacing_md"
                 android:background="@color/surface_container"
                 android:contentDescription="Driver" />

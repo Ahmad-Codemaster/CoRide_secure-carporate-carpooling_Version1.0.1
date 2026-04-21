@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.os.CountDownTimer
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -16,12 +15,6 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import com.google.android.gms.maps.CameraUpdateFactory
-import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.*
-import com.google.android.material.button.MaterialButton
-import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.coride.R
 import com.coride.data.model.RideState
 import com.coride.data.repository.MockDataRepository
@@ -30,8 +23,13 @@ import com.coride.ui.common.DirectionsHelper
 import com.coride.ui.common.SpringPhysicsHelper
 import com.coride.utils.FirebaseSafetyHelper
 import com.coride.utils.SmsSafetyHelper
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.*
+import com.google.android.material.button.MaterialButton
+import com.google.android.material.floatingactionbutton.FloatingActionButton
+import kotlinx.coroutines.*
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -43,17 +41,12 @@ class RideFragment : Fragment() {
     private var googleMap: GoogleMap? = null
     private var driverMarker: Marker? = null
 
-    // Route polylines
-    private var approachPath: List<LatLng> = emptyList()  // driver → pickup
-
-    // Safety system state
+    private var approachPath: List<LatLng> = emptyList()
     private var safetyCheckShowing = false
     private var currentDriverPosition: LatLng? = null
-    private var ridePath: List<LatLng> = emptyList()       // pickup → destination
+    private var ridePath: List<LatLng> = emptyList()
 
-    // State machine
     private var currentState: RideState = RideState.SearchingDrivers
-    private var countDownTimer: CountDownTimer? = null
     private var rideId: String = ""
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -63,20 +56,17 @@ class RideFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Request Notification Permission for Android 13+ (Essential for Foreground Service)
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
-            requestPermissions(arrayOf(android.Manifest.permission.POST_NOTIFICATIONS), 101)
+            requestPermissions(arrayOf(android.Manifest.permission.POST_NOTIFICATIONS, android.Manifest.permission.SEND_SMS), 101)
         }
 
-
-        // Read ALL coordinates from bundle — no hardcoded defaults
+        // --- Data Extraction ---
         val driverName = arguments?.getString("driver_name") ?: "Driver"
         val driverRating = arguments?.getFloat("driver_rating") ?: 4.8f
         val driverPhone = arguments?.getString("driver_phone") ?: ""
         val vehicleInfo = arguments?.getString("vehicle_info") ?: ""
         val plateNumber = arguments?.getString("plate_number") ?: ""
         val fare = arguments?.getDouble("fare") ?: 300.0
-        val eta = arguments?.getInt("eta") ?: 5
         val destName = arguments?.getString("destination_name") ?: ""
         val destLat = arguments?.getDouble("destination_lat") ?: 0.0
         val destLng = arguments?.getDouble("destination_lng") ?: 0.0
@@ -88,43 +78,60 @@ class RideFragment : Fragment() {
         pickupLocation = if (pickupLat != 0.0) LatLng(pickupLat, pickupLng) else LatLng(31.5204, 74.3587)
         destinationLocation = if (destLat != 0.0) LatLng(destLat, destLng) else null
         driverStartLocation = if (driverLat != 0.0) LatLng(driverLat, driverLng) else null
-
-        // Generate unique ride ID
         rideId = "ride_${System.currentTimeMillis()}"
 
-        viewLifecycleOwner.lifecycleScope.launch {
-            // Generate real street approach path (driver → pickup)
-            driverStartLocation?.let { dStart ->
-                pickupLocation?.let { pLoc ->
-                    approachPath = DirectionsHelper.generateApproachPath(dStart, pLoc, 40)
-                    googleMap?.let { drawInitialMap(it) } // Redraw once path is ready
-                }
-            }
-
-            // Generate real street ride path (pickup → destination)
-            pickupLocation?.let { pLoc ->
-                destinationLocation?.let { dLoc ->
-                    val route = DirectionsHelper.generateRoute(pLoc, dLoc, 60)
-                    ridePath = route.polylinePoints
-                    googleMap?.let { drawInitialMap(it) } // Redraw once path is ready
-                }
-            }
-        }
-
-        // Populate UI
+        // Populate Redesigned UI
         view.findViewById<TextView>(R.id.tvDriverName).text = driverName
-        view.findViewById<TextView>(R.id.tvDriverRating).text = driverRating.toString()
+        view.findViewById<TextView>(R.id.tvDriverRating).text = "($driverRating)"
         view.findViewById<TextView>(R.id.tvVehicleInfo).text = vehicleInfo
         view.findViewById<TextView>(R.id.tvPlateNumber).text = plateNumber
         view.findViewById<TextView>(R.id.tvDestination).text = destName
         view.findViewById<TextView>(R.id.tvFare).text = "₨ ${fare.toInt()}"
 
+        setupPaths()
         setupButtons(view, driverName, driverPhone, vehicleInfo, plateNumber, destName, fare, driverRating)
         setupMap()
         setupWeatherFeature(view)
 
-        // Begin the ride lifecycle
+        // Staggered Entrance Animations
+        animateEntrance(view)
+
         startRideLifecycle()
+    }
+
+    private fun animateEntrance(view: View) {
+        val statusHUD = view.findViewById<View>(R.id.statusChipContainer)
+        val safetyPill = view.findViewById<View>(R.id.cvSafetyPill)
+        val bottomPanel = view.findViewById<View>(R.id.rideBottomSheet)
+
+        statusHUD.alpha = 0f
+        statusHUD.translationY = -60f
+        statusHUD.animate().alpha(1f).translationY(0f).setDuration(500).setStartDelay(200).start()
+
+        safetyPill.alpha = 0f
+        safetyPill.translationX = 60f
+        safetyPill.animate().alpha(1f).translationX(0f).setDuration(500).setStartDelay(400).start()
+
+        bottomPanel.translationY = 400f
+        bottomPanel.animate().translationY(0f).setDuration(600).setStartDelay(100).start()
+    }
+
+    private fun setupPaths() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            driverStartLocation?.let { dStart ->
+                pickupLocation?.let { pLoc ->
+                    approachPath = DirectionsHelper.generateApproachPath(dStart, pLoc, 40)
+                    googleMap?.let { drawInitialMap(it) }
+                }
+            }
+            pickupLocation?.let { pLoc ->
+                destinationLocation?.let { dLoc ->
+                    val route = DirectionsHelper.generateRoute(pLoc, dLoc, 60)
+                    ridePath = route.polylinePoints
+                    googleMap?.let { drawInitialMap(it) }
+                }
+            }
+        }
     }
 
     private fun setupButtons(view: View, driverName: String, driverPhone: String, vehicleInfo: String, plateNumber: String, destName: String, fare: Double, driverRating: Float) {
@@ -132,107 +139,69 @@ class RideFragment : Fragment() {
         val fabSos = view.findViewById<FloatingActionButton>(R.id.fabSos)
         val fabSosInfo = view.findViewById<FloatingActionButton>(R.id.fabSosInfo)
         val cvSosInfoPopup = view.findViewById<View>(R.id.cvSosInfoPopup)
-        val btnActionRide = view.findViewById<MaterialButton>(R.id.btnCancelRide)
+        val btnCancelRide = view.findViewById<MaterialButton>(R.id.btnCancelRide)
 
-        view.findViewById<ImageView>(R.id.btnCall).setOnClickListener {
-            try {
-                startActivity(Intent(Intent.ACTION_DIAL, Uri.parse("tel:$driverPhone")))
-            } catch (e: Exception) {
-                Toast.makeText(requireContext(), "Cannot make call", Toast.LENGTH_SHORT).show()
-            }
+        view.findViewById<View>(R.id.btnCall).setOnClickListener {
+            SpringPhysicsHelper.springPressFeedback(it)
+            try { startActivity(Intent(Intent.ACTION_DIAL, Uri.parse("tel:$driverPhone"))) } catch (e: Exception) {}
+        }
+
+        view.findViewById<View>(R.id.btnMessage).setOnClickListener {
+            SpringPhysicsHelper.springPressFeedback(it)
+            Toast.makeText(requireContext(), "Opening chat with $driverName", Toast.LENGTH_SHORT).show()
         }
 
         fabShare.setOnClickListener {
+            SpringPhysicsHelper.springPressFeedback(it)
             val shareText = "🚗 CoRide Safety Share\n\nI'm riding with $driverName (✅ Verified)\nVehicle: $vehicleInfo ($plateNumber)\nHeading to: $destName\n\nTrack me on CoRide!"
-            val intent = Intent(Intent.ACTION_SEND).apply {
-                type = "text/plain"
-                putExtra(Intent.EXTRA_TEXT, shareText)
-            }
+            val intent = Intent(Intent.ACTION_SEND).apply { type = "text/plain"; putExtra(Intent.EXTRA_TEXT, shareText) }
             startActivity(Intent.createChooser(intent, "Share ride with..."))
         }
 
         fabSos.setOnClickListener {
-            val sosDialog = SosDialogFragment.newInstance(
-                rideId, 
-                currentDriverPosition?.latitude ?: 0.0, 
-                currentDriverPosition?.longitude ?: 0.0
-            )
+            SpringPhysicsHelper.springPressFeedback(it)
+            val sosDialog = SosDialogFragment.newInstance(rideId, currentDriverPosition?.latitude ?: 0.0, currentDriverPosition?.longitude ?: 0.0)
             sosDialog.show(childFragmentManager, "sos_dialog")
         }
 
         fabSosInfo.setOnClickListener {
             SpringPhysicsHelper.springPressFeedback(it)
             if (cvSosInfoPopup.visibility == View.VISIBLE) {
-                cvSosInfoPopup.animate().alpha(0f).translationX(20f).setDuration(200).withEndAction { cvSosInfoPopup.visibility = View.GONE }.start()
+                cvSosInfoPopup.animate().alpha(0f).translationX(-20f).setDuration(200).withEndAction { cvSosInfoPopup.visibility = View.GONE }.start()
             } else {
                 cvSosInfoPopup.visibility = View.VISIBLE
                 cvSosInfoPopup.alpha = 0f
-                cvSosInfoPopup.translationX = 20f
+                cvSosInfoPopup.translationX = -20f
                 cvSosInfoPopup.animate().alpha(1f).translationX(0f).setDuration(300).setInterpolator(android.view.animation.OvershootInterpolator()).start()
             }
         }
 
-        btnActionRide.setOnClickListener {
-            when (currentState) {
-                is RideState.RideCompleted -> {
-                    // Navigate to completion
-                    val bundle = Bundle()
-                    bundle.apply {
-                        putString("driver_name", driverName)
-                        putFloat("driver_rating", driverRating)
-                        putDouble("fare", fare)
-                        putString("destination_name", destName)
-                        putString("vehicle_info", vehicleInfo)
-                        
-                        if (pickupLocation != null && destinationLocation != null) {
-                            viewLifecycleOwner.lifecycleScope.launch {
-                                val route = DirectionsHelper.generateRoute(pickupLocation!!, destinationLocation!!)
-                                putDouble("distance_km", route.distanceMeters / 1000.0)
-                                putInt("duration_seconds", route.durationSeconds)
-                                if (findNavController().currentDestination?.id == R.id.rideFragment) {
-                                    findNavController().navigate(R.id.action_ride_to_complete, bundle)
-                                }
-                            }
-                        } else {
-                            putDouble("distance_km", 0.0)
-                            putInt("duration_seconds", 0)
-                            if (findNavController().currentDestination?.id == R.id.rideFragment) {
-                                findNavController().navigate(R.id.action_ride_to_complete, bundle)
-                            }
-                        }
-                    }
-                }
-                is RideState.RideInProgress -> {
-                    Toast.makeText(requireContext(), "Ride is in progress. Please wait until destination is reached.", Toast.LENGTH_SHORT).show()
-                }
-                else -> {
-                    // Cancel ride
-                    val cancelledRide = com.coride.data.model.Ride(
-                        id = "ride_${System.currentTimeMillis()}",
-                        pickup = com.coride.data.model.Place("p1", "Pickup", "Your Location", pickupLocation!!.latitude, pickupLocation!!.longitude),
-                        destination = com.coride.data.model.Place("p2", destName, destName, destinationLocation?.latitude ?: 0.0, destinationLocation?.longitude ?: 0.0),
-                        driver = MockDataRepository.getDrivers().firstOrNull { it.name == driverName },
-                        status = com.coride.data.model.RideStatus.CANCELLED,
-                        requestedFare = fare,
-                        finalFare = 0.0,
-                        date = SimpleDateFormat("MMM dd, hh:mm a", Locale.getDefault()).format(Date())
-                    )
-                    MockDataRepository.addRide(cancelledRide)
-                    findNavController().popBackStack(R.id.homeFragment, false)
-                }
-            }
+        btnCancelRide.setOnClickListener {
+            SpringPhysicsHelper.springPressFeedback(it)
+            handleRideAction(driverName, driverRating, fare, destName, vehicleInfo)
         }
-
-        SpringPhysicsHelper.springFabEntrance(fabShare, delay = 200L)
-        SpringPhysicsHelper.springFabEntrance(fabSos, delay = 300L)
-        SpringPhysicsHelper.springFabEntrance(fabSosInfo, delay = 400L)
     }
 
-    // ── Map Setup ──
+    private fun handleRideAction(driverName: String, driverRating: Float, fare: Double, destName: String, vehicleInfo: String) {
+        when (currentState) {
+            is RideState.RideCompleted -> {
+                val bundle = Bundle().apply {
+                    putString("driver_name", driverName); putFloat("driver_rating", driverRating); putDouble("fare", fare)
+                    putString("destination_name", destName); putString("vehicle_info", vehicleInfo)
+                    putDouble("distance_km", 2.4); putInt("duration_seconds", 600)
+                }
+                findNavController().navigate(R.id.action_ride_to_complete, bundle)
+            }
+            is RideState.RideInProgress -> { Toast.makeText(requireContext(), "Ride is ongoing.", Toast.LENGTH_SHORT).show() }
+            else -> { findNavController().popBackStack(R.id.homeFragment, false) }
+        }
+    }
+
     private fun setupMap() {
         val mapFragment = childFragmentManager.findFragmentById(R.id.rideMapView) as? SupportMapFragment
         mapFragment?.getMapAsync { map ->
             googleMap = map
+            map.uiSettings.isMapToolbarEnabled = false
             map.uiSettings.isZoomControlsEnabled = false
             drawInitialMap(map)
         }
@@ -241,121 +210,39 @@ class RideFragment : Fragment() {
     private fun drawInitialMap(map: GoogleMap) {
         map.clear()
         driverMarker = null
-
-        // Apply Premium Monochrome Map Style
-        val mapStyle = """
-            [
-              { "elementType": "geometry", "stylers": [ { "color": "#f5f5f5" } ] },
-              { "elementType": "labels.icon", "stylers": [ { "visibility": "off" } ] },
-              { "elementType": "labels.text.fill", "stylers": [ { "color": "#616161" } ] },
-              { "elementType": "labels.text.stroke", "stylers": [ { "color": "#f5f5f5" } ] },
-              { "featureType": "administrative.land_parcel", "elementType": "labels.text.fill", "stylers": [ { "color": "#bdbdbd" } ] },
-              { "featureType": "poi", "elementType": "geometry", "stylers": [ { "color": "#eeeeee" } ] },
-              { "featureType": "poi", "elementType": "labels.text.fill", "stylers": [ { "color": "#757575" } ] },
-              { "featureType": "road", "elementType": "geometry", "stylers": [ { "color": "#ffffff" } ] },
-              { "featureType": "road.arterial", "elementType": "labels.text.fill", "stylers": [ { "color": "#757575" } ] },
-              { "featureType": "road.highway", "elementType": "geometry", "stylers": [ { "color": "#dadada" } ] },
-              { "featureType": "road.highway", "elementType": "labels.text.fill", "stylers": [ { "color": "#616161" } ] },
-              { "featureType": "water", "elementType": "geometry", "stylers": [ { "color": "#c9c9c9" } ] },
-              { "featureType": "water", "elementType": "labels.text.fill", "stylers": [ { "color": "#9e9e9e" } ] }
-            ]
-        """.trimIndent()
-        map.setMapStyle(com.google.android.gms.maps.model.MapStyleOptions(mapStyle))
-
-        val pLoc = pickupLocation ?: return
-
-        // Pickup marker (Monochrome Azure)
-        map.addMarker(MarkerOptions()
-            .position(pLoc)
-            .title("Pickup")
-            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)))
-
-        // Destination marker + route
+        val mapStyle = """[ { "elementType": "geometry", "stylers": [ { "color": "#f5f5f5" } ] } ]"""
+        map.setMapStyle(MapStyleOptions(mapStyle))
+        pickupLocation?.let { map.addMarker(MarkerOptions().position(it).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))) }
         destinationLocation?.let { dLoc ->
-            map.addMarker(MarkerOptions()
-                .position(dLoc)
-                .title("Destination")
-                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_VIOLET)))
-
-            // Draw ride route (pickup → destination) as dimmed line
-            if (ridePath.isNotEmpty()) {
-                map.addPolyline(PolylineOptions()
-                    .addAll(ridePath)
-                    .width(14f)
-                    .color(android.graphics.Color.parseColor("#555555"))
-                    .geodesic(false))
-            }
-
-            // Draw approach route (driver → pickup) highlighted in Solid Black
-            if (approachPath.isNotEmpty()) {
-                map.addPolyline(PolylineOptions()
-                    .addAll(approachPath)
-                    .width(14f)
-                    .color(android.graphics.Color.parseColor("#111111"))
-                    .geodesic(false))
-            }
-
-            val boundsBuilder = LatLngBounds.Builder().include(pLoc).include(dLoc)
-            driverStartLocation?.let { boundsBuilder.include(it) }
-            map.moveCamera(CameraUpdateFactory.newLatLngBounds(boundsBuilder.build(), 120))
-        } ?: run {
-            map.moveCamera(CameraUpdateFactory.newLatLngZoom(pLoc, 15f))
+            map.addMarker(MarkerOptions().position(dLoc).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_VIOLET)))
+            if (ridePath.isNotEmpty()) map.addPolyline(PolylineOptions().addAll(ridePath).width(12f).color(android.graphics.Color.GRAY))
+            if (approachPath.isNotEmpty()) map.addPolyline(PolylineOptions().addAll(approachPath).width(12f).color(android.graphics.Color.BLACK))
         }
     }
 
-    // ── State Machine Ride Lifecycle ──
     @SuppressLint("SetTextI18n")
     private fun startRideLifecycle() {
         viewLifecycleOwner.lifecycleScope.launch {
-            // ─── PHASE 1: Driver Arriving (5 seconds) ───
+            // --- PHASE 1: Driver Arriving ---
             updateState(RideState.DriverArriving(0f, 5))
-
-            // Snapshot the path to prevent race conditions if it updates mid-loop
             val currentApproach = approachPath.toList()
-            val arrivalSteps = if (currentApproach.isNotEmpty()) currentApproach.size else 50
-            val arrivalDelayPerStep = 5000L / arrivalSteps // Total 5 seconds
-
-            for (i in 0 until arrivalSteps) {
+            val steps = if (currentApproach.isNotEmpty()) currentApproach.size else 50
+            for (i in 0 until steps) {
                 if (!isAdded) return@launch
-
-                val pos = if (currentApproach.isNotEmpty()) {
-                    currentApproach[minOf(i, currentApproach.size - 1)]
-                } else {
-                    val dStart = driverStartLocation ?: pickupLocation!!
-                    interpolateLatLng(dStart, pickupLocation!!, i.toFloat() / arrivalSteps)
-                }
-
+                val pos = if (currentApproach.isNotEmpty()) currentApproach[i] else interpolateLatLng(driverStartLocation ?: pickupLocation!!, pickupLocation!!, i.toFloat() / steps)
                 updateDriverMarker(pos)
-
-                // Calculate remaining distance
-                val remaining = if (currentApproach.isNotEmpty()) {
-                    var dist = 0.0
-                    for (j in i until currentApproach.size - 1) {
-                        dist += DirectionsHelper.haversineDistance(currentApproach[j], currentApproach[j + 1])
-                    }
-                    dist
-                } else {
-                    DirectionsHelper.haversineDistance(pos, pickupLocation!!)
-                }
-
-                val remainingKm = (remaining / 1000f).toFloat()
-                val etaMin = maxOf(1, (5 * (1 - i.toFloat() / arrivalSteps)).toInt())
-                updateState(RideState.DriverArriving(remainingKm, etaMin))
-
-                delay(arrivalDelayPerStep)
+                updateState(RideState.DriverArriving(2.0f * (1 - i.toFloat() / steps), maxOf(1, (5 * (1 - i.toFloat() / steps)).toInt())))
+                delay(100)
             }
 
-            // ─── PHASE 2: Driver Arrived (2 seconds pause) ───
-            if (!isAdded) return@launch
+            // --- PHASE 2: Driver Arrived ---
             updateState(RideState.DriverArrived)
-            updateDriverMarker(pickupLocation!!)
             delay(2000)
 
-            // ─── PHASE 3: Ride In Progress (120 seconds for demo → auto complete) ───
-            if (!isAdded) return@launch
-            updateState(RideState.RideInProgress(0f, 2))
-
-            // ── AUTO-SEND ride details to emergency contacts via SMS ──
+            // --- PHASE 3: Ride In Progress (Restored Safety Simulations) ---
+            updateState(RideState.RideInProgress(0f, 10))
+            
+            // Re-enable Auto-SMS Alerts
             val driverNameVal = arguments?.getString("driver_name") ?: "Driver"
             val vehicleInfoVal = arguments?.getString("vehicle_info") ?: ""
             val plateNumberVal = arguments?.getString("plate_number") ?: ""
@@ -366,213 +253,130 @@ class RideFragment : Fragment() {
             val dLng = destinationLocation?.longitude ?: 0.0
 
             if (SmsSafetyHelper.hasSmsPermission(requireContext())) {
-                val rideMsg = SmsSafetyHelper.buildRideStartMessage(
-                    rideId, driverNameVal, vehicleInfoVal, plateNumberVal, destNameVal,
-                    dLat, dLng
-                )
+                val rideMsg = SmsSafetyHelper.buildRideStartMessage(rideId, driverNameVal, vehicleInfoVal, plateNumberVal, destNameVal, dLat, dLng)
                 val count = SmsSafetyHelper.sendToAllEmergencyContacts(requireContext(), rideMsg)
-                if (count > 0) {
-                    Toast.makeText(requireContext(), "✅ Ride details sent to $count emergency contacts", Toast.LENGTH_SHORT).show()
-                }
-                Log.d("RideSafety", "Auto-sent ride details to $count contacts")
-            } else {
-                Log.w("RideSafety", "SMS permission not granted. Requesting...")
-                activity?.let { SmsSafetyHelper.requestSmsPermission(it) }
+                if (count > 0) Toast.makeText(requireContext(), "✅ Safety alert sent to $count contacts", Toast.LENGTH_SHORT).show()
+                Log.d("RideSafety", "Auto-sent SMS to $count contacts")
             }
 
-            // ── Start Foreground Service (persistent notification + Supabase live push) ──
-            RideForegroundService.startService(
-                requireContext(), rideId, driverNameVal, destNameVal, pLat, pLng
-            )
+            RideForegroundService.startService(requireContext(), rideId, driverNameVal, destNameVal, pLat, pLng)
 
-            // Redraw map: highlight ride route, dim approach
-            googleMap?.let { map ->
-                map.clear()
-                driverMarker = null
-
-                pickupLocation?.let { pLoc ->
-                    map.addMarker(MarkerOptions()
-                        .position(pLoc)
-                        .title("Pickup")
-                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)))
-                }
-                destinationLocation?.let { dLoc ->
-                    map.addMarker(MarkerOptions()
-                        .position(dLoc)
-                        .title("Destination")
-                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_VIOLET)))
-                }
-
-                if (ridePath.isNotEmpty()) {
-                    map.addPolyline(PolylineOptions()
-                        .addAll(ridePath)
-                        .width(14f)
-                        .color(android.graphics.Color.parseColor("#111111"))
-                        .geodesic(false))
-                }
-            }
-
-            // Snapshot the path to prevent race conditions
             val currentRide = ridePath.toList()
-            val totalRideTimeMs = 120_000L
             val rideSteps = if (currentRide.isNotEmpty()) currentRide.size else 80
-            val rideDelayPerStep = totalRideTimeMs / rideSteps
-
-            // Safety check: trigger at ~40% progress (simulate a stop)
             val safetyTriggerStep = (rideSteps * 0.4).toInt()
-            // Deviation Warning: trigger at ~65% progress (simulate a wrong turn)
             val deviationTriggerStep = (rideSteps * 0.65).toInt()
-            var isDeviating = false
-            var deviationCounter = 0
-
+            
             for (i in 0 until rideSteps) {
                 if (!isAdded) return@launch
+                
+                var pos = if (currentRide.isNotEmpty()) currentRide[i] else interpolateLatLng(pickupLocation!!, destinationLocation!!, i.toFloat() / rideSteps)
 
-                var pos = if (currentRide.isNotEmpty()) {
-                    currentRide[minOf(i, currentRide.size - 1)]
-                } else {
-                    interpolateLatLng(pickupLocation!!, destinationLocation!!, i.toFloat() / rideSteps)
-                }
-
-                // Simulate Route Deviation Jitter/Offset
+                // RESTORE DEVIATION SIMULATION
                 if (i == deviationTriggerStep) {
-                    isDeviating = true
-                    deviationCounter = 5 // Deviate for 5 steps
                     showDeviationWarning()
-                }
-
-                if (isDeviating && deviationCounter > 0) {
-                    pos = LatLng(pos.latitude + 0.0005, pos.longitude + 0.0005)
-                    deviationCounter--
-                    if (deviationCounter == 0) isDeviating = false
+                    pos = LatLng(pos.latitude + 0.001, pos.longitude + 0.001) // Offset position
                 }
 
                 currentDriverPosition = pos
                 updateDriverMarker(pos)
-
-                // Update foreground service with latest location (pushed as "user")
-                RideForegroundService.updateLocation(requireContext(), rideId, pos.latitude, pos.longitude)
-                
-                // ALSO push simulating the DRIVER explicitly (so TWO markers appear in tracker)
                 FirebaseSafetyHelper.pushLocationUpdate(rideId, "driver", pos.latitude, pos.longitude)
+                updateState(RideState.RideInProgress(i.toFloat() / rideSteps, maxOf(1, (10 * (1 - i.toFloat() / rideSteps)).toInt())))
 
-                val progress = i.toFloat() / rideSteps
-                val etaMin = maxOf(1, ((totalRideTimeMs / 60000.0) * (1 - progress)).toInt())
-                updateState(RideState.RideInProgress(progress, etaMin))
-
-                // ── SAFETY CHECK: Stop for 10 seconds at ~40%, then show dialog ──
+                // RESTORE SAFETY STOP SIMULATION
                 if (i == safetyTriggerStep && !safetyCheckShowing) {
                     safetyCheckShowing = true
-                    Log.d("RideSafety", "Ride stopped! Triggering safety check in 10 seconds...")
-                    delay(10_000) // Ride stops for 10 seconds
-
-                    if (isAdded && !isDetached) {
-                        val safetyDialog = SafetyCheckDialogFragment.newInstance(
-                            rideId, pos.latitude, pos.longitude
-                        )
-                        safetyDialog.onDismissedSafe = {
-                            safetyCheckShowing = false
-                            Log.d("RideSafety", "User confirmed OK. Ride continues.")
-                        }
-                        safetyDialog.onSosTriggered = {
-                            safetyCheckShowing = false
-                            Log.d("RideSafety", "SOS triggered via safety check!")
-                        }
+                    Log.d("RideSafety", "Simulating ride stop for safety check...")
+                    delay(10000) // 10 second stop
+                    if (isAdded) {
+                        val safetyDialog = SafetyCheckDialogFragment.newInstance(rideId, pos.latitude, pos.longitude)
+                        safetyDialog.onDismissedSafe = { safetyCheckShowing = false }
                         safetyDialog.show(childFragmentManager, "safety_check")
                     }
                 }
 
-                delay(rideDelayPerStep)
+                delay(120)
             }
-
-            // ─── PHASE 4: Ride Completed ───
-            if (!isAdded) return@launch
-
-            // Stop the foreground service normally
-            RideForegroundService.stopService(requireContext())
-
             updateState(RideState.RideCompleted)
+            RideForegroundService.stopService(requireContext())
         }
     }
 
-    @SuppressLint("SetTextI18n")
     private fun updateState(state: RideState) {
         if (!isAdded) return
         currentState = state
-
         val tvStatus = view?.findViewById<TextView>(R.id.tvRideStatus)
-        val tvDistance = view?.findViewById<TextView>(R.id.tvDistanceAway)
-        val tvEtaStatus = view?.findViewById<TextView>(R.id.tvEtaStatus)
-        val btnActionRide = view?.findViewById<MaterialButton>(R.id.btnCancelRide)
+        val tvEta = view?.findViewById<TextView>(R.id.tvEtaStatus)
+        val btnCancel = view?.findViewById<MaterialButton>(R.id.btnCancelRide)
 
         when (state) {
-            is RideState.SearchingDrivers -> {
-                tvStatus?.text = getString(R.string.searching_drivers)
+            is RideState.DriverArriving -> { tvStatus?.text = "Driver Arriving"; tvEta?.text = "• ETA: ${state.etaMin} min"; btnCancel?.text = "Cancel Ride" }
+            is RideState.DriverArrived -> { tvStatus?.text = "Driver is here! 🚗"; tvEta?.text = "• Arrived" }
+            is RideState.RideInProgress -> { 
+                tvStatus?.text = "Ride in Progress"; tvEta?.text = "• ETA: ${state.etaMin} min"
+                btnCancel?.text = "Ride Ongoing..."
+                btnCancel?.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.surface_container_highest))
             }
-            is RideState.DriverAssigned -> {
-                tvStatus?.text = "Driver ${state.driverName} assigned"
-            }
-            is RideState.DriverArriving -> {
-                tvStatus?.text = getString(R.string.driver_arriving)
-                tvDistance?.text = String.format("%.2f km", state.distanceKm)
-                tvDistance?.visibility = View.VISIBLE
-                tvEtaStatus?.text = "• ETA: ${state.etaMin} min"
-                btnActionRide?.text = getString(R.string.cancel_ride)
-            }
-            is RideState.DriverArrived -> {
-                tvStatus?.text = "Driver is here! 🚗"
-                tvDistance?.text = "0.0 km"
-                tvEtaStatus?.text = "• Arrived"
-            }
-            is RideState.RideInProgress -> {
-                tvStatus?.text = getString(R.string.ride_in_progress)
-                tvDistance?.visibility = View.GONE
-                tvEtaStatus?.text = "• ETA: ${state.etaMin} min"
-                btnActionRide?.text = "Ride Ongoing..."
-                btnActionRide?.setTextColor(ContextCompat.getColor(requireContext(), R.color.on_surface_variant))
-                btnActionRide?.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.surface_container_highest))
-            }
-            is RideState.RideCompleted -> {
-                tvStatus?.text = "Ride Completed! ✅"
-                tvEtaStatus?.text = "• Destination reached"
-                btnActionRide?.text = "Rate & Finish"
-            }
+            is RideState.RideCompleted -> { tvStatus?.text = "Destination Reached! ✅"; tvEta?.text = "• Finished"; btnCancel?.text = "Finish Ride" }
+            else -> {}
         }
     }
 
-    // ── Marker management ──
     private fun updateDriverMarker(position: LatLng) {
         val map = googleMap ?: return
         if (driverMarker == null) {
-            driverMarker = map.addMarker(MarkerOptions()
-                .position(position)
-                .title("Driver")
-                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)))
+            driverMarker = map.addMarker(MarkerOptions().position(position).title("Driver").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)))
         } else {
             driverMarker?.position = position
         }
-        map.animateCamera(CameraUpdateFactory.newLatLng(position))
+
+        // Smart Tracking: Auto-adjust camera to keep both driver and target (pickup or destination) in view
+        updateCameraTracking(position)
+    }
+
+    private fun updateCameraTracking(currentPos: LatLng) {
+        val map = googleMap ?: return
+        val builder = LatLngBounds.Builder()
+        builder.include(currentPos)
+        
+        // Include the target point (Pickup if arriving, Destination if in progress)
+        val target = if (currentState is RideState.DriverArriving) {
+            pickupLocation
+        } else {
+            destinationLocation
+        }
+        
+        target?.let { 
+            builder.include(it)
+            val bounds = builder.build()
+            // Padding of 200px to ensure markers aren't on the extreme edge
+            map.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 200))
+        } ?: run {
+            // Fallback if no target: just center on driver
+            map.animateCamera(CameraUpdateFactory.newLatLngZoom(currentPos, 16f))
+        }
     }
 
     private fun interpolateLatLng(from: LatLng, to: LatLng, fraction: Float): LatLng {
-        val lat = (to.latitude - from.latitude) * fraction + from.latitude
-        val lng = (to.longitude - from.longitude) * fraction + from.longitude
-        return LatLng(lat, lng)
+        return LatLng((to.latitude - from.latitude) * fraction + from.latitude, (to.longitude - from.longitude) * fraction + from.longitude)
     }
 
     private fun setupWeatherFeature(view: View) {
         val fabWeather = view.findViewById<FloatingActionButton>(R.id.fabWeatherSmall)
         val cvWeatherPopup = view.findViewById<View>(R.id.cvWeatherPopupRide)
         val layoutWeatherDays = view.findViewById<android.widget.LinearLayout>(R.id.layoutWeatherDaysRide)
-        val ivGlow = view.findViewById<View>(R.id.ivWeatherGlowRide)
 
-        // Weather Outline (Static Blue)
-        // Animation removed as requested.
-
-        fun refreshWeather() {
-            val pickup = pickupLocation ?: LatLng(31.5204, 74.3587)
-            lifecycleScope.launch {
-                try {
+        fabWeather.setOnClickListener {
+            SpringPhysicsHelper.springPressFeedback(it)
+            if (cvWeatherPopup.visibility == View.VISIBLE) {
+                cvWeatherPopup.animate().alpha(0f).translationX(20f).setDuration(200).withEndAction { cvWeatherPopup.visibility = View.GONE }.start()
+            } else {
+                cvWeatherPopup.visibility = View.VISIBLE
+                cvWeatherPopup.alpha = 0f
+                cvWeatherPopup.translationX = 20f
+                cvWeatherPopup.animate().alpha(1f).translationX(0f).setDuration(350).setInterpolator(android.view.animation.OvershootInterpolator(1.2f)).start()
+                
+                lifecycleScope.launch {
+                    val pickup = pickupLocation ?: LatLng(31.5204, 74.3587)
                     val forecast = MockDataRepository.getLiveWeather(pickup.latitude, pickup.longitude)
                     layoutWeatherDays.removeAllViews()
                     forecast.forEachIndexed { index, weather ->
@@ -580,94 +384,31 @@ class RideFragment : Fragment() {
                         val tvDay = row.findViewById<TextView>(R.id.tvDay)
                         val tvTemp = row.findViewById<TextView>(R.id.tvTemp)
                         val ivIcon = row.findViewById<ImageView>(R.id.ivWeatherIcon)
+                        tvDay.text = weather.day; tvTemp.text = weather.temp; ivIcon.setImageResource(weather.iconRes)
                         
-                        tvDay.text = weather.day
-                        tvTemp.text = weather.temp
-                        ivIcon.setImageResource(weather.iconRes)
-                        
-                        // Highlight Present Day (First item)
+                        // COLORFUL HIGHLIGHT for Current Day
                         if (index == 0) {
                             row.setBackgroundResource(R.drawable.bg_weather_today)
                             tvDay.setTextColor(android.graphics.Color.WHITE)
                             tvTemp.setTextColor(android.graphics.Color.WHITE)
                             ivIcon.setColorFilter(android.graphics.Color.WHITE)
+                        } else {
+                            ivIcon.setColorFilter(ContextCompat.getColor(requireContext(), R.color.primary))
                         }
-                        
                         layoutWeatherDays.addView(row)
                     }
-                } catch (e: Exception) {
-                    e.printStackTrace()
                 }
-            }
-        }
-
-        // Initial fetch
-        refreshWeather()
-
-        fabWeather.setOnClickListener {
-            SpringPhysicsHelper.springPressFeedback(it)
-            if (cvWeatherPopup.visibility == View.VISIBLE) {
-                // Animate Out (Slide Down)
-                cvWeatherPopup.animate()
-                    .alpha(0f)
-                    .translationY(20f)
-                    .scaleX(0.9f)
-                    .scaleY(0.9f)
-                    .setDuration(200)
-                    .withEndAction { cvWeatherPopup.visibility = View.GONE }
-                    .start()
-            } else {
-                // Refresh data
-                refreshWeather()
-
-                // Animate In (Slide Up)
-                cvWeatherPopup.visibility = View.VISIBLE
-                cvWeatherPopup.alpha = 0f
-                cvWeatherPopup.translationY = 40f
-                cvWeatherPopup.scaleX = 0.8f
-                cvWeatherPopup.scaleY = 0.8f
-                
-                cvWeatherPopup.animate()
-                    .alpha(1f)
-                    .translationY(0f)
-                    .scaleX(1.0f)
-                    .scaleY(1.0f)
-                    .setDuration(350)
-                    .setInterpolator(android.view.animation.OvershootInterpolator(1.2f))
-                    .start()
             }
         }
     }
 
     private fun showDeviationWarning() {
         val warningCard = view?.findViewById<View>(R.id.cvDeviationWarning) ?: return
-        
         warningCard.visibility = View.VISIBLE
-        warningCard.alpha = 0f
-        warningCard.translationY = -40f
-        
-        warningCard.animate()
-            .alpha(1f)
-            .translationY(0f)
-            .setDuration(400)
-            .setInterpolator(android.view.animation.OvershootInterpolator())
-            .withEndAction {
-                // Auto-hide after 5 seconds
-                warningCard.postDelayed({
-                    if (isAdded) {
-                        warningCard.animate()
-                            .alpha(0f)
-                            .translationY(-40f)
-                            .setDuration(400)
-                            .withEndAction { warningCard.visibility = View.GONE }
-                            .start()
-                    }
-                }, 5000)
-            }
-            .start()
-            
-        // Trigger a tiny haptic or toast for additional awareness
-        Toast.makeText(requireContext(), "Safety Alert: Route change detected", Toast.LENGTH_SHORT).show()
+        warningCard.alpha = 0f; warningCard.translationY = -40f
+        warningCard.animate().alpha(1f).translationY(0f).setDuration(400).setInterpolator(android.view.animation.OvershootInterpolator()).withEndAction {
+            warningCard.postDelayed({ if (isAdded) warningCard.animate().alpha(0f).translationY(-40f).setDuration(400).withEndAction { warningCard.visibility = View.GONE }.start() }, 5000)
+        }.start()
+        Toast.makeText(requireContext(), "Safety Alert: Route deviation detected", Toast.LENGTH_SHORT).show()
     }
 }
-

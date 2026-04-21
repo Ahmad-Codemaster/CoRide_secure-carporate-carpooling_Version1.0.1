@@ -42,7 +42,6 @@ class HomeFragment : Fragment() {
         setupSavedPlaceButtons(view)
         updateDynamicContext(view)
         setupScrollEffects(view)
-        setupWeatherFeature(view)
         setupSpendingIconAnimation(view)
 
         // ── M3 Expressive entrance animations after layout ──
@@ -54,69 +53,7 @@ class HomeFragment : Fragment() {
         })
     }
 
-    private fun setupWeatherFeature(view: View) {
-        val fabWeather = view.findViewById<FloatingActionButton>(R.id.fabWeatherHome)
-        val cvWeatherPopup = view.findViewById<View>(R.id.cvWeatherPopupHome)
-        val layoutWeatherDays = view.findViewById<LinearLayout>(R.id.layoutWeatherDaysHome)
 
-        lifecycleScope.launch {
-            try {
-                // Lahore Default Coords
-                val forecast = MockDataRepository.getLiveWeather(31.5204, 74.3587)
-                layoutWeatherDays.removeAllViews()
-                forecast.forEachIndexed { index, weather ->
-                    val row = LayoutInflater.from(requireContext()).inflate(R.layout.item_weather_mini, layoutWeatherDays, false)
-                    val tvDay = row.findViewById<TextView>(R.id.tvDay)
-                    val tvTemp = row.findViewById<TextView>(R.id.tvTemp)
-                    val ivIcon = row.findViewById<ImageView>(R.id.ivWeatherIcon)
-                    
-                    tvDay.text = weather.day
-                    tvTemp.text = weather.temp
-                    ivIcon.setImageResource(weather.iconRes)
-                    
-                    if (index == 0) {
-                        row.setBackgroundResource(R.drawable.bg_weather_today)
-                        tvDay.setTextColor(android.graphics.Color.WHITE)
-                        tvTemp.setTextColor(android.graphics.Color.WHITE)
-                        ivIcon.setColorFilter(android.graphics.Color.WHITE)
-                    }
-                    
-                    layoutWeatherDays.addView(row)
-                }
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        }
-
-        fabWeather.setOnClickListener {
-            SpringPhysicsHelper.springPressFeedback(it)
-            if (cvWeatherPopup.visibility == View.VISIBLE) {
-                cvWeatherPopup.animate()
-                    .alpha(0f)
-                    .translationY(20f)
-                    .scaleX(0.9f)
-                    .scaleY(0.9f)
-                    .setDuration(200)
-                    .withEndAction { cvWeatherPopup.visibility = View.GONE }
-                    .start()
-            } else {
-                cvWeatherPopup.visibility = View.VISIBLE
-                cvWeatherPopup.alpha = 0f
-                cvWeatherPopup.translationY = 40f
-                cvWeatherPopup.scaleX = 0.8f
-                cvWeatherPopup.scaleY = 0.8f
-                
-                cvWeatherPopup.animate()
-                    .alpha(1f)
-                    .translationY(0f)
-                    .scaleX(1.0f)
-                    .scaleY(1.0f)
-                    .setDuration(350)
-                    .setInterpolator(android.view.animation.OvershootInterpolator(1.2f))
-                    .start()
-            }
-        }
-    }
 
     private fun setupHeader(view: View) {
         val user = MockDataRepository.getCurrentUser()
@@ -179,7 +116,7 @@ class HomeFragment : Fragment() {
             SpringPhysicsHelper.springPressFeedback(it)
             it.postDelayed({
                 if (requireVerification()) {
-                    findNavController().navigate(R.id.action_home_to_search)
+                    findNavController().navigate(R.id.action_home_to_booking)
                 }
             }, 100)
         }

@@ -1,6 +1,5 @@
 package com.coride.ui.home
 
-import android.location.Geocoder
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -26,6 +25,9 @@ class SearchPlaceFragment : Fragment() {
     private lateinit var adapter: PlaceAdapter
     private var autocompleteHelper: PlacesAutocompleteHelper? = null
     private var currentLocation: com.google.android.gms.maps.model.LatLng? = null
+    
+    private var rvResults: RecyclerView? = null
+    private var tvNoResults: TextView? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_search_place, container, false)
@@ -36,112 +38,102 @@ class SearchPlaceFragment : Fragment() {
 
         autocompleteHelper = PlacesAutocompleteHelper(requireContext())
         
-        // Try to get current location for biasing results (Professional feature)
         LocationHelper.getCurrentLocation(requireContext()) { loc ->
             loc?.let { currentLocation = com.google.android.gms.maps.model.LatLng(it.latitude, it.longitude) }
         }
 
+        // --- View Bindings ---
         val btnBack = view.findViewById<ImageView>(R.id.btnBack)
+        val etSearch = view.findViewById<EditText>(R.id.etSearch)
+        rvResults = view.findViewById(R.id.rvSearchResults)
+        tvNoResults = view.findViewById(R.id.tvNoResults)
+
+        // Navigation
         btnBack.setOnClickListener { findNavController().navigateUp() }
 
-        val etSearch = view.findViewById<EditText>(R.id.etSearch)
-        val rvResults = view.findViewById<RecyclerView>(R.id.rvSearchResults)
-        val btnPickOnMap = view.findViewById<View>(R.id.btnPickOnMap)
-        val tvNoResults = view.findViewById<TextView>(R.id.tvNoResults)
+        // Setup Colorful Category Pills
+        setupCategoryPills(view, etSearch)
 
-        // Setup Chips (Professional Action Buttons)
-        setupCategoryChips(view, etSearch)
-
-        btnPickOnMap.setOnClickListener {
-            findNavController().navigate(R.id.action_search_to_booking)
-        }
-
+        // --- Adapter Setup ---
         adapter = PlaceAdapter(MockDataRepository.getSavedPlaces()) { place ->
             if (place.latitude == 0.0 && place.longitude == 0.0) {
-                // Fetch coords for Google result
+                // Fetch coords for ORS/Google result if needed
                 autocompleteHelper?.resolvePlace(place.id) { latLng ->
-                    val bundle = bundleOf(
-                        "destination_name" to place.name,
-                        "destination_address" to place.address,
-                        "destination_lat" to (latLng?.latitude ?: 0.0),
-                        "destination_lng" to (latLng?.longitude ?: 0.0)
-                    )
-                    findNavController().navigate(R.id.action_search_to_booking, bundle)
+                    navigateToBooking(place.name, place.address, latLng?.latitude ?: 0.0, latLng?.longitude ?: 0.0)
                 }
             } else {
-                val bundle = bundleOf(
-                    "destination_name" to place.name,
-                    "destination_address" to place.address,
-                    "destination_lat" to place.latitude,
-                    "destination_lng" to place.longitude
-                )
-                findNavController().navigate(R.id.action_search_to_booking, bundle)
+                navigateToBooking(place.name, place.address, place.latitude, place.longitude)
             }
         }
 
-        rvResults.layoutManager = LinearLayoutManager(requireContext())
-        rvResults.adapter = adapter
+        rvResults?.layoutManager = LinearLayoutManager(requireContext())
+        rvResults?.adapter = adapter
 
+        // --- Search Logic ---
         etSearch.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
             override fun afterTextChanged(s: Editable?) {
                 val query = s?.toString()?.trim() ?: ""
-                performSearch(query, tvNoResults)
+                performSearch(query)
             }
         })
 
         etSearch.requestFocus()
     }
 
-    private fun setupCategoryChips(view: View, etSearch: EditText) {
-        val chips = listOf(
-            view.findViewById<com.google.android.material.chip.Chip>(R.id.chipRestaurant) to "Restaurants",
-            view.findViewById<com.google.android.material.chip.Chip>(R.id.chipATM) to "ATM",
-            view.findViewById<com.google.android.material.chip.Chip>(R.id.chipPetrol) to "Petrol",
-            view.findViewById<com.google.android.material.chip.Chip>(R.id.chipHospital) to "Hospital"
+    private fun setupCategoryPills(view: View, etSearch: EditText) {
+        val pills = listOf(
+            view.findViewById<View>(R.id.pillRestaurant) to "Restaurants",
+            view.findViewById<View>(R.id.pillATM) to "ATM",
+            view.findViewById<View>(R.id.pillPetrol) to "Petrol",
+            view.findViewById<View>(R.id.pillHospital) to "Hospital"
         )
         
-        chips.forEach { (chip, query) ->
-            chip?.setOnClickListener {
+        pills.forEach { (pill, query) ->
+            pill?.setOnClickListener {
                 etSearch.setText(query)
                 etSearch.setSelection(query.length)
             }
         }
     }
 
-    private fun performSearch(query: String, tvNoResults: TextView) {
+    private fun navigateToBooking(name: String, address: String, lat: Double, lng: Double) {
+        val bundle = bundleOf(
+            "destination_name" to name,
+            "destination_address" to address,
+            "destination_lat" to lat,
+            "destination_lng" to lng
+        )
+        findNavController().navigate(R.id.action_search_to_booking, bundle)
+    }
+
+    private fun performSearch(query: String) {
         if (query.isEmpty()) {
             val saved = MockDataRepository.getSavedPlaces()
             adapter.updatePlaces(saved)
-            tvNoResults.visibility = if (saved.isEmpty()) View.VISIBLE else View.GONE
+            tvNoResults?.visibility = if (saved.isEmpty()) View.VISIBLE else View.GONE
             return
         }
 
-        // Use the new Location-Biased search (Professional approach)
         autocompleteHelper?.search(query, currentLocation) { results ->
             if (!isAdded) return@search
             
             adapter.updatePlaces(results)
-            tvNoResults.visibility = if (results.isEmpty()) View.VISIBLE else View.GONE
+            tvNoResults?.visibility = if (results.isEmpty()) View.VISIBLE else View.GONE
             
             if (results.isNotEmpty()) {
-                val rv = view?.findViewById<RecyclerView>(R.id.rvSearchResults) ?: return@search
-                rv.post {
+                rvResults?.post {
+                    val rv = rvResults ?: return@post
                     val views = mutableListOf<View>()
                     for (i in 0 until minOf(results.size, 6)) {
                         rv.getChildAt(i)?.let { views.add(it) }
                     }
                     if (views.isNotEmpty()) {
-                        views.forEach { 
-                            it.alpha = 0f
-                            it.translationY = 50f
-                        }
-                        SpringPhysicsHelper.staggerSpringEntrance(views, staggerDelayMs = 50L)
+                        SpringPhysicsHelper.staggerSpringEntrance(views, staggerDelayMs = 40L)
                     }
                 }
             }
         }
     }
 }
-

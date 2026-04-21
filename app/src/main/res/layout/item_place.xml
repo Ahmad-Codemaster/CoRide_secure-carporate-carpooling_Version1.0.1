@@ -1,60 +1,78 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:gravity="center_vertical"
-    android:orientation="horizontal"
-    android:paddingHorizontal="@dimen/spacing_md"
-    android:paddingVertical="@dimen/spacing_md"
-    android:background="?attr/selectableItemBackground">
+    android:layout_marginHorizontal="20dp"
+    android:layout_marginVertical="6dp"
+    app:cardBackgroundColor="#FFFFFF"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="1dp"
+    app:strokeColor="#f1f5f9"
+    app:strokeWidth="1dp">
 
-    <!-- Location icon container — small circle -->
-    <com.google.android.material.card.MaterialCardView
-        android:layout_width="36dp"
-        android:layout_height="36dp"
-        app:cardCornerRadius="@dimen/shape_full"
-        app:cardElevation="@dimen/elevation_none"
-        app:cardBackgroundColor="@color/surface_container">
-
-        <ImageView
-            android:id="@+id/ivPlaceIcon"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:padding="8dp"
-            android:src="@drawable/ic_history"
-            android:tint="@color/on_surface_variant"
-            android:contentDescription="Place" />
-    </com.google.android.material.card.MaterialCardView>
-
-    <!-- Place Info -->
     <LinearLayout
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:layout_marginHorizontal="@dimen/spacing_md"
-        android:orientation="vertical">
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:padding="12dp">
 
-        <TextView
-            android:id="@+id/tvPlaceName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/on_surface"
-            android:textSize="@dimen/text_body_medium"
-            android:fontFamily="sans-serif-medium"
-            android:maxLines="1"
-            android:ellipsize="end" />
+        <!-- Location icon container — circular Background -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cvIconBackground"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            app:cardCornerRadius="22dp"
+            app:cardElevation="0dp"
+            app:cardBackgroundColor="#F1F5F9"
+            app:strokeWidth="0dp">
 
-        <TextView
-            android:id="@+id/tvPlaceAddress"
-            android:layout_width="wrap_content"
+            <ImageView
+                android:id="@+id/ivPlaceIcon"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="10dp"
+                android:src="@drawable/ic_history"
+                app:tint="#475569" />
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Place Info -->
+        <LinearLayout
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="2dp"
-            android:textColor="@color/on_surface_variant"
-            android:textSize="@dimen/text_body_small"
-            android:maxLines="1"
-            android:ellipsize="end" />
+            android:layout_weight="1"
+            android:layout_marginHorizontal="16dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tvPlaceName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#0f172a"
+                android:textSize="15sp"
+                android:fontFamily="sans-serif-bold"
+                android:maxLines="1"
+                android:ellipsize="end" />
+
+            <TextView
+                android:id="@+id/tvPlaceAddress"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:textColor="#64748b"
+                android:textSize="12sp"
+                android:fontFamily="sans-serif-medium"
+                android:maxLines="1"
+                android:ellipsize="end" />
+        </LinearLayout>
+
+        <!-- Selection Arrow -->
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@drawable/ic_chevron_right"
+            app:tint="#cbd5e1" />
+
     </LinearLayout>
-
-</LinearLayout>
-
+</com.google.android.material.card.MaterialCardView>

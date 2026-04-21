@@ -19,8 +19,36 @@ interface OpenRouteApi {
         @Query("end") end: String      // lon,lat
     ): Response<ORSResponse>
 
+    @GET("geocode/autocomplete")
+    suspend fun getAutocomplete(
+        @Query("api_key") apiKey: String,
+        @Query("text") text: String,
+        @Query("focus.point.lat") lat: Double? = null,
+        @Query("focus.point.lon") lon: Double? = null,
+        @Query("size") size: Int = 10
+    ): Response<GeocodeResponse>
+
     data class ORSResponse(
         @SerializedName("features") val features: List<Feature>?
+    )
+
+    data class GeocodeResponse(
+        @SerializedName("features") val features: List<GeocodeFeature>?
+    )
+
+    data class GeocodeFeature(
+        @SerializedName("geometry") val geometry: GeocodeGeometry?,
+        @SerializedName("properties") val properties: GeocodeProperties?
+    )
+
+    data class GeocodeGeometry(
+        @SerializedName("coordinates") val coordinates: List<Double>? // [lon, lat]
+    )
+
+    data class GeocodeProperties(
+        @SerializedName("label") val label: String?, // Full address
+        @SerializedName("name") val name: String?,   // Feature name
+        @SerializedName("id") val id: String?
     )
 
     data class Feature(
@@ -41,4 +69,3 @@ interface OpenRouteApi {
         @SerializedName("duration") val duration: Double?
     )
 }
-

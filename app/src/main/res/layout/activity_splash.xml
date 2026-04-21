@@ -56,46 +56,25 @@
         android:alpha="0"
         android:translationY="30dp" />
 
-    <!-- Animated Dots Row — spring pulse -->
-    <LinearLayout
-        android:id="@+id/dotsContainer"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/spacing_xxl"
-        android:orientation="horizontal"
-        android:gravity="center"
+    <!-- Progress Loading Bar — smooth filling -->
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/progressTrack"
+        android:layout_width="200dp"
+        android:layout_height="4dp"
+        android:layout_marginTop="60dp"
+        app:cardCornerRadius="2dp"
+        app:cardElevation="0dp"
+        app:cardBackgroundColor="#33FFFFFF"
         android:alpha="0">
 
         <View
-            android:id="@+id/dot1"
-            android:layout_width="8dp"
-            android:layout_height="8dp"
-            android:layout_marginHorizontal="5dp"
-            android:background="@drawable/bg_splash_dot"
-            android:alpha="1.0"
-            android:scaleX="1.0"
-            android:scaleY="1.0" />
-
-        <View
-            android:id="@+id/dot2"
-            android:layout_width="8dp"
-            android:layout_height="8dp"
-            android:layout_marginHorizontal="5dp"
-            android:background="@drawable/bg_splash_dot"
-            android:alpha="0.4"
-            android:scaleX="0.7"
-            android:scaleY="0.7" />
-
-        <View
-            android:id="@+id/dot3"
-            android:layout_width="8dp"
-            android:layout_height="8dp"
-            android:layout_marginHorizontal="5dp"
-            android:background="@drawable/bg_splash_dot"
-            android:alpha="0.4"
-            android:scaleX="0.7"
-            android:scaleY="0.7" />
-    </LinearLayout>
+            android:id="@+id/progressFilling"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#FFFFFF"
+            android:scaleX="0"
+            android:transformPivotX="0dp" />
+    </com.google.android.material.card.MaterialCardView>
 
 </LinearLayout>
 

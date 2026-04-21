@@ -16,7 +16,8 @@ import com.coride.data.model.RideStatus
 
 class RideHistoryAdapter(
     private var rides: List<Ride>,
-    private val onDeleteClick: (Ride) -> Unit
+    private val onDeleteClick: (Ride) -> Unit,
+    private val onReceiptClick: (Ride) -> Unit
 ) : RecyclerView.Adapter<RideHistoryAdapter.RideViewHolder>() {
 
     fun updateData(newRides: List<Ride>) {
@@ -58,7 +59,7 @@ class RideHistoryAdapter(
             btnViewReceipt.setOnClickListener {
                 SpringPhysicsHelper.springPressFeedback(it)
                 it.postDelayed({
-                    showReceiptDialog(ride)
+                    onReceiptClick(ride)
                 }, 100)
             }
 
@@ -80,24 +81,6 @@ class RideHistoryAdapter(
                     Toast.makeText(itemView.context, "Ride deleted", Toast.LENGTH_SHORT).show()
                 }
                 .show()
-        }
-
-        private fun showReceiptDialog(ride: Ride) {
-            val dialog = BottomSheetDialog(itemView.context, R.style.Widget_CoRide_BottomSheet)
-            val view = LayoutInflater.from(itemView.context).inflate(R.layout.dialog_receipt, null)
-            dialog.setContentView(view)
-
-            view.findViewById<TextView>(R.id.tvReceiptDate).text = "${ride.date} • ${ride.duration} min"
-            val farePrefix = itemView.resources.getString(R.string.currency_symbol)
-            
-            val baseFareVal = ride.finalFare.toInt() - 50
-            view.findViewById<TextView>(R.id.tvBaseFare).text = "$farePrefix $baseFareVal"
-            view.findViewById<TextView>(R.id.tvTotalPaid).text = "$farePrefix ${ride.finalFare.toInt()}"
-            
-            view.findViewById<MaterialButton>(R.id.btnCloseReceipt).setOnClickListener {
-                dialog.dismiss()
-            }
-            dialog.show()
         }
     }
 
