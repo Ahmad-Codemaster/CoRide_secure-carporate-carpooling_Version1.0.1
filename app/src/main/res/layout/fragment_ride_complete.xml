@@ -252,7 +252,7 @@
                                 android:src="@drawable/ic_wallet" app:tint="@color/on_surface_variant"/>
                             <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="16dp" android:orientation="vertical">
                                 <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="CoRide Wallet" android:textColor="@color/on_surface" android:fontFamily="sans-serif-bold"/>
-                                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Balance: ₨ 1,250" android:textColor="@color/on_surface_variant" android:textSize="12sp"/>
+                                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Balance: PKR 1,250" android:textColor="@color/on_surface_variant" android:textSize="12sp"/>
                             </LinearLayout>
                             <RadioButton android:id="@+id/rbWallet" android:layout_width="wrap_content" android:layout_height="wrap_content" android:clickable="false"/>
                         </LinearLayout>

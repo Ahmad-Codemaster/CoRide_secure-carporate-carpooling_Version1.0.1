@@ -296,7 +296,7 @@ class BookingFragment : Fragment() {
                 currentFare = MockDataRepository.getRecommendedFare(distanceKm, selectedType)
                 updateMapMarkers()
                 view?.findViewById<EditText>(R.id.etFare)?.setText(currentFare.toInt().toString())
-                view?.findViewById<TextView>(R.id.tvRecommendedFare)?.text = "Recommended: Rs. ${currentFare.toInt()}  •  ${DirectionsHelper.formatDistance(result.distanceMeters)}"
+                view?.findViewById<TextView>(R.id.tvRecommendedFare)?.text = "Recommended: PKR ${currentFare.toInt()}  •  ${DirectionsHelper.formatDistance(result.distanceMeters)}"
             } catch (e: Exception) {}
         }
     }

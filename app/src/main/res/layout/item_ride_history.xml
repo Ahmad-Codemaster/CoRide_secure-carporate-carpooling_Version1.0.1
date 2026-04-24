@@ -6,9 +6,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginVertical="8sp"
-    app:cardBackgroundColor="@color/accent_light"
+    app:cardBackgroundColor="#FFFFFF"
     app:cardCornerRadius="20dp"
-    app:cardElevation="2dp"
     app:strokeColor="#e2e8f0"
     app:strokeWidth="1dp">
 
@@ -188,12 +187,13 @@
                 android:layout_width="0dp"
                 android:layout_height="44dp"
                 android:layout_weight="1"
+                android:fontFamily="sans-serif-medium"
                 android:text="Book Again"
                 android:textAllCaps="false"
                 android:textSize="12sp"
-                app:cornerRadius="12dp"
                 app:backgroundTint="#0f172a"
-                android:fontFamily="sans-serif-medium" />
+                app:cornerRadius="12dp"
+                tools:ignore="TouchTargetSizeCheck" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnViewReceipt"
@@ -202,14 +202,15 @@
                 android:layout_height="44dp"
                 android:layout_marginStart="12dp"
                 android:layout_weight="1"
+                android:fontFamily="sans-serif-medium"
                 android:text="View Receipt"
                 android:textAllCaps="false"
-                android:textSize="12sp"
                 android:textColor="#2196F3"
+                android:textSize="12sp"
                 app:cornerRadius="12dp"
                 app:strokeColor="#2196F3"
                 app:strokeWidth="1dp"
-                android:fontFamily="sans-serif-medium" />
+                tools:ignore="TouchTargetSizeCheck" />
         </LinearLayout>
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

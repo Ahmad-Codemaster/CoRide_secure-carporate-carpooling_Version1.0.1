@@ -56,25 +56,13 @@
         android:alpha="0"
         android:translationY="30dp" />
 
-    <!-- Progress Loading Bar — smooth filling -->
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/progressTrack"
-        android:layout_width="200dp"
-        android:layout_height="4dp"
-        android:layout_marginTop="60dp"
-        app:cardCornerRadius="2dp"
-        app:cardElevation="0dp"
-        app:cardBackgroundColor="#33FFFFFF"
-        android:alpha="0">
-
-        <View
-            android:id="@+id/progressFilling"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="#FFFFFF"
-            android:scaleX="0"
-            android:transformPivotX="0dp" />
-    </com.google.android.material.card.MaterialCardView>
+    <!-- Progress Loading — Infinity Symbol Expressive Indicator -->
+    <com.coride.ui.custom.InfinityLoadingView
+        android:id="@+id/progressIndicator"
+        android:layout_width="160dp"
+        android:layout_height="80dp"
+        android:layout_marginTop="48dp"
+        android:alpha="0" />
 
 </LinearLayout>
 

@@ -13,6 +13,9 @@ import com.coride.ui.auth.AuthActivity
 import com.coride.ui.common.SpringPhysicsHelper
 import com.coride.ui.common.ThemeHelper
 import com.coride.ui.main.MainActivity
+import com.coride.ui.custom.InfinityLoadingView
+import android.animation.ValueAnimator
+import android.view.animation.LinearInterpolator
 
 @SuppressLint("CustomSplashScreen")
 class SplashActivity : AppCompatActivity() {
@@ -26,8 +29,7 @@ class SplashActivity : AppCompatActivity() {
         val heroContainer = findViewById<View>(R.id.heroContainer)
         val tvAppName = findViewById<View>(R.id.tvAppName)
         val tvTagline = findViewById<View>(R.id.tvTagline)
-        val progressTrack = findViewById<View>(R.id.progressTrack)
-        val progressFilling = findViewById<View>(R.id.progressFilling)
+        val progressIndicator = findViewById<InfinityLoadingView>(R.id.progressIndicator)
 
         // ── Hero Circle — M3 Expressive spatial spring (bouncy scale up) ──
         SpringPhysicsHelper.springScale(
@@ -58,23 +60,12 @@ class SplashActivity : AppCompatActivity() {
             startDelay = 380L
         )
 
-        // ── Progress Bar — fade in and fill ──
+        // ── Progress Indicator — smooth fade in and fill animation ──
         SpringPhysicsHelper.springAlpha(
-            progressTrack, 1f,
+            progressIndicator, 1f,
             startDelay = 550L
         )
-
-        // ── Smooth Filling Animation (ValueAnimator) ──
-        android.animation.ValueAnimator.ofFloat(0f, 1f).apply {
-            duration = 2400
-            startDelay = 600
-            interpolator = android.view.animation.LinearInterpolator()
-            addUpdateListener { animator ->
-                progressFilling.scaleX = animator.animatedValue as Float
-            }
-            start()
-        }
-
+        
         // ── Navigate after 2.8s ──
         Handler(Looper.getMainLooper()).postDelayed({
             val intent = if (MockDataRepository.isLoggedIn()) {

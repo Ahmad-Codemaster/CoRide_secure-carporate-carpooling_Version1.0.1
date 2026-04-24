@@ -151,8 +151,8 @@
     <string name="loading">Loading…</string>
     <string name="error_occurred">Something went wrong</string>
     <string name="retry">Retry</string>
-    <string name="currency_symbol">₨</string>
-    <string name="currency_format">₨ %1$s</string>
+    <string name="currency_symbol">PKR</string>
+    <string name="currency_format">PKR %1$s</string>
     <string name="verify">Verify</string>
     <string name="org">Org</string>
     <string name="select">Select</string>

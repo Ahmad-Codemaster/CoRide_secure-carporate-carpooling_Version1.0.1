@@ -114,77 +114,86 @@ object MockDataRepository {
         Place("place_8", "Shaukat Khanum Hospital", "Johar Town, Lahore", 31.4685, 74.2635, PlaceType.RECENT)
     )
 
-    private val rideHistory = mutableListOf(
-        Ride(
-            id = "ride_001",
-            pickup = mockPlaces[0],
-            destination = mockPlaces[1],
-            driver = mockDrivers[0],
-            status = RideStatus.COMPLETED,
-            requestedFare = 350.0,
-            finalFare = 380.0,
-            distance = 12.5,
-            duration = 25,
-            rideType = VehicleType.CAR,
-            driverRating = 5f,
-            date = "Today, 8:30 AM"
-        ),
-        Ride(
-            id = "ride_002",
-            pickup = mockPlaces[1],
-            destination = mockPlaces[2],
-            driver = mockDrivers[1],
-            status = RideStatus.COMPLETED,
-            requestedFare = 250.0,
-            finalFare = 250.0,
-            distance = 8.3,
-            duration = 18,
-            rideType = VehicleType.CAR,
-            driverRating = 4f,
-            date = "Yesterday, 6:15 PM"
-        ),
-        Ride(
-            id = "ride_003",
-            pickup = mockPlaces[3],
-            destination = mockPlaces[0],
-            driver = mockDrivers[2],
-            status = RideStatus.COMPLETED,
-            requestedFare = 500.0,
-            finalFare = 550.0,
-            distance = 18.7,
-            duration = 35,
-            rideType = VehicleType.BIKE,
-            driverRating = 5f,
-            date = "Mar 10, 2:45 PM"
-        ),
-        Ride(
-            id = "ride_004",
-            pickup = mockPlaces[0],
-            destination = mockPlaces[4],
-            driver = mockDrivers[3],
-            status = RideStatus.CANCELLED,
-            requestedFare = 400.0,
-            finalFare = 0.0,
-            distance = 15.2,
-            duration = 0,
-            rideType = VehicleType.CAR,
-            date = "Mar 8, 11:00 AM"
-        ),
-        Ride(
-            id = "ride_005",
-            pickup = mockPlaces[5],
-            destination = mockPlaces[6],
-            driver = mockDrivers[4],
-            status = RideStatus.COMPLETED,
-            requestedFare = 200.0,
-            finalFare = 220.0,
-            distance = 6.1,
-            duration = 14,
-            rideType = VehicleType.CAR,
-            driverRating = 5f,
-            date = "Mar 5, 9:20 AM"
-        )
-    )
+    private val rideHistory = mutableListOf<Ride>().apply {
+        val stored = com.coride.data.local.LocalPreferences.getRides()
+        if (stored != null) {
+            addAll(stored)
+        } else {
+            // Initial mock data if nothing is saved
+            addAll(listOf(
+                Ride(
+                    id = "ride_001",
+                    pickup = mockPlaces[0],
+                    destination = mockPlaces[1],
+                    driver = mockDrivers[0],
+                    status = RideStatus.COMPLETED,
+                    requestedFare = 350.0,
+                    finalFare = 380.0,
+                    distance = 12.5,
+                    duration = 25,
+                    rideType = VehicleType.CAR,
+                    driverRating = 5f,
+                    date = "Today, 8:30 AM"
+                ),
+                Ride(
+                    id = "ride_002",
+                    pickup = mockPlaces[1],
+                    destination = mockPlaces[2],
+                    driver = mockDrivers[1],
+                    status = RideStatus.COMPLETED,
+                    requestedFare = 250.0,
+                    finalFare = 250.0,
+                    distance = 8.3,
+                    duration = 18,
+                    rideType = VehicleType.CAR,
+                    driverRating = 4f,
+                    date = "Yesterday, 6:15 PM"
+                ),
+                Ride(
+                    id = "ride_003",
+                    pickup = mockPlaces[3],
+                    destination = mockPlaces[0],
+                    driver = mockDrivers[2],
+                    status = RideStatus.COMPLETED,
+                    requestedFare = 500.0,
+                    finalFare = 550.0,
+                    distance = 18.7,
+                    duration = 35,
+                    rideType = VehicleType.BIKE,
+                    driverRating = 5f,
+                    date = "Mar 10, 2:45 PM"
+                ),
+                Ride(
+                    id = "ride_004",
+                    pickup = mockPlaces[0],
+                    destination = mockPlaces[4],
+                    driver = mockDrivers[3],
+                    status = RideStatus.CANCELLED,
+                    requestedFare = 400.0,
+                    finalFare = 0.0,
+                    distance = 15.2,
+                    duration = 0,
+                    rideType = VehicleType.CAR,
+                    date = "Mar 8, 11:00 AM"
+                ),
+                Ride(
+                    id = "ride_005",
+                    pickup = mockPlaces[5],
+                    destination = mockPlaces[6],
+                    driver = mockDrivers[4],
+                    status = RideStatus.COMPLETED,
+                    requestedFare = 200.0,
+                    finalFare = 220.0,
+                    distance = 6.1,
+                    duration = 14,
+                    rideType = VehicleType.CAR,
+                    driverRating = 5f,
+                    date = "Mar 5, 9:20 AM"
+                )
+            ))
+            com.coride.data.local.LocalPreferences.saveRides(this)
+        }
+    }
 
     fun getCurrentUser(): User = currentUser
 
@@ -317,10 +326,12 @@ object MockDataRepository {
 
     fun addRide(ride: Ride) {
         rideHistory.add(ride)
+        com.coride.data.local.LocalPreferences.saveRides(rideHistory)
     }
 
     fun deleteRide(ride: Ride) {
         rideHistory.removeIf { it.id == ride.id }
+        com.coride.data.local.LocalPreferences.saveRides(rideHistory)
     }
 
     fun getDrivers(): List<Driver> = mockDrivers
@@ -425,6 +436,7 @@ object MockDataRepository {
             )
             updateUser(newUser)
             rideHistory.clear()
+            com.coride.data.local.LocalPreferences.saveRides(rideHistory)
             
             // Automated Administrative Alert
             EmailNotificationHelper.sendRegistrationAlert(newUser)

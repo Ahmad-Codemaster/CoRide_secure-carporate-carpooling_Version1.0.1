@@ -9,6 +9,10 @@ import com.coride.data.repository.MockDataRepository
 import com.coride.ui.common.ThemeHelper
 import com.coride.ui.custom.CurvedBottomNavigationView
 import com.coride.ui.verification.VerificationPopupDialogFragment
+import com.coride.utils.FirebaseSafetyHelper
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
 
@@ -86,23 +90,37 @@ class MainActivity : AppCompatActivity() {
         val user = MockDataRepository.getCurrentUser()
         val rideId = "hardware_sos_event"
         
-        // Fetch real-time location silently in the background
-        com.coride.ui.common.LocationHelper.getCurrentLocation(this) { location ->
-            val lat = location?.latitude ?: 0.0
-            val lng = location?.longitude ?: 0.0
-            
-            // 1. Trigger App Internal SOS State
-            MockDataRepository.triggerSOS()
-            
-            // 2. Dispatch Email Admin Alert
-            com.coride.utils.EmailNotificationHelper.sendSosAlert(user, rideId, lat, lng)
-            
-            // 3. Dispatch SMS Real-World Alerts
-            val smsMsg = com.coride.utils.SmsSafetyHelper.buildSosMessage(rideId, lat, lng)
-            com.coride.utils.SmsSafetyHelper.sendToAllEmergencyContacts(this, smsMsg)
-            
-            runOnUiThread {
-                android.widget.Toast.makeText(this, "🆘 EMERGENCY HARDWARE SOS TRIGGERED!", android.widget.Toast.LENGTH_LONG).show()
+        lifecycleScope.launch {
+            val startTime = System.currentTimeMillis()
+            val trackingDuration = 10 * 60 * 1000L // Track for 10 minutes
+            var isFirstNotification = true
+
+            while (System.currentTimeMillis() - startTime < trackingDuration) {
+                com.coride.ui.common.LocationHelper.getCurrentLocation(this@MainActivity) { location ->
+                    val lat = location?.latitude ?: 0.0
+                    val lng = location?.longitude ?: 0.0
+                    
+                    // 1. Update Live Firebase Tracking
+                    FirebaseSafetyHelper.pushLocationUpdate(rideId, "user", lat, lng)
+                    
+                    if (isFirstNotification) {
+                        // 2. Trigger App Internal SOS State
+                        MockDataRepository.triggerSOS()
+                        
+                        // 3. Dispatch Admin Email Alert
+                        com.coride.utils.EmailNotificationHelper.sendSosAlert(user, rideId, lat, lng)
+                        
+                        // 4. Dispatch SMS Alerts to Trusted Contacts
+                        val smsMsg = com.coride.utils.SmsSafetyHelper.buildSosMessage(rideId, lat, lng)
+                        com.coride.utils.SmsSafetyHelper.sendToAllEmergencyContacts(this@MainActivity, smsMsg)
+                        
+                        runOnUiThread {
+                            android.widget.Toast.makeText(this@MainActivity, "🆘 EMERGENCY HARDWARE SOS TRIGGERED!\nLive location is being shared.", android.widget.Toast.LENGTH_LONG).show()
+                        }
+                        isFirstNotification = false
+                    }
+                }
+                delay(10000) // Update every 10 seconds
             }
         }
     }

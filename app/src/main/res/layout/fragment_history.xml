@@ -26,7 +26,7 @@
                 android:layout_height="wrap_content"
                 app:cardCornerRadius="16dp"
                 app:cardElevation="0dp"
-                app:cardBackgroundColor="#222196F3"
+                app:cardBackgroundColor="#1D9C27B0"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent">
@@ -37,7 +37,7 @@
                     android:paddingHorizontal="16dp"
                     android:paddingVertical="6dp"
                     android:text="Activity"
-                    android:textColor="#2196F3"
+                    android:textColor="#673AB7"
                     android:textSize="14sp"
                     android:fontFamily="sans-serif-bold"
                     android:textAllCaps="true"

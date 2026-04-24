@@ -97,8 +97,7 @@
             android:layout_marginHorizontal="20dp"
             android:layout_marginTop="20dp"
             app:cardCornerRadius="20dp"
-            app:cardElevation="4dp"
-            app:cardBackgroundColor="@color/accent_light"
+            app:cardBackgroundColor="#FFFFFF"
             app:strokeColor="#e2e8f0"
             app:strokeWidth="1dp">
 
@@ -232,8 +231,7 @@
             android:layout_marginHorizontal="20dp"
             android:layout_marginTop="24dp"
             app:cardCornerRadius="20dp"
-            app:cardElevation="2dp"
-            app:cardBackgroundColor="@color/accent_light"
+            app:cardBackgroundColor="#FFFFFF"
             app:strokeColor="#e2e8f0"
             app:strokeWidth="1dp">
 

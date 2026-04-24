@@ -7,6 +7,9 @@ import com.coride.data.model.UserRole
 import com.coride.data.model.VerificationStatus
 
 import com.coride.data.model.TrustedContact
+import com.coride.data.model.Ride
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 
 object LocalPreferences {
     private const val PREFS_NAME = "coride_prefs"
@@ -134,6 +137,27 @@ object LocalPreferences {
 
     fun clearUser() {
         prefs.edit().putBoolean("isLoggedIn", false).apply()
+    }
+
+    /**
+     * Persist ride history
+     */
+    fun saveRides(rides: List<Ride>) {
+        val json = Gson().toJson(rides)
+        prefs.edit().putString("ride_history", json).apply()
+    }
+
+    /**
+     * Retrieve persisted ride history
+     */
+    fun getRides(): List<Ride>? {
+        val json = prefs.getString("ride_history", null) ?: return null
+        val type = object : TypeToken<List<Ride>>() {}.type
+        return try {
+            Gson().fromJson(json, type)
+        } catch (e: Exception) {
+            null
+        }
     }
 
     /**

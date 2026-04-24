@@ -48,8 +48,8 @@ dependencies {
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
     implementation("androidx.recyclerview:recyclerview:1.3.2")
 
-    // Material Design 3
-    implementation("com.google.android.material:material:1.12.0")
+    // Material Design 3 (Updated for Wavy Progress support)
+    implementation("com.google.android.material:material:1.13.0-alpha01")
 
     // Spring-physics motion (DynamicAnimation)
     implementation("androidx.dynamicanimation:dynamicanimation-ktx:1.0.0-alpha03")

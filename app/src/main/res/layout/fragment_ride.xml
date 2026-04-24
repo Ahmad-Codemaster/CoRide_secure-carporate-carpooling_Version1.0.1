@@ -11,8 +11,12 @@
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/rideMapView"
         android:name="com.google.android.gms.maps.SupportMapFragment"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         tools:layout="@layout/view_map_placeholder" />
 
     <!-- MODERN TOP HUD -->
@@ -220,6 +224,21 @@
             android:textSize="12sp"
             android:fontFamily="sans-serif-medium" />
     </com.google.android.material.card.MaterialCardView>
+
+    <!-- RECENTER FAB -->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabRecenter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:src="@drawable/location"
+        android:visibility="gone"
+        app:fabSize="mini"
+        app:backgroundTint="#FFFFFF"
+        app:tint="?attr/colorPrimary"
+        app:layout_constraintBottom_toTopOf="@id/rideBottomSheet"
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <!-- PREMIUM DRIVER AND RIDE STATUS PANEL -->
     <androidx.core.widget.NestedScrollView

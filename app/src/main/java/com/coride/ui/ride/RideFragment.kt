@@ -48,6 +48,8 @@ class RideFragment : Fragment() {
 
     private var currentState: RideState = RideState.SearchingDrivers
     private var rideId: String = ""
+    private var isAutoTracking = true
+    private lateinit var fabRecenter: FloatingActionButton
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_ride, container, false)
@@ -86,7 +88,7 @@ class RideFragment : Fragment() {
         view.findViewById<TextView>(R.id.tvVehicleInfo).text = vehicleInfo
         view.findViewById<TextView>(R.id.tvPlateNumber).text = plateNumber
         view.findViewById<TextView>(R.id.tvDestination).text = destName
-        view.findViewById<TextView>(R.id.tvFare).text = "₨ ${fare.toInt()}"
+        view.findViewById<TextView>(R.id.tvFare).text = "PKR ${fare.toInt()}"
 
         setupPaths()
         setupButtons(view, driverName, driverPhone, vehicleInfo, plateNumber, destName, fare, driverRating)
@@ -121,6 +123,7 @@ class RideFragment : Fragment() {
             driverStartLocation?.let { dStart ->
                 pickupLocation?.let { pLoc ->
                     approachPath = DirectionsHelper.generateApproachPath(dStart, pLoc, 40)
+                    // If map is already ready, draw now. Otherwise setupMap will handle it.
                     googleMap?.let { drawInitialMap(it) }
                 }
             }
@@ -128,6 +131,7 @@ class RideFragment : Fragment() {
                 destinationLocation?.let { dLoc ->
                     val route = DirectionsHelper.generateRoute(pLoc, dLoc, 60)
                     ridePath = route.polylinePoints
+                    // If map is already ready, draw now.
                     googleMap?.let { drawInitialMap(it) }
                 }
             }
@@ -140,6 +144,14 @@ class RideFragment : Fragment() {
         val fabSosInfo = view.findViewById<FloatingActionButton>(R.id.fabSosInfo)
         val cvSosInfoPopup = view.findViewById<View>(R.id.cvSosInfoPopup)
         val btnCancelRide = view.findViewById<MaterialButton>(R.id.btnCancelRide)
+        fabRecenter = view.findViewById(R.id.fabRecenter)
+
+        fabRecenter.setOnClickListener {
+            SpringPhysicsHelper.springPressFeedback(it)
+            isAutoTracking = true
+            fabRecenter.visibility = View.GONE
+            currentDriverPosition?.let { pos -> updateCameraTracking(pos) }
+        }
 
         view.findViewById<View>(R.id.btnCall).setOnClickListener {
             SpringPhysicsHelper.springPressFeedback(it)
@@ -203,6 +215,15 @@ class RideFragment : Fragment() {
             googleMap = map
             map.uiSettings.isMapToolbarEnabled = false
             map.uiSettings.isZoomControlsEnabled = false
+            
+            map.setOnCameraMoveStartedListener { reason ->
+                if (reason == GoogleMap.OnCameraMoveStartedListener.REASON_GESTURE) {
+                    isAutoTracking = false
+                    fabRecenter.visibility = View.VISIBLE
+                }
+            }
+            
+            // Ensure we draw the map once it's ready
             drawInitialMap(map)
         }
     }
@@ -334,6 +355,7 @@ class RideFragment : Fragment() {
     }
 
     private fun updateCameraTracking(currentPos: LatLng) {
+        if (!isAutoTracking) return
         val map = googleMap ?: return
         val builder = LatLngBounds.Builder()
         builder.include(currentPos)

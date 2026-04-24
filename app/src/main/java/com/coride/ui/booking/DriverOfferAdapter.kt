@@ -31,7 +31,7 @@ class DriverOfferAdapter(
             tvName.text = offer.driver.name
             tvRating.text = offer.driver.rating.toString()
             tvTrips.text = "${offer.driver.totalTrips} trips"
-            tvPrice.text = "Rs. ${offer.offeredPrice.toInt()}"
+            tvPrice.text = "PKR ${offer.offeredPrice.toInt()}"
             tvVehicle.text = "${offer.driver.vehicle.color} ${offer.driver.vehicle.make} ${offer.driver.vehicle.model} • ${offer.driver.vehicle.plateNumber}"
             
             val iconRes = when (offer.driver.vehicle.type) {

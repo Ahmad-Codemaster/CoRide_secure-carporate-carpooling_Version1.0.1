@@ -6,7 +6,6 @@
     android:layout_height="match_parent"
     android:background="@color/surface_container_low"
     android:orientation="vertical">
-
     <!-- M3 Small Top App Bar -->
     <com.google.android.material.appbar.AppBarLayout
         style="@style/Widget.CoRide.AppBarLayout"
