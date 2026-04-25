@@ -39,13 +39,18 @@ class PlacesAutocompleteHelper(private val context: Context) {
         // 2. Search OpenRouteService
         scope.launch {
             try {
+                // 2.1 Decide on a focus point (biasing). Use current location if available, otherwise default to Lahore, Pakistan
+                val biasLat = biasLocation?.latitude ?: 31.5204
+                val biasLon = biasLocation?.longitude ?: 74.3587
+
                 val response = withContext(Dispatchers.IO) {
                     SafetyNetworkModule.orsApi.getAutocomplete(
                         apiKey = orsKey,
                         text = query,
-                        lat = biasLocation?.latitude,
-                        lon = biasLocation?.longitude,
-                        size = 10
+                        lat = biasLat,
+                        lon = biasLon,
+                        layers = "address,venue,neighbourhood,locality",
+                        size = 12
                     )
                 }
 

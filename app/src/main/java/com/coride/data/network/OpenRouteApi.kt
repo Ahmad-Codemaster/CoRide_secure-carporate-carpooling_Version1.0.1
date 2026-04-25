@@ -25,6 +25,8 @@ interface OpenRouteApi {
         @Query("text") text: String,
         @Query("focus.point.lat") lat: Double? = null,
         @Query("focus.point.lon") lon: Double? = null,
+        @Query("layers") layers: String? = null,
+        @Query("sources") sources: String? = null,
         @Query("size") size: Int = 10
     ): Response<GeocodeResponse>
 

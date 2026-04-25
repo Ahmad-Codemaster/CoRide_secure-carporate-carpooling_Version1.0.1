@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="400dp"
+    android:height="120dp"
+    android:viewportWidth="400"
+    android:viewportHeight="120">
+    
+    <!-- Glassy Blue Shape with Curved Bottom -->
+    <path
+        android:pathData="M0,0 L400,0 L400,75 C400,75 200,115 0,75 Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:angle="135"
+                android:endColor="#991D4ED8"
+                android:startColor="#CC3B82F6"
+                android:type="linear" />
+        </aapt:attr>
+    </path>
+
+    <!-- Subtle White Top Highlight/Stroke for Glassy Effect -->
+    <path
+        android:pathData="M0,0 L400,0 L400,2 L0,2 Z"
+        android:fillColor="#40FFFFFF" />
+
+    <!-- Subtle Bottom Stroke -->
+    <path
+        android:pathData="M0,75 C400,75 200,115 0,75"
+        android:strokeColor="#33FFFFFF"
+        android:strokeWidth="1.5" />
+</vector>

@@ -231,8 +231,7 @@ class RideFragment : Fragment() {
     private fun drawInitialMap(map: GoogleMap) {
         map.clear()
         driverMarker = null
-        val mapStyle = """[ { "elementType": "geometry", "stylers": [ { "color": "#f5f5f5" } ] } ]"""
-        map.setMapStyle(MapStyleOptions(mapStyle))
+        // Removed restrictive map style that was making the map appear blank
         pickupLocation?.let { map.addMarker(MarkerOptions().position(it).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))) }
         destinationLocation?.let { dLoc ->
             map.addMarker(MarkerOptions().position(dLoc).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_VIOLET)))

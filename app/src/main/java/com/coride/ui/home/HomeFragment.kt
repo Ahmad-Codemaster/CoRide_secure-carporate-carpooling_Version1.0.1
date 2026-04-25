@@ -135,6 +135,7 @@ class HomeFragment : Fragment() {
         val tvUserName = view.findViewById<View>(R.id.tvUserName)
         val btnMap = view.findViewById<View>(R.id.btnToggleMap)
         val spendingCard = view.findViewById<View>(R.id.spendingCard)
+        val homeHeader = view.findViewById<View>(R.id.homeHeader)
 
         // Threshold for full condensation
         val scrollThreshold = 100f
@@ -142,10 +143,10 @@ class HomeFragment : Fragment() {
         scrollView.setOnScrollChangeListener { _, _, scrollY, _, _ ->
             val factor = (scrollY.toFloat() / scrollThreshold).coerceIn(0f, 1f)
 
-            // 1. Stable Header Morphing (95% Opacity White as requested)
-            // Background: Transparent -> 95% White (#F2FFFFFF)
-            val alpha = (factor * 242).toInt() // 95% of 255 is approx 242
-            headerPill?.setCardBackgroundColor(android.graphics.Color.argb(alpha, 255, 255, 255))
+            // 1. Stable Header Morphing (Glassy Blue as requested)
+            // Background: Transparent -> Glassy Blue (#3B82F6 with alpha)
+            val alpha = (factor * 230).toInt() // Approx 90% opacity for glassy look
+            headerPill?.setCardBackgroundColor(android.graphics.Color.argb(alpha, 59, 130, 246))
             
             // Corner Radius morphing: 0dp -> 100dp
             val radius = factor * 100f * resources.displayMetrics.density
@@ -170,10 +171,24 @@ class HomeFragment : Fragment() {
             btnMap?.scaleX = btnScale
             btnMap?.scaleY = btnScale
             
-            // 3. Subtle Translation
-            headerPill?.translationY = factor * 5f * resources.displayMetrics.density
+            // 4. Triangle Background Fade Out
+            homeHeader?.background?.alpha = ((1f - factor) * 255).toInt()
 
-            // 4. Parallax Depth for Spending Card
+            // 5. Dynamic Padding & Height (Fixes bottom space in pill state)
+            // Default: 24dp padding, 84dp minHeight -> Pill: 12dp padding, 72dp minHeight
+            val density = resources.displayMetrics.density
+            val currentPadding = ((24f - (12f * factor)) * density).toInt()
+            val currentMinHeight = ((84f - (12f * factor)) * density).toInt()
+            
+            homeHeader?.setPadding(
+                (20f * density).toInt(), // Left
+                (12f * density).toInt(), // Top
+                (20f * density).toInt(), // Right
+                currentPadding           // Bottom (Dynamic)
+            )
+            homeHeader?.minimumHeight = currentMinHeight
+
+            // 6. Parallax Depth for Spending Card
             spendingCard?.translationY = scrollY * 0.35f
         }
     }
@@ -189,7 +204,7 @@ class HomeFragment : Fragment() {
         val totalAmount = completedRides.sumOf { it.finalFare }
         
         // Format to decimal
-        tvTotalSpending?.text = String.format("$%.2f", totalAmount)
+        tvTotalSpending?.text = String.format("PKR %.2f", totalAmount)
     }
 
     private fun setupSearchBar(view: View) {
@@ -235,7 +250,7 @@ class HomeFragment : Fragment() {
                 val dest = ride.destination.name.takeIf { it.isNotBlank() } ?: "Destination"
                 tvRoute.text = "$origin → $dest"
                 tvDate.text = ride.date
-                tvPrice.text = String.format("$%.0f", ride.finalFare)
+                tvPrice.text = String.format("PKR %.0f", ride.finalFare)
                 
                 item.setOnClickListener {
                     SpringPhysicsHelper.springPressFeedback(it)

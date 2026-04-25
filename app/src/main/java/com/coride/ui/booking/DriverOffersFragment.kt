@@ -43,7 +43,7 @@ class DriverOffersFragment : Fragment() {
         val pickupLng = arguments?.getDouble("pickup_lng") ?: 0.0
         val rideType = arguments?.getString("ride_type") ?: "ECONOMY"
 
-        view.findViewById<TextView>(R.id.tvYourFare).text = "Rs. ${fare.toInt()}"
+        view.findViewById<TextView>(R.id.tvYourFare).text = "PKR ${fare.toInt()}"
         view.findViewById<TextView>(R.id.tvOfferDestination).text = destName
 
         view.findViewById<View>(R.id.btnCancel).setOnClickListener {

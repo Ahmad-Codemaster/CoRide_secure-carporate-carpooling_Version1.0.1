@@ -154,7 +154,7 @@
                     android:id="@+id/tvRideFare"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="₨ 1,250"
+                    android:text="PKR 1,250"
                     android:textColor="#0f172a"
                     android:textSize="18sp"
                     android:fontFamily="sans-serif-bold" />

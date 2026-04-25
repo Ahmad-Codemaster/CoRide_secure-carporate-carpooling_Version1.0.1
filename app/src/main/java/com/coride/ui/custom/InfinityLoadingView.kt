@@ -36,14 +36,12 @@ class InfinityLoadingView @JvmOverloads constructor(
     private val pathMeasure = PathMeasure()
     
     private var progress = 0f // 0 to 1 for the segment position
-    private var phase = 0f    // For the wave effect
     
     private var animator: ValueAnimator? = null
-    private var phaseAnimator: ValueAnimator? = null
 
     var indicatorColor = Color.WHITE
     var trackColor = Color.parseColor("#1AFFFFFF")
-    var segmentLength = 0.4f // 40% of the path length
+    var segmentLength = 0.3f // 30% of the path length
 
     init {
         indicatorColor = MaterialColors.getColor(this, com.google.android.material.R.attr.colorOnPrimary, Color.WHITE)
@@ -56,23 +54,11 @@ class InfinityLoadingView @JvmOverloads constructor(
     private fun startAnimations() {
         animator?.cancel()
         animator = ValueAnimator.ofFloat(0f, 1f).apply {
-            duration = 3000
+            duration = 2000 // Slightly faster for a "normal" feel
             repeatCount = ValueAnimator.INFINITE
             interpolator = LinearInterpolator()
             addUpdateListener {
                 progress = it.animatedValue as Float
-                invalidate()
-            }
-            start()
-        }
-
-        phaseAnimator?.cancel()
-        phaseAnimator = ValueAnimator.ofFloat(0f, (2 * PI).toFloat()).apply {
-            duration = 1000
-            repeatCount = ValueAnimator.INFINITE
-            interpolator = LinearInterpolator()
-            addUpdateListener {
-                phase = it.animatedValue as Float
                 invalidate()
             }
             start()
@@ -124,42 +110,17 @@ class InfinityLoadingView @JvmOverloads constructor(
         // Calculate segment start and end
         val totalLength = pathMeasure.length
         val startDist = progress * totalLength
-        val endDist = startDist + (segmentLength * totalLength)
-
+        val segmentDist = segmentLength * totalLength
+        
         indicatorPath.reset()
         
-        val stepDist = 2f
-        var currentDist = startDist
-        
-        val pos = FloatArray(2)
-        val tan = FloatArray(2)
-        
-        var first = true
-        while (currentDist <= endDist) {
-            val actualDist = currentDist % totalLength
-            pathMeasure.getPosTan(actualDist, pos, tan)
-            
-            // Add a wavy offset perpendicular to the tangent
-            // Tangent is (tanX, tanY), Normal is (-tanY, tanX)
-            val normalX = -tan[1]
-            val normalY = tan[0]
-            
-            // Wave calculation
-            val waveFreq = 10f
-            val waveAmp = 6f
-            val waveOffset = sin((currentDist / totalLength) * 2 * PI.toFloat() * waveFreq + phase) * waveAmp
-            
-            val wx = pos[0] + normalX * waveOffset
-            val wy = pos[1] + normalY * waveOffset
-            
-            if (first) {
-                indicatorPath.moveTo(wx, wy)
-                first = false
-            } else {
-                indicatorPath.lineTo(wx, wy)
-            }
-            
-            currentDist += stepDist
+        // Handle wrap-around for the segment
+        if (startDist + segmentDist <= totalLength) {
+            pathMeasure.getSegment(startDist, startDist + segmentDist, indicatorPath, true)
+        } else {
+            // Segment crosses the end of the path
+            pathMeasure.getSegment(startDist, totalLength, indicatorPath, true)
+            pathMeasure.getSegment(0f, (startDist + segmentDist) % totalLength, indicatorPath, true)
         }
 
         canvas.drawPath(indicatorPath, indicatorPaint)
@@ -168,6 +129,5 @@ class InfinityLoadingView @JvmOverloads constructor(
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
         animator?.cancel()
-        phaseAnimator?.cancel()
     }
 }
