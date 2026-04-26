@@ -152,6 +152,9 @@ class HomeFragment : Fragment() {
         // Threshold for full condensation
         val scrollThreshold = 100f
 
+        // Track state to trigger spring pop once per condensation
+        var isCondensed = false
+
         scrollView.setOnScrollChangeListener { _, _, scrollY, _, _ ->
             val factor = (scrollY.toFloat() / scrollThreshold).coerceIn(0f, 1f)
 
@@ -173,6 +176,16 @@ class HomeFragment : Fragment() {
             val lp = headerPill?.layoutParams as? ViewGroup.MarginLayoutParams
             lp?.setMargins(margin, topMargin, margin, 0)
             headerPill?.layoutParams = lp
+
+            // SPRING POP: Trigger a subtle scale spring when reaching full pill state
+            if (factor >= 0.95f && !isCondensed) {
+                isCondensed = true
+                headerPill?.let { SpringPhysicsHelper.springScale(it, 1.04f, stiffness = 800f, dampingRatio = 0.5f, onEnd = {
+                    SpringPhysicsHelper.springScale(it, 1f, stiffness = 600f, dampingRatio = 0.6f)
+                }) }
+            } else if (factor < 0.8f) {
+                isCondensed = false
+            }
 
             // 2. Element Shrinking (Stays Sharp)
             val avatarScale = 1f - (factor * 0.25f)

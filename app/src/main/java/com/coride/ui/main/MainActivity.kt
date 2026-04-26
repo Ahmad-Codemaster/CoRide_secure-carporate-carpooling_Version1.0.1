@@ -67,19 +67,21 @@ class MainActivity : AppCompatActivity() {
     override fun dispatchKeyEvent(event: android.view.KeyEvent): Boolean {
         if (event.keyCode == android.view.KeyEvent.KEYCODE_VOLUME_DOWN && event.action == android.view.KeyEvent.ACTION_DOWN) {
             val currentTime = System.currentTimeMillis()
-            if (currentTime - lastVolumeDownTime > SOS_TRIGGER_WINDOW) {
-                // Reset if it's been too long since the last press
-                volumeDownCount = 1
-            } else {
-                volumeDownCount++
-            }
-            lastVolumeDownTime = currentTime
+            if (com.coride.data.local.LocalPreferences.isVolumeSosEnabled()) {
+                if (currentTime - lastVolumeDownTime > SOS_TRIGGER_WINDOW) {
+                    // Reset if it's been too long since the last press
+                    volumeDownCount = 1
+                } else {
+                    volumeDownCount++
+                }
+                lastVolumeDownTime = currentTime
 
-            if (volumeDownCount >= 3) {
-                // Trigger SOS and consume event
-                volumeDownCount = 0
-                triggerHardwareSos()
-                return true 
+                if (volumeDownCount >= 3) {
+                    // Trigger SOS and consume event
+                    volumeDownCount = 0
+                    triggerHardwareSos()
+                    return true 
+                }
             }
             // Allow default volume behavior to continue while counting
         }

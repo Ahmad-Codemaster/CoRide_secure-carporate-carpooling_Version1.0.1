@@ -18,6 +18,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -238,7 +239,7 @@ class HomeMapFragment : Fragment() {
                 try {
                     val intentSenderRequest = androidx.activity.result.IntentSenderRequest.Builder(exception.resolution.intentSender).build()
                     gpsResolutionLauncher.launch(intentSenderRequest)
-                } catch (e: Exception) {
+                } catch (_: Exception) {
                     hideLoading()
                 }
             },
@@ -294,7 +295,7 @@ class HomeMapFragment : Fragment() {
                         view?.findViewById<SearchBar>(R.id.mapSearchBar)?.setText(currentAddress)
                     }
                 }
-            } catch (e: Exception) {
+            } catch (_: Exception) {
                 launch(Dispatchers.Main) {
                     if (isAdded) {
                         currentAddress = "Selected Location"
@@ -309,7 +310,6 @@ class HomeMapFragment : Fragment() {
         val fabWeather = view.findViewById<FloatingActionButton>(R.id.fabWeatherMap)
         val cvWeatherPopup = view.findViewById<View>(R.id.cvWeatherPopupMap)
         val layoutWeatherDays = view.findViewById<LinearLayout>(R.id.layoutWeatherDaysMap)
-        val ivGlow = view.findViewById<View>(R.id.ivWeatherGlowMap)
 
         fun refreshWeather() {
             val target = googleMap?.cameraPosition?.target ?: LatLng(31.5204, 74.3587)
@@ -348,7 +348,7 @@ class HomeMapFragment : Fragment() {
 
         fabWeather.setOnClickListener {
             SpringPhysicsHelper.springPressFeedback(it)
-            if (cvWeatherPopup.visibility == View.VISIBLE) {
+            if (cvWeatherPopup.isVisible) {
                 // Animate Out
                 cvWeatherPopup.animate()
                     .alpha(0f)
@@ -379,5 +379,12 @@ class HomeMapFragment : Fragment() {
                     .start()
             }
         }
+    }
+
+    override fun onDestroyView() {
+        geocodeJob?.cancel()
+        autocompleteHelper?.cancel()
+        googleMap = null
+        super.onDestroyView()
     }
 }

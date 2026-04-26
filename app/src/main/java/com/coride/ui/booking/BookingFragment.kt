@@ -10,12 +10,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
-import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -49,12 +49,11 @@ class BookingFragment : Fragment() {
     private var pickupLocation: LatLng? = null
     private var destinationLocation: LatLng? = null
     private var routePoints: List<LatLng> = emptyList()
-    private var routeDistanceMeters: Int = 0
-    private var routeDurationSeconds: Int = 0
     private var isPickingDestination = false
     private var googleMap: GoogleMap? = null
     private var geocodeJob: Job? = null
     private var routeJob: Job? = null
+    private var passengerCount = 1
     private var autocompleteHelper: PlacesAutocompleteHelper? = null
 
     // Integrated Search Views
@@ -66,10 +65,6 @@ class BookingFragment : Fragment() {
 
     private val locationPermissionLauncher = registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
         if (permissions[Manifest.permission.ACCESS_FINE_LOCATION] == true) fetchLiveLocation()
-    }
-
-    private val gpsResolutionLauncher = registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { _ ->
-        fetchLiveLocation()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -84,7 +79,7 @@ class BookingFragment : Fragment() {
         // --- Bottom Sheet Setup ---
         val sheet = view.findViewById<View>(R.id.bookingSheet)
         behavior = BottomSheetBehavior.from(sheet)
-        behavior.state = BottomSheetBehavior.STATE_EXPANDED
+        behavior.state = BottomSheetBehavior.STATE_COLLAPSED
 
         // View Bindings
         etBookingSearch = view.findViewById(R.id.etBookingSearch)
@@ -93,7 +88,7 @@ class BookingFragment : Fragment() {
         val btnBack = view.findViewById<View>(R.id.btnBack)
 
         btnBack.setOnClickListener {
-            if (rvIntegratedSearch.visibility == View.VISIBLE) {
+            if (rvIntegratedSearch.isVisible) {
                 closeSearchMode()
             } else if (isPickingDestination) {
                 exitPickMode()
@@ -191,7 +186,7 @@ class BookingFragment : Fragment() {
             if (!isAdded) return@search
             searchAdapter.updatePlaces(results)
             
-            if (results.isNotEmpty() && rvIntegratedSearch.visibility == View.VISIBLE) {
+            if (results.isNotEmpty() && rvIntegratedSearch.isVisible) {
                 rvIntegratedSearch.post {
                     val views = mutableListOf<View>()
                     for (i in 0 until minOf(results.size, 5)) {
@@ -219,9 +214,10 @@ class BookingFragment : Fragment() {
                         pickupLocation = LatLng(it.latitude, it.longitude)
                         try {
                             val geocoder = Geocoder(requireContext(), Locale.getDefault())
+                            @Suppress("DEPRECATION")
                             val addresses = geocoder.getFromLocation(it.latitude, it.longitude, 1)
                             view?.findViewById<TextView>(R.id.tvPickupLocation)?.text = addresses?.firstOrNull()?.getAddressLine(0) ?: "Your Location"
-                        } catch (e: Exception) {}
+                        } catch (_: Exception) {}
                         if (destinationLocation == null) {
                             googleMap?.animateCamera(CameraUpdateFactory.newLatLngZoom(pickupLocation!!, 16f))
                         } else {
@@ -239,7 +235,6 @@ class BookingFragment : Fragment() {
 
     private fun setupUI(view: View) {
         val etFare = view.findViewById<EditText>(R.id.etFare)
-        val tvRecommended = view.findViewById<TextView>(R.id.tvRecommendedFare)
         
         view.findViewById<View>(R.id.cardBike).setOnClickListener { selectedType = VehicleType.BIKE; updateVehicleSelectionUI(); SpringPhysicsHelper.springPressFeedback(it) }
         view.findViewById<View>(R.id.cardRickshaw).setOnClickListener { selectedType = VehicleType.RICKSHAW; updateVehicleSelectionUI(); SpringPhysicsHelper.springPressFeedback(it) }
@@ -250,6 +245,25 @@ class BookingFragment : Fragment() {
         
         view.findViewById<MaterialButton>(R.id.btnConfirmLocation).setOnClickListener { confirmPickedDestination() }
         view.findViewById<FloatingActionButton>(R.id.fabMyLocation).setOnClickListener { fetchLiveLocation() }
+
+        // Passenger Count Logic
+        val tvPassengerCount = view.findViewById<TextView>(R.id.tvPassengerCount)
+        view.findViewById<View>(R.id.btnPlusPassenger).setOnClickListener {
+            if (passengerCount < 4) {
+                passengerCount++
+                tvPassengerCount.text = passengerCount.toString()
+                SpringPhysicsHelper.springPressFeedback(it)
+            } else {
+                Toast.makeText(requireContext(), "Max 4 passengers", Toast.LENGTH_SHORT).show()
+            }
+        }
+        view.findViewById<View>(R.id.btnMinusPassenger).setOnClickListener {
+            if (passengerCount > 1) {
+                passengerCount--
+                tvPassengerCount.text = passengerCount.toString()
+                SpringPhysicsHelper.springPressFeedback(it)
+            }
+        }
 
         view.findViewById<MaterialButton>(R.id.btnFindDriver).setOnClickListener {
             if (destinationLocation == null) {
@@ -263,7 +277,8 @@ class BookingFragment : Fragment() {
                 "destination_lng" to destinationLocation!!.longitude,
                 "pickup_lat" to (pickupLocation?.latitude ?: 0.0),
                 "pickup_lng" to (pickupLocation?.longitude ?: 0.0),
-                "ride_type" to selectedType.name
+                "ride_type" to selectedType.name,
+                "passenger_count" to passengerCount
             )
             findNavController().navigate(R.id.action_booking_to_offers, bundle)
         }
@@ -275,11 +290,10 @@ class BookingFragment : Fragment() {
             val card = view?.findViewById<com.google.android.material.card.MaterialCardView>(id)
             val isSelected = selectedType == type
             
-            // Keep background colors as default (set in XML)
-            // Only update the stroke for a "less bolder" selection look
-            card?.strokeWidth = if (isSelected) 6 else 2 // Pixels (approx 2dp selected, 1dp default)
-            card?.strokeColor = if (isSelected) 0xFF000000.toInt() else 0xFFCBD5E1.toInt()
-            card?.cardElevation = if (isSelected) 6f else 1f
+            card?.strokeWidth = if (isSelected) 6 else 1
+            card?.strokeColor = if (isSelected) ContextCompat.getColor(requireContext(), R.color.primary) else ContextCompat.getColor(requireContext(), R.color.outline_variant)
+            card?.cardElevation = if (isSelected) 8f else 0f
+            card?.alpha = if (isSelected) 1.0f else 0.85f
         }
         computeRouteAndFare()
     }
@@ -296,8 +310,13 @@ class BookingFragment : Fragment() {
                 currentFare = MockDataRepository.getRecommendedFare(distanceKm, selectedType)
                 updateMapMarkers()
                 view?.findViewById<EditText>(R.id.etFare)?.setText(currentFare.toInt().toString())
-                view?.findViewById<TextView>(R.id.tvRecommendedFare)?.text = "Recommended: PKR ${currentFare.toInt()}  •  ${DirectionsHelper.formatDistance(result.distanceMeters)}"
-            } catch (e: Exception) {}
+                view?.findViewById<TextView>(R.id.tvRecommendedFare)?.text =
+                    getString(
+                        R.string.booking_recommended_fare_distance,
+                        currentFare.toInt(),
+                        DirectionsHelper.formatDistance(result.distanceMeters)
+                    )
+            } catch (_: Exception) {}
         }
     }
 
@@ -333,10 +352,11 @@ class BookingFragment : Fragment() {
         geocodeJob = viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
             delay(350)
             try {
+                @Suppress("DEPRECATION")
                 val addresses = Geocoder(requireContext(), Locale.getDefault()).getFromLocation(latLng.latitude, latLng.longitude, 1)
                 val text = addresses?.firstOrNull()?.let { it.thoroughfare ?: it.featureName } ?: "Selected Location"
                 launch(Dispatchers.Main) { if (isAdded && isPickingDestination) view?.findViewById<TextView>(R.id.tvPickingTask)?.text = text }
-            } catch (e: Exception) {}
+            } catch (_: Exception) {}
         }
     }
 
@@ -355,5 +375,13 @@ class BookingFragment : Fragment() {
                 map.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 150))
             }
         }
+    }
+
+    override fun onDestroyView() {
+        geocodeJob?.cancel()
+        routeJob?.cancel()
+        autocompleteHelper?.cancel()
+        googleMap = null
+        super.onDestroyView()
     }
 }

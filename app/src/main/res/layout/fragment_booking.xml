@@ -18,7 +18,8 @@
             android:name="com.google.android.gms.maps.SupportMapFragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            tools:layout="@layout/view_map_placeholder" />
+            tools:layout="@layout/view_map_placeholder"
+            tools:ignore="MissingClass" />
 
         <!-- NEW DETACHED SMART SEARCH BAR -->
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -89,7 +90,8 @@
                         android:textSize="14sp"
                         android:fontFamily="sans-serif-medium"
                         app:layout_constraintStart_toEndOf="@id/ivSearchIcon"
-                        app:layout_constraintEnd_toStartOf="@id/btnClearSearchText" />
+                        app:layout_constraintEnd_toStartOf="@id/btnClearSearchText"
+                        tools:ignore="VisualLintTextFieldSize" />
 
                     <ImageView
                         android:id="@+id/btnClearSearchText"
@@ -228,7 +230,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:behavior_hideable="false"
-        app:behavior_peekHeight="120dp"
+        app:behavior_peekHeight="420dp"
         app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
         android:background="@drawable/bg_bottom_sheet"
         android:elevation="16dp">
@@ -251,70 +253,79 @@
                 android:background="@drawable/indicator_m3_drag" />
 
             <!-- Route Info Widget -->
-            <LinearLayout
+            <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:background="@drawable/bg_card"
-                android:padding="@dimen/spacing_md">
+                app:cardCornerRadius="24dp"
+                app:cardElevation="0dp"
+                app:strokeWidth="1dp"
+                app:strokeColor="@color/surface_container_highest"
+                app:cardBackgroundColor="@color/surface_container_low">
 
-                <!-- Pickup Row -->
                 <LinearLayout
-                    android:id="@+id/rowPickup"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal">
+                    android:orientation="vertical"
+                    android:padding="20dp">
 
-                    <View
-                        android:layout_width="10dp"
-                        android:layout_height="10dp"
-                        android:background="@drawable/bg_circle_primary" />
-
-                    <TextView
-                        android:id="@+id/tvPickupLocation"
-                        android:layout_width="0dp"
+                    <!-- Pickup Row -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:layout_marginStart="@dimen/spacing_md"
-                        android:text="Your Location"
-                        android:textColor="?attr/colorOnSurface"
-                        android:textSize="@dimen/text_body_medium"
-                        android:fontFamily="sans-serif-medium" />
-                </LinearLayout>
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
 
-                <!-- Connector line -->
-                <View
-                    android:layout_width="2dp"
-                    android:layout_height="14dp"
-                    android:layout_marginStart="4dp"
-                    android:background="?attr/colorOutlineVariant" />
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:src="@drawable/ic_location_pin"
+                            app:tint="#2196F3" />
 
-                <!-- Destination Row -->
-                <LinearLayout
-                    android:id="@+id/rowDestination"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal">
+                        <TextView
+                            android:id="@+id/tvPickupLocation"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:layout_marginStart="16dp"
+                            android:text="Your Location"
+                            android:textColor="@color/on_surface"
+                            android:textSize="14sp"
+                            android:fontFamily="sans-serif-medium" />
+                    </LinearLayout>
 
+                    <!-- Connector -->
                     <View
-                        android:layout_width="10dp"
-                        android:layout_height="10dp"
-                        android:background="@drawable/bg_circle_secondary" />
+                        android:layout_width="1dp"
+                        android:layout_height="20dp"
+                        android:layout_marginStart="9.5dp"
+                        android:background="@color/outline_variant" />
 
-                    <TextView
-                        android:id="@+id/tvDestinationLocation"
-                        android:layout_width="0dp"
+                    <!-- Destination Row -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:layout_marginStart="@dimen/spacing_md"
-                        android:text="Tap to set destination"
-                        android:textColor="?attr/colorOnSurface"
-                        android:textSize="@dimen/text_body_medium"
-                        android:fontFamily="sans-serif-medium" />
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:src="@drawable/ic_location_pin"
+                            app:tint="#F44336" />
+
+                        <TextView
+                            android:id="@+id/tvDestinationLocation"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:layout_marginStart="16dp"
+                            android:text="Tap to set destination"
+                            android:textColor="@color/on_surface"
+                            android:textSize="14sp"
+                            android:fontFamily="sans-serif-bold" />
+                    </LinearLayout>
                 </LinearLayout>
-            </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
 
             <!-- Divider -->
             <View
@@ -336,7 +347,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/spacing_sm"
+                android:layout_marginTop="16dp"
                 android:orientation="horizontal"
                 android:weightSum="3">
 
@@ -346,29 +357,31 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:layout_marginEnd="4dp"
-                    app:cardCornerRadius="16dp"
+                    android:layout_marginEnd="6dp"
+                    app:cardCornerRadius="20dp"
+                    app:cardElevation="0dp"
                     app:strokeWidth="1dp"
-                    app:strokeColor="#CBD5E1"
-                    app:cardBackgroundColor="#FFE4E6"> <!-- Pastel Pink -->
+                    app:strokeColor="@color/outline_variant"
+                    app:cardBackgroundColor="@color/surface">
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="center"
                         android:orientation="vertical"
-                        android:padding="8dp">
+                        android:padding="12dp">
                         <ImageView
-                            android:layout_width="60dp"
-                            android:layout_height="50dp"
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
                             android:src="@drawable/bike"
                             android:scaleType="centerInside" />
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
                             android:text="Bike"
-                            android:textColor="#0f172a"
-                            android:textSize="13sp"
-                            android:fontFamily="sans-serif-medium" />
+                            android:textColor="@color/on_surface"
+                            android:textSize="12sp"
+                            android:fontFamily="sans-serif-bold" />
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
 
@@ -378,30 +391,31 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:layout_marginHorizontal="2dp"
-                    app:cardCornerRadius="16dp"
-                    app:cardElevation="1dp"
+                    android:layout_marginHorizontal="3dp"
+                    app:cardCornerRadius="20dp"
+                    app:cardElevation="0dp"
                     app:strokeWidth="1dp"
-                    app:strokeColor="#CBD5E1"
-                    app:cardBackgroundColor="#DCFCE7"> <!-- Pastel Green -->
+                    app:strokeColor="@color/outline_variant"
+                    app:cardBackgroundColor="@color/surface">
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="center"
                         android:orientation="vertical"
-                        android:padding="8dp">
+                        android:padding="12dp">
                         <ImageView
-                            android:layout_width="60dp"
-                            android:layout_height="50dp"
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
                             android:src="@drawable/rikshaw"
                             android:scaleType="centerInside" />
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
                             android:text="Rickshaw"
-                            android:textColor="#0f172a"
-                            android:textSize="13sp"
-                            android:fontFamily="sans-serif-medium" />
+                            android:textColor="@color/on_surface"
+                            android:textSize="12sp"
+                            android:fontFamily="sans-serif-bold" />
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
 
@@ -411,30 +425,31 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:layout_marginStart="4dp"
-                    app:cardCornerRadius="16dp"
-                    app:cardElevation="1dp"
+                    android:layout_marginStart="6dp"
+                    app:cardCornerRadius="20dp"
+                    app:cardElevation="0dp"
                     app:strokeWidth="1dp"
-                    app:strokeColor="#CBD5E1"
-                    app:cardBackgroundColor="#DBEAFE"> <!-- Pastel Blue -->
+                    app:strokeColor="@color/outline_variant"
+                    app:cardBackgroundColor="@color/surface">
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="center"
                         android:orientation="vertical"
-                        android:padding="8dp">
+                        android:padding="12dp">
                         <ImageView
-                            android:layout_width="60dp"
-                            android:layout_height="50dp"
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
                             android:src="@drawable/car"
                             android:scaleType="centerInside" />
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
                             android:text="Car"
-                            android:textColor="#0f172a"
-                            android:textSize="13sp"
-                            android:fontFamily="sans-serif-medium" />
+                            android:textColor="@color/on_surface"
+                            android:textSize="12sp"
+                            android:fontFamily="sans-serif-bold" />
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
             </LinearLayout>
@@ -443,60 +458,65 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/spacing_lg"
+                android:layout_marginTop="24dp"
                 android:gravity="center_vertical"
-                android:orientation="horizontal">
-
+                android:orientation="horizontal"
+                android:background="@color/surface_container_low"
+                android:padding="12dp"
+                android:clipToOutline="true">
+                
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:layout_marginStart="8dp"
                     android:text="Number of Passengers"
-                    android:textColor="?attr/colorOnSurface"
-                    android:textSize="@dimen/text_title_small"
+                    android:textColor="@color/on_surface"
+                    android:textSize="14sp"
                     android:fontFamily="sans-serif-medium" />
 
                 <com.google.android.material.card.MaterialCardView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    app:cardCornerRadius="12dp"
+                    app:cardCornerRadius="14dp"
                     app:cardElevation="0dp"
-                    app:strokeColor="?attr/colorOutlineVariant"
-                    app:strokeWidth="1dp">
+                    app:strokeColor="@color/outline_variant"
+                    app:strokeWidth="1dp"
+                    app:cardBackgroundColor="@color/surface">
 
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:gravity="center_vertical"
                         android:orientation="horizontal"
-                        android:padding="4dp">
+                        android:padding="2dp">
 
                         <ImageView
                             android:id="@+id/btnMinusPassenger"
-                            android:layout_width="32dp"
-                            android:layout_height="32dp"
-                            android:padding="8dp"
+                            android:layout_width="36dp"
+                            android:layout_height="36dp"
+                            android:padding="10dp"
                             android:src="@drawable/ic_delete"
-                            app:tint="?attr/colorOnSurfaceVariant"
+                            app:tint="@color/on_surface_variant"
                             android:background="?attr/selectableItemBackgroundBorderless" />
 
                         <TextView
                             android:id="@+id/tvPassengerCount"
-                            android:layout_width="32dp"
+                            android:layout_width="36dp"
                             android:layout_height="wrap_content"
                             android:gravity="center"
                             android:text="1"
-                            android:textColor="?attr/colorOnSurface"
-                            android:textSize="15sp"
+                            android:textColor="@color/on_surface"
+                            android:textSize="16sp"
                             android:fontFamily="sans-serif-bold" />
 
                         <ImageView
                             android:id="@+id/btnPlusPassenger"
-                            android:layout_width="32dp"
-                            android:layout_height="32dp"
-                            android:padding="8dp"
+                            android:layout_width="36dp"
+                            android:layout_height="36dp"
+                            android:padding="10dp"
                             android:src="@drawable/ic_add"
-                            app:tint="?attr/colorPrimary"
+                            app:tint="@color/primary"
                             android:background="?attr/selectableItemBackgroundBorderless" />
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
@@ -527,70 +547,79 @@
                 android:textSize="@dimen/text_body_small" />
 
             <!-- M3 Fare Stepper -->
-            <LinearLayout
+            <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/spacing_sm"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
+                android:layout_marginTop="12dp"
+                app:cardCornerRadius="32dp"
+                app:cardElevation="0dp"
+                app:strokeWidth="1dp"
+                app:strokeColor="@color/outline_variant"
+                app:cardBackgroundColor="@color/surface_container">
 
-                <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/btnMinusContainer"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    app:cardCornerRadius="@dimen/shape_full"
-                    app:cardElevation="@dimen/elevation_none"
-                    app:strokeColor="?attr/colorOutlineVariant"
-                    app:strokeWidth="1dp"
-                    app:cardBackgroundColor="?attr/colorSurfaceVariant">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:padding="8dp">
 
-                    <ImageView
-                        android:id="@+id/btnMinus"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:padding="12dp"
-                        android:src="@drawable/ic_delete"
-                        android:background="?attr/selectableItemBackgroundBorderless"
-                        android:contentDescription="@string/decrease" />
-                </com.google.android.material.card.MaterialCardView>
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/btnMinusContainer"
+                        android:layout_width="52dp"
+                        android:layout_height="52dp"
+                        app:cardCornerRadius="26dp"
+                        app:cardElevation="0dp"
+                        app:strokeColor="@color/outline_variant"
+                        app:strokeWidth="1dp"
+                        app:cardBackgroundColor="@color/surface">
 
-                <!-- Fare Display -->
-                <EditText
-                    android:id="@+id/etFare"
-                    android:layout_width="0dp"
-                    android:layout_height="56dp"
-                    android:layout_weight="1"
-                    android:layout_marginHorizontal="@dimen/spacing_md"
-                    android:background="@drawable/bg_card"
-                    android:gravity="center"
-                    android:inputType="number"
-                    android:textColor="?attr/colorOnSurface"
-                    android:textSize="@dimen/text_headline_small"
-                    android:fontFamily="sans-serif-bold"
-                    android:importantForAutofill="no"
-                    tools:ignore="LabelFor" />
+                        <ImageView
+                            android:id="@+id/btnMinus"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:padding="14dp"
+                            android:src="@drawable/ic_delete"
+                            app:tint="@color/on_surface"
+                            android:background="?attr/selectableItemBackgroundBorderless" />
+                    </com.google.android.material.card.MaterialCardView>
 
-                <!-- Plus icon button -->
-                <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/btnPlusContainer"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    app:cardCornerRadius="@dimen/shape_full"
-                    app:cardElevation="@dimen/elevation_none"
-                    app:strokeColor="?attr/colorOutlineVariant"
-                    app:strokeWidth="1.5dp"
-                    app:cardBackgroundColor="?attr/colorPrimaryContainer">
+                    <!-- Fare Display -->
+                    <EditText
+                        android:id="@+id/etFare"
+                        android:layout_width="0dp"
+                        android:layout_height="64dp"
+                        android:layout_weight="1"
+                        android:layout_marginHorizontal="12dp"
+                        android:background="@null"
+                        android:gravity="center"
+                        android:inputType="number"
+                        android:textColor="@color/on_surface"
+                        android:textSize="28sp"
+                        android:fontFamily="sans-serif-black"
+                        android:importantForAutofill="no" />
 
-                    <ImageView
-                        android:id="@+id/btnPlus"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:padding="12dp"
-                        android:src="@drawable/ic_add"
-                        android:background="?attr/selectableItemBackgroundBorderless"
-                        android:contentDescription="Increase" />
-                </com.google.android.material.card.MaterialCardView>
-            </LinearLayout>
+                    <!-- Plus icon button -->
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/btnPlusContainer"
+                        android:layout_width="52dp"
+                        android:layout_height="52dp"
+                        app:cardCornerRadius="26dp"
+                        app:cardElevation="4dp"
+                        app:strokeWidth="0dp"
+                        app:cardBackgroundColor="@color/primary">
+
+                        <ImageView
+                            android:id="@+id/btnPlus"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:padding="14dp"
+                            android:src="@drawable/ic_add"
+                            app:tint="@color/on_primary"
+                            android:background="?attr/selectableItemBackgroundBorderless" />
+                    </com.google.android.material.card.MaterialCardView>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
 
             <!-- Comment Input -->
             <com.google.android.material.textfield.TextInputLayout
@@ -605,17 +634,23 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="text"
-                    android:importantForAutofill="no" />
+                    android:importantForAutofill="no"
+                    tools:ignore="VisualLintTextFieldSize" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <!-- Find Driver Button -->
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnFindDriver"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/button_height"
-                android:layout_marginTop="@dimen/spacing_lg"
+                android:layout_height="64dp"
+                android:layout_marginTop="32dp"
                 android:text="@string/find_driver"
-                style="@style/Widget.CoRide.Button.Primary" />
+                android:textAllCaps="true"
+                android:letterSpacing="0.1"
+                app:cornerRadius="32dp"
+                android:fontFamily="sans-serif-black"
+                style="@style/Widget.CoRide.Button.Primary"
+                tools:ignore="VisualLintButtonSize" />
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>

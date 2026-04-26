@@ -77,6 +77,7 @@
     <string name="special_requests">Add comment for driver…</string>
     <string name="pickup">Pickup</string>
     <string name="destination">Destination</string>
+    <string name="booking_recommended_fare_distance">Recommended: PKR %1$d  •  %2$s</string>
 
     <!-- Driver Offers -->
     <string name="searching_drivers">Searching for drivers…</string>
@@ -99,6 +100,17 @@
     <string name="message_driver">Message</string>
     <string name="cancel_ride">Cancel Ride</string>
     <string name="eta">ETA: %1$d min</string>
+    <string name="driver_rating_bracket">(%1$.1f)</string>
+    <string name="ride_status_driver_arriving">Driver Arriving</string>
+    <string name="ride_status_driver_here">Driver is here! 🚗</string>
+    <string name="ride_status_in_progress">Ride in Progress</string>
+    <string name="ride_status_destination_reached">Destination Reached! ✅</string>
+    <string name="ride_status_eta_bullet">• ETA: %1$d min</string>
+    <string name="ride_status_arrived_bullet">• Arrived</string>
+    <string name="ride_status_finished_bullet">• Finished</string>
+    <string name="ride_action_cancel">Cancel Ride</string>
+    <string name="ride_action_ongoing">Ride Ongoing...</string>
+    <string name="ride_action_finish">Finish Ride</string>
 
     <!-- SOS / Safety -->
     <string name="sos_title">🚨 Emergency Alert</string>

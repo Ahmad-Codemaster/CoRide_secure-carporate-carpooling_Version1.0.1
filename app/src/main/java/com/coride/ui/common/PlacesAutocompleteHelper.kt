@@ -9,6 +9,8 @@ import com.coride.data.repository.MockDataRepository
 import com.coride.data.network.SafetyNetworkModule
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -18,7 +20,7 @@ import kotlinx.coroutines.withContext
  */
 class PlacesAutocompleteHelper(private val context: Context) {
 
-    private val scope = CoroutineScope(Dispatchers.Main)
+    private val scope = MainScope()
     private val orsKey = SafetyNetworkModule.getOrsKey()
 
     // Temporary cache for resolved coordinates from autocomplete
@@ -108,5 +110,12 @@ class PlacesAutocompleteHelper(private val context: Context) {
 
         // 3. Fallback (should not happen often with ORS autocomplete)
         onResolved(null)
+    }
+
+    /**
+     * Cancel all ongoing search requests.
+     */
+    fun cancel() {
+        scope.cancel()
     }
 }

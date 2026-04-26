@@ -129,33 +129,35 @@ class RideForegroundService : Service() {
 
     private fun setupUrgentSosListeners() {
         // 1. Volume SOS (1-2-3 Done)
-        val filter = android.content.IntentFilter("android.media.VOLUME_CHANGED_ACTION")
-        volumeReceiver = object : android.content.BroadcastReceiver() {
-            override fun onReceive(context: Context?, intent: Intent?) {
-                val currentTime = System.currentTimeMillis()
-                
-                // --- DEBOUNCE LOGIC ---
-                // Ignore multiple system events within 300ms of a previous event
-                if (currentTime - lastVolumeEventTime < DEBOUNCE_MS) return
-                lastVolumeEventTime = currentTime
-
-                if (currentTime - lastVolumePressTime > VOLUME_SOS_WINDOW_MS) {
-                    volumePressCount = 1
-                } else {
-                    volumePressCount++
-                }
-                lastVolumePressTime = currentTime
-                
-                Log.d(TAG, "🔊 Volume press count: $volumePressCount")
-                
-                if (volumePressCount >= 3) {
-                    Log.i(TAG, "🔊 Volume SOS Triggered!")
-                    triggerUrgentSos("Volume Button")
-                    volumePressCount = 0
+        if (com.coride.data.local.LocalPreferences.isVolumeSosEnabled()) {
+            val filter = android.content.IntentFilter("android.media.VOLUME_CHANGED_ACTION")
+            volumeReceiver = object : android.content.BroadcastReceiver() {
+                override fun onReceive(context: Context?, intent: Intent?) {
+                    val currentTime = System.currentTimeMillis()
+                    
+                    // --- DEBOUNCE LOGIC ---
+                    // Ignore multiple system events within 300ms of a previous event
+                    if (currentTime - lastVolumeEventTime < DEBOUNCE_MS) return
+                    lastVolumeEventTime = currentTime
+    
+                    if (currentTime - lastVolumePressTime > VOLUME_SOS_WINDOW_MS) {
+                        volumePressCount = 1
+                    } else {
+                        volumePressCount++
+                    }
+                    lastVolumePressTime = currentTime
+                    
+                    Log.d(TAG, "🔊 Volume press count: $volumePressCount")
+                    
+                    if (volumePressCount >= 3) {
+                        Log.i(TAG, "🔊 Volume SOS Triggered!")
+                        triggerUrgentSos("Volume Button")
+                        volumePressCount = 0
+                    }
                 }
             }
+            registerReceiver(volumeReceiver, filter)
         }
-        registerReceiver(volumeReceiver, filter)
 
         // 2. Shake SOS (Shake and Done)
         if (com.coride.data.local.LocalPreferences.isShakeSosEnabled()) {

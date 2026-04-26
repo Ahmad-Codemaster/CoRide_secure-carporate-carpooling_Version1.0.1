@@ -135,6 +135,12 @@ object LocalPreferences {
         prefs.edit().putBoolean("isShakeSosEnabled", value).apply()
     }
 
+    fun isVolumeSosEnabled(): Boolean = prefs.getBoolean("isVolumeSosEnabled", false)
+
+    fun setVolumeSosEnabled(value: Boolean) {
+        prefs.edit().putBoolean("isVolumeSosEnabled", value).apply()
+    }
+
     fun clearUser() {
         prefs.edit().putBoolean("isLoggedIn", false).apply()
     }

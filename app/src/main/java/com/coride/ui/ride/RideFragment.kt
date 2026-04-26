@@ -2,7 +2,6 @@ package com.coride.ui.ride
 
 import android.annotation.SuppressLint
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -12,6 +11,9 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.toColorInt
+import androidx.core.net.toUri
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -30,8 +32,6 @@ import com.google.android.gms.maps.model.*
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.coroutines.*
-import java.text.SimpleDateFormat
-import java.util.*
 
 class RideFragment : Fragment() {
 
@@ -43,7 +43,6 @@ class RideFragment : Fragment() {
     private var deviationPolyline: Polyline? = null
 
     private var approachPath: List<LatLng> = emptyList()
-    private var safetyCheckShowing = false
     private var currentDriverPosition: LatLng? = null
     private var ridePath: List<LatLng> = emptyList()
 
@@ -60,6 +59,7 @@ class RideFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+            @Suppress("DEPRECATION")
             requestPermissions(arrayOf(android.Manifest.permission.POST_NOTIFICATIONS, android.Manifest.permission.SEND_SMS), 101)
         }
 
@@ -85,11 +85,11 @@ class RideFragment : Fragment() {
 
         // Populate Redesigned UI
         view.findViewById<TextView>(R.id.tvDriverName).text = driverName
-        view.findViewById<TextView>(R.id.tvDriverRating).text = "($driverRating)"
+        view.findViewById<TextView>(R.id.tvDriverRating).text = getString(R.string.driver_rating_bracket, driverRating)
         view.findViewById<TextView>(R.id.tvVehicleInfo).text = vehicleInfo
         view.findViewById<TextView>(R.id.tvPlateNumber).text = plateNumber
         view.findViewById<TextView>(R.id.tvDestination).text = destName
-        view.findViewById<TextView>(R.id.tvFare).text = "PKR ${fare.toInt()}"
+        view.findViewById<TextView>(R.id.tvFare).text = getString(R.string.currency_format, fare.toInt().toString())
 
         setupPaths()
         setupButtons(view, driverName, driverPhone, vehicleInfo, plateNumber, destName, fare, driverRating)
@@ -156,7 +156,7 @@ class RideFragment : Fragment() {
 
         view.findViewById<View>(R.id.btnCall).setOnClickListener {
             SpringPhysicsHelper.springPressFeedback(it)
-            try { startActivity(Intent(Intent.ACTION_DIAL, Uri.parse("tel:$driverPhone"))) } catch (e: Exception) {}
+            try { startActivity(Intent(Intent.ACTION_DIAL, "tel:$driverPhone".toUri())) } catch (_: Exception) {}
         }
 
         view.findViewById<View>(R.id.btnMessage).setOnClickListener {
@@ -179,7 +179,7 @@ class RideFragment : Fragment() {
 
         fabSosInfo.setOnClickListener {
             SpringPhysicsHelper.springPressFeedback(it)
-            if (cvSosInfoPopup.visibility == View.VISIBLE) {
+            if (cvSosInfoPopup.isVisible) {
                 cvSosInfoPopup.animate().alpha(0f).translationX(-20f).setDuration(200).withEndAction { cvSosInfoPopup.visibility = View.GONE }.start()
             } else {
                 cvSosInfoPopup.visibility = View.VISIBLE
@@ -285,13 +285,12 @@ class RideFragment : Fragment() {
 
             val currentRide = ridePath.toList()
             val rideSteps = if (currentRide.isNotEmpty()) currentRide.size else 80
-            val safetyTriggerStep = (rideSteps * 0.4).toInt()
             val deviationTriggerStep = (rideSteps * 0.65).toInt()
             
             for (i in 0 until rideSteps) {
                 if (!isAdded) return@launch
                 
-                var pos = if (currentRide.isNotEmpty()) currentRide[i] else interpolateLatLng(pickupLocation!!, destinationLocation!!, i.toFloat() / rideSteps)
+                val pos = if (currentRide.isNotEmpty()) currentRide[i] else interpolateLatLng(pickupLocation!!, destinationLocation!!, i.toFloat() / rideSteps)
 
                 // ── DYNAMIC DEVIATION SIMULATION ──
                 if (i == deviationTriggerStep) {
@@ -300,7 +299,7 @@ class RideFragment : Fragment() {
                     // Create a "Wrong Road" path
                     val deviationPoints = mutableListOf<LatLng>()
                     var lastPos = pos
-                    for (j in 1..15) {
+                    repeat(15) {
                         lastPos = LatLng(lastPos.latitude + 0.0004, lastPos.longitude + 0.0006)
                         deviationPoints.add(lastPos)
                     }
@@ -311,7 +310,7 @@ class RideFragment : Fragment() {
                             PolylineOptions()
                                 .addAll(deviationPoints)
                                 .width(14f)
-                                .color(android.graphics.Color.parseColor("#BA1A1A")) // SOS Red
+                                .color("#BA1A1A".toColorInt()) // SOS Red
                                 .pattern(listOf(Dash(20f), Gap(10f)))
                         )
                     }
@@ -335,22 +334,7 @@ class RideFragment : Fragment() {
                 FirebaseSafetyHelper.pushLocationUpdate(rideId, "driver", pos.latitude, pos.longitude)
                 updateState(RideState.RideInProgress(i.toFloat() / rideSteps, maxOf(1, (10 * (1 - i.toFloat() / rideSteps)).toInt())))
 
-                // RESTORE SAFETY STOP SIMULATION
-                if (i == safetyTriggerStep && !safetyCheckShowing) {
-                    safetyCheckShowing = true
-                    Log.d("RideSafety", "Simulating ride stop for safety check...")
-                    
-                    // Trigger immediate Help Email for the stop alert
-                    val user = MockDataRepository.getCurrentUser()
-                    com.coride.utils.EmailNotificationHelper.sendSosAlert(user, rideId, pos.latitude, pos.longitude)
-                    
-                    delay(10000) // 10 second stop
-                    if (isAdded) {
-                        val safetyDialog = SafetyCheckDialogFragment.newInstance(rideId, pos.latitude, pos.longitude)
-                        safetyDialog.onDismissedSafe = { safetyCheckShowing = false }
-                        safetyDialog.show(childFragmentManager, "safety_check")
-                    }
-                }
+                // Simulation steps removed for stability
 
                 delay(120)
             }
@@ -372,14 +356,26 @@ class RideFragment : Fragment() {
         val btnCancel = view?.findViewById<MaterialButton>(R.id.btnCancelRide)
 
         when (state) {
-            is RideState.DriverArriving -> { tvStatus?.text = "Driver Arriving"; tvEta?.text = "• ETA: ${state.etaMin} min"; btnCancel?.text = "Cancel Ride" }
-            is RideState.DriverArrived -> { tvStatus?.text = "Driver is here! 🚗"; tvEta?.text = "• Arrived" }
-            is RideState.RideInProgress -> { 
-                tvStatus?.text = "Ride in Progress"; tvEta?.text = "• ETA: ${state.etaMin} min"
-                btnCancel?.text = "Ride Ongoing..."
+            is RideState.DriverArriving -> {
+                tvStatus?.text = getString(R.string.ride_status_driver_arriving)
+                tvEta?.text = getString(R.string.ride_status_eta_bullet, state.etaMin)
+                btnCancel?.text = getString(R.string.ride_action_cancel)
+            }
+            is RideState.DriverArrived -> {
+                tvStatus?.text = getString(R.string.ride_status_driver_here)
+                tvEta?.text = getString(R.string.ride_status_arrived_bullet)
+            }
+            is RideState.RideInProgress -> {
+                tvStatus?.text = getString(R.string.ride_status_in_progress)
+                tvEta?.text = getString(R.string.ride_status_eta_bullet, state.etaMin)
+                btnCancel?.text = getString(R.string.ride_action_ongoing)
                 btnCancel?.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.surface_container_highest))
             }
-            is RideState.RideCompleted -> { tvStatus?.text = "Destination Reached! ✅"; tvEta?.text = "• Finished"; btnCancel?.text = "Finish Ride" }
+            is RideState.RideCompleted -> {
+                tvStatus?.text = getString(R.string.ride_status_destination_reached)
+                tvEta?.text = getString(R.string.ride_status_finished_bullet)
+                btnCancel?.text = getString(R.string.ride_action_finish)
+            }
             else -> {}
         }
     }
@@ -431,7 +427,7 @@ class RideFragment : Fragment() {
 
         fabWeather.setOnClickListener {
             SpringPhysicsHelper.springPressFeedback(it)
-            if (cvWeatherPopup.visibility == View.VISIBLE) {
+            if (cvWeatherPopup.isVisible) {
                 cvWeatherPopup.animate().alpha(0f).translationX(20f).setDuration(200).withEndAction { cvWeatherPopup.visibility = View.GONE }.start()
             } else {
                 cvWeatherPopup.visibility = View.VISIBLE
@@ -474,5 +470,10 @@ class RideFragment : Fragment() {
             warningCard.postDelayed({ if (isAdded) warningCard.animate().alpha(0f).translationY(-40f).setDuration(400).withEndAction { warningCard.visibility = View.GONE }.start() }, 5000)
         }.start()
         Toast.makeText(requireContext(), "Safety Alert: Route deviation detected", Toast.LENGTH_SHORT).show()
+    }
+
+    override fun onDestroyView() {
+        googleMap = null
+        super.onDestroyView()
     }
 }

@@ -50,6 +50,15 @@ class SecuritySettingsDialog : BottomSheetDialogFragment() {
             Toast.makeText(requireContext(), "Shake to SOS $status", Toast.LENGTH_SHORT).show()
         }
 
+        // Initialize Volume SOS state
+        val switchVolumeSos = view.findViewById<MaterialSwitch>(R.id.switchVolumeSos)
+        switchVolumeSos.isChecked = LocalPreferences.isVolumeSosEnabled()
+        switchVolumeSos.setOnCheckedChangeListener { _, isChecked ->
+            LocalPreferences.setVolumeSosEnabled(isChecked)
+            val status = if (isChecked) "Enabled" else "Disabled"
+            Toast.makeText(requireContext(), "Volume SOS $status", Toast.LENGTH_SHORT).show()
+        }
+
         btnDeleteAccount.setOnClickListener {
             com.google.android.material.dialog.MaterialAlertDialogBuilder(requireContext())
                 .setTitle("⚠️ Delete Your Account?")

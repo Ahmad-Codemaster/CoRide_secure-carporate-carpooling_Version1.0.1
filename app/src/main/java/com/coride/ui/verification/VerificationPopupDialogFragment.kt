@@ -1,6 +1,5 @@
 package com.coride.ui.verification
 
-import android.app.Dialog
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.view.LayoutInflater
@@ -45,14 +44,13 @@ class VerificationPopupDialogFragment : BottomSheetDialogFragment() {
         val tvSubtitle = view.findViewById<TextView>(R.id.tvSubtitle)
         val cardOrgId = view.findViewById<MaterialCardView>(R.id.cardOrgId)
         val btnCancel = view.findViewById<MaterialButton>(R.id.btnCancel)
-        val timerContainer = view.findViewById<View>(R.id.timerContainer)
         val progressTimer = view.findViewById<CircularProgressIndicator>(R.id.progressTimer)
         val tvTimerCount = view.findViewById<TextView>(R.id.tvTimerCount)
 
         // Check if verification is already in progress
         if (MockDataRepository.isVerificationTimerRunning()) {
             showTimerState(view)
-            startCountdownUI(timerContainer, progressTimer, tvTimerCount, cardOrgId)
+            startCountdownUI(progressTimer, tvTimerCount)
         }
 
         // ── M3 Expressive Spring Entrance Animations ──
@@ -68,7 +66,7 @@ class VerificationPopupDialogFragment : BottomSheetDialogFragment() {
         cardOrgId.setOnClickListener {
             SpringPhysicsHelper.springPressFeedback(it)
             it.postDelayed({
-                submitDocument(VerificationDocType.ORGANIZATION_CARD, view)
+                submitDocument(view)
             }, 150)
         }
 
@@ -77,18 +75,16 @@ class VerificationPopupDialogFragment : BottomSheetDialogFragment() {
         }
     }
 
-    private fun submitDocument(docType: VerificationDocType, view: View) {
-        MockDataRepository.submitDocument(docType)
+    private fun submitDocument(view: View) {
+        MockDataRepository.submitDocument(VerificationDocType.ORGANIZATION_CARD)
 
         Toast.makeText(requireContext(), "📄 Organization Card uploaded successfully", Toast.LENGTH_SHORT).show()
 
-        val timerContainer = view.findViewById<View>(R.id.timerContainer)
         val progressTimer = view.findViewById<CircularProgressIndicator>(R.id.progressTimer)
         val tvTimerCount = view.findViewById<TextView>(R.id.tvTimerCount)
-        val cardOrgId = view.findViewById<MaterialCardView>(R.id.cardOrgId)
 
         showTimerState(view)
-        startCountdownUI(timerContainer, progressTimer, tvTimerCount, cardOrgId)
+        startCountdownUI(progressTimer, tvTimerCount)
     }
 
     private fun showTimerState(view: View) {
@@ -111,10 +107,8 @@ class VerificationPopupDialogFragment : BottomSheetDialogFragment() {
     }
 
     private fun startCountdownUI(
-        timerContainer: View,
         progressTimer: CircularProgressIndicator,
-        tvTimerCount: TextView,
-        cardOrgId: MaterialCardView
+        tvTimerCount: TextView
     ) {
         val remainingMs = MockDataRepository.getVerificationRemainingMs()
         val totalMs = 30 * 1000L
