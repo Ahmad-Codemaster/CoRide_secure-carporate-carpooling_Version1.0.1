@@ -12,9 +12,9 @@
         <aapt:attr name="android:fillColor">
             <gradient
                 android:angle="135"
-                android:endColor="#991D4ED8"
-                android:startColor="#CC3B82F6"
-                android:type="linear" />
+                android:endColor="#BB1D4ED8"
+                android:startColor="#D63B82F6"
+                android:type="sweep" />
         </aapt:attr>
     </path>
 
@@ -23,9 +23,4 @@
         android:pathData="M0,0 L400,0 L400,2 L0,2 Z"
         android:fillColor="#40FFFFFF" />
 
-    <!-- Subtle Bottom Stroke -->
-    <path
-        android:pathData="M0,75 C400,75 200,115 0,75"
-        android:strokeColor="#33FFFFFF"
-        android:strokeWidth="1.5" />
 </vector>

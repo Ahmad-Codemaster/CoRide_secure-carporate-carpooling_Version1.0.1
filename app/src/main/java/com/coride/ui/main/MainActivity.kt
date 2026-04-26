@@ -88,7 +88,8 @@ class MainActivity : AppCompatActivity() {
 
     private fun triggerHardwareSos() {
         val user = MockDataRepository.getCurrentUser()
-        val rideId = "hardware_sos_event"
+        val activeRideId = com.coride.service.RideForegroundService.getActiveRideId()
+        val rideId = if (activeRideId.isNotEmpty()) activeRideId else "hardware_sos_${System.currentTimeMillis()}"
         
         lifecycleScope.launch {
             val startTime = System.currentTimeMillis()

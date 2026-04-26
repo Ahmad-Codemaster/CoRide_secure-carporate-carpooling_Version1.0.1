@@ -29,8 +29,7 @@ class EditProfileBottomSheet : BottomSheetDialogFragment() {
         val etOrg = view.findViewById<TextInputEditText>(R.id.etEditOrg)
         val etStudentId = view.findViewById<TextInputEditText>(R.id.etEditStudentId)
         val etAddress = view.findViewById<TextInputEditText>(R.id.etEditAddress)
-        val etEmerName = view.findViewById<TextInputEditText>(R.id.etEditEmergencyName)
-        val etEmerPhone = view.findViewById<TextInputEditText>(R.id.etEditEmergencyPhone)
+
 
         etName?.setText(user.name)
         etPhone?.setText(user.phone)
@@ -38,8 +37,7 @@ class EditProfileBottomSheet : BottomSheetDialogFragment() {
         etOrg?.setText(user.organizationName)
         etStudentId?.setText(user.cnicNumber)
         etAddress?.setText(user.homeAddress)
-        etEmerName?.setText(user.emergencyContactName)
-        etEmerPhone?.setText(user.emergencyContactPhone)
+
 
         view.findViewById<MaterialButton>(R.id.btnCancelEdit)?.setOnClickListener {
             dismiss()

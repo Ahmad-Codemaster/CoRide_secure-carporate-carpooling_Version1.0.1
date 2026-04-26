@@ -48,7 +48,10 @@ class RideForegroundService : Service() {
         const val EXTRA_LAST_LNG = "last_lng"
 
         private var isRunning = false
+        private var currentRideId: String = ""
+        
         fun isServiceRunning(): Boolean = isRunning
+        fun getActiveRideId(): String = currentRideId
 
         /**
          * Start the ride foreground service.
@@ -219,6 +222,7 @@ class RideForegroundService : Service() {
                 lastLng = intent.getDoubleExtra(EXTRA_LAST_LNG, 0.0)
                 wasStoppedNormally = false
                 isRunning = true
+                currentRideId = rideId
                 
                 // Initial push (as "user")
                 FirebaseSafetyHelper.pushLocationUpdate(rideId, "user", lastLat, lastLng)
@@ -230,6 +234,7 @@ class RideForegroundService : Service() {
             ACTION_STOP -> {
                 wasStoppedNormally = true
                 isRunning = false
+                currentRideId = ""
                 stopForeground(STOP_FOREGROUND_REMOVE)
                 stopSelf()
                 Log.d(TAG, "Ride Foreground Service stopped normally")

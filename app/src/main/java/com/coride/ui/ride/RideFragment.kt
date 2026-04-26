@@ -40,6 +40,7 @@ class RideFragment : Fragment() {
     private var driverStartLocation: LatLng? = null
     private var googleMap: GoogleMap? = null
     private var driverMarker: Marker? = null
+    private var deviationPolyline: Polyline? = null
 
     private var approachPath: List<LatLng> = emptyList()
     private var safetyCheckShowing = false
@@ -165,7 +166,7 @@ class RideFragment : Fragment() {
 
         fabShare.setOnClickListener {
             SpringPhysicsHelper.springPressFeedback(it)
-            val shareText = "🚗 CoRide Safety Share\n\nI'm riding with $driverName (✅ Verified)\nVehicle: $vehicleInfo ($plateNumber)\nHeading to: $destName\n\nTrack me on CoRide!"
+            val shareText = "🚗 CoRide Safety Share\n\nI'm riding with $driverName (✅ Verified)\n📞 Driver Contact: $driverPhone\n🚙 Vehicle: $vehicleInfo ($plateNumber)\n📍 Heading to: $destName\n\nTrack me on CoRide!"
             val intent = Intent(Intent.ACTION_SEND).apply { type = "text/plain"; putExtra(Intent.EXTRA_TEXT, shareText) }
             startActivity(Intent.createChooser(intent, "Share ride with..."))
         }
@@ -273,7 +274,8 @@ class RideFragment : Fragment() {
             val dLng = destinationLocation?.longitude ?: 0.0
 
             if (SmsSafetyHelper.hasSmsPermission(requireContext())) {
-                val rideMsg = SmsSafetyHelper.buildRideStartMessage(rideId, driverNameVal, vehicleInfoVal, plateNumberVal, destNameVal, dLat, dLng)
+                val driverPhoneVal = arguments?.getString("driver_phone") ?: ""
+                val rideMsg = SmsSafetyHelper.buildRideStartMessage(rideId, driverNameVal, driverPhoneVal, vehicleInfoVal, plateNumberVal, destNameVal, dLat, dLng)
                 val count = SmsSafetyHelper.sendToAllEmergencyContacts(requireContext(), rideMsg)
                 if (count > 0) Toast.makeText(requireContext(), "✅ Safety alert sent to $count contacts", Toast.LENGTH_SHORT).show()
                 Log.d("RideSafety", "Auto-sent SMS to $count contacts")
@@ -291,10 +293,41 @@ class RideFragment : Fragment() {
                 
                 var pos = if (currentRide.isNotEmpty()) currentRide[i] else interpolateLatLng(pickupLocation!!, destinationLocation!!, i.toFloat() / rideSteps)
 
-                // RESTORE DEVIATION SIMULATION
+                // ── DYNAMIC DEVIATION SIMULATION ──
                 if (i == deviationTriggerStep) {
                     showDeviationWarning()
-                    pos = LatLng(pos.latitude + 0.001, pos.longitude + 0.001) // Offset position
+                    
+                    // Create a "Wrong Road" path
+                    val deviationPoints = mutableListOf<LatLng>()
+                    var lastPos = pos
+                    for (j in 1..15) {
+                        lastPos = LatLng(lastPos.latitude + 0.0004, lastPos.longitude + 0.0006)
+                        deviationPoints.add(lastPos)
+                    }
+                    
+                    // Draw the red "Danger" path on map
+                    viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
+                        deviationPolyline = googleMap?.addPolyline(
+                            PolylineOptions()
+                                .addAll(deviationPoints)
+                                .width(14f)
+                                .color(android.graphics.Color.parseColor("#BA1A1A")) // SOS Red
+                                .pattern(listOf(Dash(20f), Gap(10f)))
+                        )
+                    }
+
+                    // Make the driver actually follow this wrong road
+                    for (devPos in deviationPoints) {
+                        if (!isAdded) return@launch
+                        currentDriverPosition = devPos
+                        updateDriverMarker(devPos)
+                        FirebaseSafetyHelper.pushLocationUpdate(rideId, "driver", devPos.latitude, devPos.longitude)
+                        delay(200) // Fast move on the wrong road
+                    }
+                    
+                    // After deviation, "teleport" back to original route or just continue
+                    // For realism, let's just continue from where the deviation started but maybe skip a few steps
+                    delay(1000)
                 }
 
                 currentDriverPosition = pos
@@ -306,6 +339,11 @@ class RideFragment : Fragment() {
                 if (i == safetyTriggerStep && !safetyCheckShowing) {
                     safetyCheckShowing = true
                     Log.d("RideSafety", "Simulating ride stop for safety check...")
+                    
+                    // Trigger immediate Help Email for the stop alert
+                    val user = MockDataRepository.getCurrentUser()
+                    com.coride.utils.EmailNotificationHelper.sendSosAlert(user, rideId, pos.latitude, pos.longitude)
+                    
                     delay(10000) // 10 second stop
                     if (isAdded) {
                         val safetyDialog = SafetyCheckDialogFragment.newInstance(rideId, pos.latitude, pos.longitude)
@@ -317,6 +355,11 @@ class RideFragment : Fragment() {
                 delay(120)
             }
             updateState(RideState.RideCompleted)
+            MockDataRepository.addNotification(
+                "Ride Completed",
+                "You have arrived safely at $destNameVal. Thank you for using CoRide!",
+                com.coride.data.model.NotificationType.RIDE
+            )
             RideForegroundService.stopService(requireContext())
         }
     }

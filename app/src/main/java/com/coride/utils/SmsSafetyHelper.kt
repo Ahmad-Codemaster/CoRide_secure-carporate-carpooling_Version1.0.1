@@ -115,6 +115,7 @@ object SmsSafetyHelper {
     fun buildRideStartMessage(
         rideId: String,
         driverName: String,
+        driverPhone: String,
         vehicleInfo: String,
         plateNumber: String,
         destination: String,
@@ -133,6 +134,7 @@ object SmsSafetyHelper {
 $userName has started a ride.
 
 👤 Driver: $driverName (Verified ✅)
+📞 Contact: $driverPhone
 🚙 Vehicle: $vehicleInfo
 🔢 Plate: $plateNumber
 📍 Heading to: $destination

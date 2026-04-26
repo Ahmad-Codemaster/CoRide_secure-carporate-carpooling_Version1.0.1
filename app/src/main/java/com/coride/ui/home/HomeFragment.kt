@@ -58,14 +58,27 @@ class HomeFragment : Fragment() {
     private fun setupHeader(view: View) {
         val user = MockDataRepository.getCurrentUser()
         view.findViewById<TextView>(R.id.tvUserName).text = user.name
-        view.findViewById<View>(R.id.btnToggleMap).setOnClickListener {
-            SpringPhysicsHelper.springPressFeedback(it)
-            findNavController().navigate(R.id.action_home_to_home_map)
-        }
+
         
         view.findViewById<View>(R.id.ivUserAvatarCard).setOnClickListener {
             SpringPhysicsHelper.springPressFeedback(it)
             findNavController().navigate(R.id.action_home_to_profile)
+        }
+
+        view.findViewById<View>(R.id.layoutNotification).setOnClickListener {
+            SpringPhysicsHelper.springPressFeedback(it)
+            val dialog = NotificationsDialogFragment()
+            dialog.show(childFragmentManager, "notifications_dialog")
+            
+            // Update dot when dialog closes (since notifications are marked as read)
+            childFragmentManager.registerFragmentLifecycleCallbacks(object : androidx.fragment.app.FragmentManager.FragmentLifecycleCallbacks() {
+                override fun onFragmentDestroyed(fm: androidx.fragment.app.FragmentManager, f: androidx.fragment.app.Fragment) {
+                    if (f is NotificationsDialogFragment) {
+                        view.findViewById<View>(R.id.viewNotificationDot)?.visibility = View.GONE
+                        childFragmentManager.unregisterFragmentLifecycleCallbacks(this)
+                    }
+                }
+            }, false)
         }
     }
 
@@ -133,7 +146,6 @@ class HomeFragment : Fragment() {
         val avatarCard = view.findViewById<View>(R.id.ivUserAvatarCard)
         val tvGreeting = view.findViewById<View>(R.id.tvGreeting)
         val tvUserName = view.findViewById<View>(R.id.tvUserName)
-        val btnMap = view.findViewById<View>(R.id.btnToggleMap)
         val spendingCard = view.findViewById<View>(R.id.spendingCard)
         val homeHeader = view.findViewById<View>(R.id.homeHeader)
 
@@ -144,9 +156,9 @@ class HomeFragment : Fragment() {
             val factor = (scrollY.toFloat() / scrollThreshold).coerceIn(0f, 1f)
 
             // 1. Stable Header Morphing (Glassy Blue as requested)
-            // Background: Transparent -> Glassy Blue (#3B82F6 with alpha)
-            val alpha = (factor * 230).toInt() // Approx 90% opacity for glassy look
-            headerPill?.setCardBackgroundColor(android.graphics.Color.argb(alpha, 59, 130, 246))
+            // Background: Transparent -> Glassy Grey (#F5F5F5 with alpha)
+            val alpha = (factor * 240).toInt() 
+            headerPill?.setCardBackgroundColor(android.graphics.Color.argb(alpha, 245, 245, 245))
             
             // Corner Radius morphing: 0dp -> 100dp
             val radius = factor * 100f * resources.displayMetrics.density
@@ -167,22 +179,22 @@ class HomeFragment : Fragment() {
             avatarCard?.scaleX = avatarScale
             avatarCard?.scaleY = avatarScale
             
-            val btnScale = 1f - (factor * 0.15f)
-            btnMap?.scaleX = btnScale
-            btnMap?.scaleY = btnScale
+            val notificationIcon = view?.findViewById<View>(R.id.layoutNotification)
+            val iconScale = 1f - (factor * 0.15f)
+            notificationIcon?.scaleX = iconScale
+            notificationIcon?.scaleY = iconScale
             
-            // 4. Triangle Background Fade Out
-            homeHeader?.background?.alpha = ((1f - factor) * 255).toInt()
+            // 4. Triangle Background (Disabled for minimal white theme)
+            // homeHeader?.background?.alpha = ((1f - factor) * 255).toInt()
 
-            // 5. Dynamic Padding & Height (Fixes bottom space in pill state)
-            // Default: 24dp padding, 84dp minHeight -> Pill: 12dp padding, 72dp minHeight
+            // 5. Dynamic Padding & Height
             val density = resources.displayMetrics.density
-            val currentPadding = ((24f - (12f * factor)) * density).toInt()
-            val currentMinHeight = ((84f - (12f * factor)) * density).toInt()
+            val currentPadding = ((16f - (8f * factor)) * density).toInt()
+            val currentMinHeight = ((84f - (20f * factor)) * density).toInt()
             
             homeHeader?.setPadding(
                 (20f * density).toInt(), // Left
-                (12f * density).toInt(), // Top
+                currentPadding,          // Top (Dynamic)
                 (20f * density).toInt(), // Right
                 currentPadding           // Bottom (Dynamic)
             )
@@ -199,9 +211,23 @@ class HomeFragment : Fragment() {
         val tvTotalSpending = view.findViewById<TextView>(R.id.tvTotalSpending)
 
         microWidget?.text = "Hi ${user.name.split(" ").first()}, Start your new journey here"
+        
+        val tvGreeting = view.findViewById<TextView>(R.id.tvGreeting)
+        val tvSubGreeting = view.findViewById<TextView>(R.id.tvUserName)
+        
+        tvGreeting?.text = "Morning, ${user.name.split(" ").first()}"
+        tvSubGreeting?.text = "Welcome to CoRide"
+
+        // Update Notification Dot
+        val dot = view.findViewById<View>(R.id.viewNotificationDot)
+        dot?.visibility = if (MockDataRepository.hasUnreadNotifications()) View.VISIBLE else View.GONE
 
         val completedRides = MockDataRepository.getRideHistory().filter { it.status == RideStatus.COMPLETED }
         val totalAmount = completedRides.sumOf { it.finalFare }
+        
+        // Update counts
+        val tvTotalRides = view.findViewById<TextView>(R.id.tvTotalRides)
+        tvTotalRides?.text = "${completedRides.size} taken rides"
         
         // Format to decimal
         tvTotalSpending?.text = String.format("PKR %.2f", totalAmount)

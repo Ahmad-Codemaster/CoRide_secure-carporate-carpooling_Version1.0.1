@@ -101,6 +101,12 @@ object EmailNotificationHelper {
     fun sendSosAlert(user: User, rideId: String, lat: Double, lng: Double) {
         val subject = "🆘 EMERGENCY SOS: ${user.name}"
         
+        com.coride.data.repository.MockDataRepository.addNotification(
+            "SOS Alert Sent", 
+            "Your emergency SOS has been dispatched to the CoRide safety team. Stay calm, help is being coordinated.", 
+            com.coride.data.model.NotificationType.SOS
+        )
+        
         // 🚀 LIVE FIXED: Hosted on GitHub Pages for the board presentation
         val baseUrl = "https://ahmad-codemaster.github.io/CoRide_secure-carporate-carpooling_Version1.0.1/live_tracker.html"
         // Including lat/lng for instant SOS visualization in admin dashboard

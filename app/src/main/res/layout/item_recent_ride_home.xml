@@ -47,7 +47,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Downtown  Airport"
-                android:textColor="#0f172a"
+                android:textColor="#4CAF50"
                 android:textSize="14sp"
                 android:fontFamily="sans-serif-medium" />
 
@@ -66,7 +66,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="PKR 45"
-            android:textColor="#0f172a"
+            android:textColor="#3F51B5"
             android:textSize="15sp"
             android:fontFamily="sans-serif-bold" />
     </LinearLayout>

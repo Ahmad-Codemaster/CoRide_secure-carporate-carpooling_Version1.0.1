@@ -141,3 +141,16 @@ data class WeatherDay(
     val condition: String
 )
 
+// ── CoRide App Notification ──
+data class AppNotification(
+    val id: String = java.util.UUID.randomUUID().toString(),
+    val title: String,
+    val message: String,
+    val timestamp: Long = System.currentTimeMillis(),
+    val type: NotificationType = NotificationType.SYSTEM,
+    var isRead: Boolean = false
+)
+
+enum class NotificationType {
+    WELCOME, VERIFICATION, RIDE, SOS, SYSTEM
+}

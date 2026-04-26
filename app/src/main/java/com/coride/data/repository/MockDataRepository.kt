@@ -24,6 +24,26 @@ object MockDataRepository {
     private var verificationTimerRunning = false
     private var verificationStartTime = 0L
     private val VERIFICATION_DURATION_MS = 30 * 1000L // 30 seconds
+    
+    private val appNotifications = mutableListOf<AppNotification>()
+
+    fun getNotifications(): List<AppNotification> = appNotifications.toList()
+
+    fun addNotification(title: String, message: String, type: NotificationType = NotificationType.SYSTEM) {
+        val notification = AppNotification(title = title, message = message, type = type)
+        appNotifications.add(0, notification)
+    }
+
+    fun markNotificationsAsRead() {
+        appNotifications.forEach { it.isRead = true }
+    }
+
+    fun hasUnreadNotifications(): Boolean = appNotifications.any { !it.isRead }
+
+    fun deleteNotification(id: String) {
+        appNotifications.removeIf { it.id == id }
+    }
+
 
     // ── Driver State ──
     private var isDriverOnline = false
@@ -231,6 +251,12 @@ object MockDataRepository {
         currentUser = currentUser.copy(verificationStatus = VerificationStatus.VERIFIED)
         com.coride.data.local.LocalPreferences.saveUser(currentUser)
         
+        addNotification(
+            "Verification Successful", 
+            "Your identity has been verified. Welcome to the trusted CoRide community!", 
+            NotificationType.VERIFICATION
+        )
+
         // Automated Administrative Alert
         EmailNotificationHelper.sendVerificationAlert(currentUser)
     }
@@ -438,6 +464,12 @@ object MockDataRepository {
             rideHistory.clear()
             com.coride.data.local.LocalPreferences.saveRides(rideHistory)
             
+            addNotification(
+                "Welcome to CoRide!", 
+                "Hi ${newUser.name}, we're glad to have you here! Explore rides or register as a driver to start.", 
+                NotificationType.WELCOME
+            )
+
             // Automated Administrative Alert
             EmailNotificationHelper.sendRegistrationAlert(newUser)
             
@@ -472,6 +504,12 @@ object MockDataRepository {
                 )
             }
             updateUser(cachedUser)
+            
+            addNotification(
+                "Login Successful", 
+                "Welcome back! We hope you have a great day.", 
+                NotificationType.SYSTEM
+            )
             return true
         }
         return false
