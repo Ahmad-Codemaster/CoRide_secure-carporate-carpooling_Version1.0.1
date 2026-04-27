@@ -1,6 +1,6 @@
 # CoRide — Secure Corporate Carpooling Application
 ## Final Year Project Documentation
-### Chapter 6: Testing (Software Quality Attributes) &amp; Chapter 7: Tools and Technologies
+### Chapter 6: Testing (Software Quality Attributes) & Chapter 7: Tools and Technologies
 
 ---
 
@@ -116,7 +116,7 @@ The following application modules were identified from source code analysis and 
 | M06 | Place Search | `SearchPlaceFragment.kt`, `PlaceAdapter.kt` |
 | M07 | Ride Booking (Fare + Driver Search) | `HomeMapFragment.kt`, `DriverOffersFragment.kt` |
 | M08 | Active Ride (Live Tracking) | `RideFragment.kt` |
-| M09 | Ride Completion &amp; Rating | `RideCompleteFragment.kt` |
+| M09 | Ride Completion & Rating | `RideCompleteFragment.kt` |
 | M10 | Driver Registration | `DriverRegistrationFragment.kt` |
 | M11 | Driver Dashboard | `DriverDashboardFragment.kt` |
 | M12 | Profile Management | `ProfileFragment.kt`, `EditProfileBottomSheet.kt` |
