@@ -1379,25 +1379,7 @@ While XML is not a general-purpose programming language, it plays a critical str
 
 ### 7.2.1 Development Environment
 
-The CoRide application was developed in the following environment:
-
-| Parameter | Details |
-|---|---|
-| Operating System | Windows 11 (64-bit, recommended) |
-| IDE | Android Studio Hedgehog (2023.1.1) / or Iguana (2023.2.1) |
-| Build System | Gradle 8.x using Kotlin DSL (`build.gradle.kts`, `settings.gradle.kts`) |
-| Version Control | Git (local) + GitHub (remote repository) |
-| Remote Repository | `github.com/Ahmad-Codemaster/CoRide_secure-carporate-carpooling_Version1.0.1` |
-| JDK | Java Development Kit 17 (JVM target 17) |
-| Min Android SDK | API 26 (Android 8.0 Oreo) |
-| Compile SDK | API 34 (Android 14) |
-| Target SDK | API 34 (Android 14) |
-| Gradle Plugin | Android Gradle Plugin (AGP) — as per `build.gradle.kts` |
-| Package Name | `com.coride` |
-| Version Code | 1 |
-| Version Name | 1.0 |
-
-**Table 7.1: Development Environment Specification**
+The CoRide application was developed on **Windows 11** (64-bit) as the operating system. The primary integrated development environment was **Android Studio Hedgehog (2023.1.1)**, with support for the Iguana (2023.2.1) release as well. The build system used is **Gradle 8.x** with the Kotlin DSL, managed through `build.gradle.kts` and `settings.gradle.kts` configuration files. Source code version control was handled using **Git** locally, paired with a remote repository on **GitHub** at `github.com/Ahmad-Codemaster/CoRide_secure-carporate-carpooling_Version1.0.1`. The runtime environment is based on **Java Development Kit 17** with a JVM target of 17. The application sets its **Minimum SDK at API 26** (Android 8.0 Oreo), ensuring broad device compatibility, while both the **Compile SDK and Target SDK are set to API 34** (Android 14) to take advantage of the latest Android platform features. Build automation is orchestrated by the **Android Gradle Plugin (AGP)** as declared in the project's `build.gradle.kts`. The application package name is `com.coride`, with version code 1 and version name 1.0.
 
 **Build Configuration Details (from `app/build.gradle.kts`):**
 ```kotlin
@@ -1425,118 +1407,55 @@ android {
 
 ### 7.2.2 Execution and Deployment Environment
 
-The CoRide application is designed to run on Android smartphones meeting the following requirements:
-
-| Requirement | Minimum Specification |
-|---|---|
-| Android Version | Android 8.0 Oreo (API 26) and above |
-| Processor | ARMv7 or ARM64 (32-bit or 64-bit) |
-| RAM | 2 GB minimum (4 GB recommended for smooth performance) |
-| Storage | 100 MB free storage for app installation and local data |
-| Network | Wi-Fi or 3G/4G/5G mobile data (required for weather API, email, and live tracking) |
-| GPS | Required for pickup/drop-off location detection and live ride tracking |
-| SMS | Required for safety alert dispatch to trusted contacts |
-| Biometric Sensor | Optional (fingerprint or face recognition for quick login) |
-| Camera | Optional (for identity document upload in verification flow) |
-
-**Table 7.2: Minimum Device Requirements**
+The CoRide application is designed to run on Android smartphones meeting the following minimum requirements. The device must run **Android 8.0 Oreo (API 26) or above**. In terms of hardware, the application requires an **ARMv7 or ARM64 processor** (32-bit or 64-bit) with a minimum of **2 GB of RAM**, though 4 GB is recommended for smooth and responsive performance. At least **100 MB of free internal storage** must be available for the application installation and locally cached data. **Internet connectivity** — whether through Wi-Fi or 3G/4G/5G mobile data — is mandatory for cloud-dependent features including the weather API, email notifications, Firebase real-time tracking, and the live tracker page. **GPS and location services** must be enabled on the device to support ride pickup and drop-off point detection, driver matching, and live ride tracking. **SMS capability** is a hardware requirement for the safety alert system that dispatches emergency messages to trusted contacts. A **biometric sensor** (fingerprint scanner or face recognition hardware) is optional; when available, it powers the quick biometric login feature. A **camera** is also optional, used for capturing and uploading identity verification documents during the user registration flow.
 
 ---
 
 ### 7.2.3 Third-Party Libraries and Dependencies
 
-All external libraries are managed through the Gradle dependency management system. The following table documents every dependency declared in `app/build.gradle.kts` and its specific role in the CoRide application:
+All external libraries are managed through the Gradle dependency management system. The following sub-sections document every dependency declared in `app/build.gradle.kts` and its specific role in the CoRide application.
 
 **a) Android Jetpack / AndroidX Libraries**
 
-| Library | Version | Role in CoRide |
-|---|---|---|
-| `core-ktx` | 1.12.0 | Kotlin extensions for Android core APIs; extension functions for `Context`, `Bundle`, `Intent`, etc. |
-| `appcompat` | 1.6.1 | Backward-compatible access to newer Android APIs (ActionBar, Theme support) |
-| `activity-ktx` | 1.8.2 | Kotlin extensions for `Activity` lifecycle management and result APIs |
-| `fragment-ktx` | 1.6.2 | Kotlin extensions for `Fragment` (navigation, result passing, bundleOf) |
-| `constraintlayout` | 2.1.4 | Primary layout system for all CoRide screens; enables complex, responsive UI layouts without nesting |
-| `recyclerview` | 1.3.2 | Used for rendering lists: driver offers, trusted contacts, ride history, notifications, search results |
-| `lifecycle-viewmodel-ktx` | 2.7.0 | ViewModel lifecycle-aware data holder; coroutine scope for ViewModels |
-| `lifecycle-livedata-ktx` | 2.7.0 | LiveData observable pattern; Kotlin extension for coroutine-based LiveData |
-| `lifecycle-runtime-ktx` | 2.7.0 | Lifecycle-aware coroutine scopes (`viewLifecycleOwner.lifecycleScope.launch {}`) |
-| `navigation-fragment-ktx` | 2.7.6 | Jetpack Navigation Component for fragment-based navigation; `findNavController()`, `navigate()` |
-| `navigation-ui-ktx` | 2.7.6 | Navigation UI integration with `BottomNavigationView` and menus |
-| `viewpager2` | 1.0.0 | ViewPager2 for swipe-based navigation (e.g., onboarding, multi-step flows) |
-| `dynamicanimation-ktx` | 1.0.0-alpha03 | Spring physics animations (`SpringForce`, `FlingAnimation`) via `SpringPhysicsHelper.kt` |
-| `dynamicanimation` | 1.0.0 | Base spring animation library for fling/spring transitions |
-| `biometric` | 1.2.0-alpha05 | Biometric authentication (fingerprint/face); `BiometricPrompt`, `BiometricManager` in `BiometricHelper.kt` |
+The application relies on an extensive set of Android Jetpack (AndroidX) libraries. The `core-ktx` library (version 1.12.0) provides Kotlin extension functions for Android core APIs including `Context`, `Bundle`, and `Intent`. The `appcompat` library (version 1.6.1) enables backward-compatible access to newer Android platform APIs, such as ActionBar and theme support. Activity and fragment lifecycle management is handled through `activity-ktx` (version 1.8.2) and `fragment-ktx` (version 1.6.2), offering Kotlin extensions for lifecycle management, the Activity Result API, and `bundleOf` utilities. `ConstraintLayout` (version 2.1.4) serves as the primary layout system across all CoRide screens, enabling complex and responsive UI layouts without deep view nesting. `RecyclerView` (version 1.3.2) powers all list-based UI components in the application, including driver offer lists, trusted contacts, ride history, notifications, and search results.
 
-**Table 7.3: AndroidX Library Dependencies**
+Lifecycle-aware data management is achieved through three complementary libraries: `lifecycle-viewmodel-ktx` (version 2.7.0) provides ViewModel support with coroutine scope integration; `lifecycle-livedata-ktx` (version 2.7.0) enables observable LiveData patterns using Kotlin coroutine extensions; and `lifecycle-runtime-ktx` (version 2.7.0) provides lifecycle-scoped coroutine execution via `viewLifecycleOwner.lifecycleScope.launch {}`. The Jetpack Navigation Component is integrated through `navigation-fragment-ktx` and `navigation-ui-ktx` (both version 2.7.6), which handle all in-app fragment navigation using `findNavController()` and `navigate()`, and integrate with the `BottomNavigationView`. `ViewPager2` (version 1.0.0) enables swipe-based navigation in multi-step flows. Spring physics animations are implemented using `dynamicanimation-ktx` (version 1.0.0-alpha03) and `dynamicanimation` (version 1.0.0) as utilised in `SpringPhysicsHelper.kt`. Finally, biometric authentication is enabled through the `biometric` library (version 1.2.0-alpha05), which provides `BiometricPrompt` and `BiometricManager` as used in `BiometricHelper.kt`.
 
 ---
 
 **b) Google Libraries**
 
-| Library | Version | Role in CoRide |
-|---|---|---|
-| `material` (Material Design 3) | 1.13.0-alpha01 | Complete Material Design 3 UI component set: `MaterialButton`, `MaterialCardView`, `TextInputLayout`, `BottomSheetDialogFragment`, `Chip`, `MaterialAlertDialogBuilder`, `WavyProgressIndicator` |
-| `play-services-maps` | 18.2.0 | Google Maps SDK for Android; `GoogleMap`, `Marker`, `Polyline`, `PolylineOptions`, `MarkerOptions` in `RideFragment.kt` and `HomeMapFragment.kt` |
-| `play-services-location` | 21.0.1 | FusedLocationProviderClient for GPS-based location detection (pickup point, SOS coordinate capture) |
-
-**Table 7.4: Google Library Dependencies**
+Three key Google libraries are incorporated. **Material Design 3** (`material`, version 1.13.0-alpha01) provides the complete UI component library used throughout the CoRide interface, including `MaterialButton`, `MaterialCardView`, `TextInputLayout`, `BottomSheetDialogFragment`, `Chip`, `MaterialAlertDialogBuilder`, and `WavyProgressIndicator`. The **Google Maps SDK for Android** (`play-services-maps`, version 18.2.0) enables interactive map rendering with `GoogleMap`, `Marker`, `Polyline`, `PolylineOptions`, and `MarkerOptions`, used in `RideFragment.kt` and `HomeMapFragment.kt`. **Google Play Services Location** (`play-services-location`, version 21.0.1) provides the `FusedLocationProviderClient` API for GPS-based location detection, including ride pickup point resolution and SOS coordinate capture.
 
 ---
 
 **c) Networking Libraries**
 
-| Library | Version | Role in CoRide |
-|---|---|---|
-| `retrofit2:retrofit` | 2.9.0 | Type-safe HTTP client framework; interfaces for REST API calls (Weather API via `WeatherApiService.kt`) |
-| `retrofit2:converter-gson` | 2.9.0 | Gson converter for automatic JSON-to-Kotlin data class deserialisation of weather API responses |
-| `okhttp3:logging-interceptor` | 4.11.0 | OkHttp logging interceptor for debugging HTTP request/response bodies during development |
-
-**Table 7.5: Networking Library Dependencies**
+Network communication with external services is implemented through the **Retrofit2** framework (`retrofit2:retrofit`, version 2.9.0), a type-safe HTTP client that defines REST API calls via annotated Kotlin interfaces, as seen in `WeatherApiService.kt`. The `retrofit2:converter-gson` library (version 2.9.0) acts as the Gson converter for automatic JSON-to-Kotlin data class deserialisation of weather API responses. HTTP request and response debugging during development is facilitated by `okhttp3:logging-interceptor` (version 4.11.0), which logs full request and response bodies to Logcat.
 
 ---
 
 **d) Multimedia and Animation Libraries**
 
-| Library | Version | Role in CoRide |
-|---|---|---|
-| `lottie` | 6.4.0 | Airbnb's Lottie library for After Effects animation JSON playback; used for loading animations, success animations, and splash screen effects |
-| `glide` | 4.16.0 | Bumptech Glide for efficient image loading, caching, and rendering; used for user avatar display (`CircleImageView`) |
-| `circleimageview` | 3.1.0 | hdodenhof CircleImageView for circular avatar display in Profile and Ride screens |
-
-**Table 7.6: Multimedia Library Dependencies**
+The **Lottie** library (version 6.4.0) from Airbnb enables smooth playback of After Effects JSON animation files, used throughout CoRide for loading animations, success indicators, and splash screen visual effects. **Glide** (version 4.16.0) from Bumptech provides efficient image loading, memory and disk caching, and rendering of user profile avatars. The **CircleImageView** library (version 3.1.0) by hdodenhof supplies the circular avatar widget used on the Profile and Ride screens to display user photographs in a rounded format.
 
 ---
 
 **e) Data Serialisation**
 
-| Library | Version | Role in CoRide |
-|---|---|---|
-| `gson` | (transitive via `converter-gson`) | Google Gson for JSON serialisation of ride history (`LocalPreferences.saveRides()`) and deserialisation (`LocalPreferences.getRides()`) using `TypeToken` |
-
-**Table 7.7: Data Serialisation Dependencies**
+Data serialisation and deserialisation is handled by **Google Gson**, included transitively through the `retrofit2:converter-gson` dependency. Gson is used directly in `LocalPreferences.saveRides()` and `LocalPreferences.getRides()` to serialise and deserialise the user's ride history as a JSON string, leveraging `TypeToken` for accurate generic type reflection when converting between `List<Ride>` and its JSON representation.
 
 ---
 
 **f) Email / SMTP Library**
 
-| Library | Version | Role in CoRide |
-|---|---|---|
-| `android-mail` | 1.6.2 | Sun/Oracle JavaMail for Android; SMTP-based email dispatch via `javax.mail.*` APIs (`Session`, `Transport`, `MimeMessage`) in `EmailNotificationHelper.kt` |
-| `android-activation` | 1.6.2 | JavaBeans Activation Framework required by JavaMail for MIME type handling |
-| `transport-api` | 4.1.0 | Google Data Transport API; supporting dependency |
-
-**Table 7.8: Email Library Dependencies**
+Email dispatch functionality is powered by the **JavaMail for Android** library (`android-mail`, version 1.6.2), which provides the full `javax.mail.*` API suite — including `Session`, `Transport`, and `MimeMessage` — for SMTP-based email sending as implemented in `EmailNotificationHelper.kt`. The **JavaBeans Activation Framework** (`android-activation`, version 1.6.2) is required by JavaMail for MIME content type handling and data source management. The **Google Data Transport API** (`transport-api`, version 4.1.0) is included as a supporting dependency required by the Firebase and Google services stack.
 
 ---
 
 **g) Coroutines**
 
-| Library | Version | Role in CoRide |
-|---|---|---|
-| `kotlinx-coroutines-android` | 1.7.3 | Android-specific coroutine dispatchers (`Dispatchers.Main`, UI thread integration, coroutine cancellation on lifecycle) |
-| `kotlinx-coroutines-core` | 1.7.3 | Core coroutine primitives (`launch`, `async`, `delay`, `CoroutineScope`, `withContext`) |
-
-**Table 7.9: Coroutines Library Dependencies**
+Asynchronous programming throughout CoRide is built on **Kotlin Coroutines**. The `kotlinx-coroutines-android` library (version 1.7.3) provides Android-specific coroutine dispatchers (`Dispatchers.Main` for UI-thread execution), seamless integration with the Android main looper, and lifecycle-aware coroutine cancellation to prevent memory leaks. The `kotlinx-coroutines-core` library (version 1.7.3) supplies the foundational coroutine primitives used throughout the application, including `launch`, `async`, `delay`, `CoroutineScope`, and `withContext`, enabling non-blocking execution of network calls, database operations, and background processing tasks.
 
 ---
 
@@ -1550,35 +1469,9 @@ CoRide employs a hybrid data architecture that combines local on-device persiste
 
 The primary persistence mechanism for user data in CoRide is Android's **SharedPreferences** API, managed through the `LocalPreferences` singleton object (`data/local/LocalPreferences.kt`). SharedPreferences provides a key-value XML file stored in the app's private internal storage directory, accessible only by the CoRide application and not exposed to other apps or users.
 
-The following data categories are persisted in `coride_prefs` (the SharedPreferences file name):
+The `coride_prefs` SharedPreferences file stores a comprehensive set of user profile and session data. The user's unique identifier is persisted under the key `id` as a String, alongside `name` (full name), `phone` (phone number), and `email` (email address). Numeric profile data includes `rating` (Float) and `totalRides` (Int). Account metadata is stored as `memberSince` (account creation date string), `role` (the serialised `UserRole` enum value), `organizationName`, `homeAddress`, and `cnicNumber` (institution student or CNIC identifier). The user's identity verification state is persisted as `verificationStatus` (the serialised `VerificationStatus` enum value). Trusted emergency contacts are stored as a pipe-separated serialised string under the key `trustedContacts`.
 
-| Key | Data Type | Purpose |
-|---|---|---|
-| `id` | String | User unique ID |
-| `name` | String | User full name |
-| `phone` | String | User phone number |
-| `email` | String | User email address |
-| `rating` | Float | User rating |
-| `totalRides` | Int | Total completed rides |
-| `memberSince` | String | Account creation date |
-| `role` | String | `UserRole` enum value |
-| `organizationName` | String | Institutional name |
-| `homeAddress` | String | Home address |
-| `cnicNumber` | String | Institutional Student/CNIC ID |
-| `verificationStatus` | String | `VerificationStatus` enum |
-| `trustedContacts` | String | Pipe-separated serialised contacts |
-| `isLoggedIn` | Boolean | Session flag |
-| `isDriverMode` | Boolean | Current driver/passenger mode |
-| `isRegisteredDriver` | Boolean | Driver registration status |
-| `isBiometricEnabled` | Boolean | Biometric login preference |
-| `isShakeSosEnabled` | Boolean | Shake-to-SOS setting |
-| `isVolumeSosEnabled` | Boolean | Volume-SOS setting |
-| `registeredEmail` | String | Persisted credential email |
-| `registeredPhone` | String | Persisted credential phone |
-| `registeredPassword` | String | Persisted credential password |
-| `ride_history` | String | Gson-serialised `List<Ride>` |
-
-**Table 7.10: SharedPreferences Data Schema**
+Session and mode control flags are stored as Boolean values: `isLoggedIn` indicates whether an active session exists, `isDriverMode` reflects the user's current operational mode (driver or passenger), and `isRegisteredDriver` records whether the user has completed driver registration. User security preferences are stored as Boolean flags: `isBiometricEnabled`, `isShakeSosEnabled`, and `isVolumeSosEnabled`. Login credentials are persisted for offline authentication under `registeredEmail`, `registeredPhone`, and `registeredPassword`. Finally, the user's complete ride history is stored under the `ride_history` key as a Gson-serialised JSON string representing a `List<Ride>`.
 
 SharedPreferences is appropriate for CoRide's current offline-first prototype architecture. For production deployment, this would be migrated to a secure backend database with encrypted credential storage.
 
@@ -1645,29 +1538,9 @@ The response is parsed into `WeatherResponse → WeatherForecastItem → MainDat
 
 **e) Gmail SMTP (Automated Email Notifications)**
 
-The `EmailNotificationHelper` class uses the **JavaMail library (`android-mail` 1.6.2)** to send automated HTML email notifications via Gmail's SMTP server over SSL:
+The `EmailNotificationHelper` class uses the **JavaMail library (`android-mail` 1.6.2)** to send automated HTML email notifications via Gmail's SMTP server over SSL. The SMTP host is configured as `smtp.gmail.com` on **port 465** with SSL encryption enforced using `javax.net.ssl.SSLSocketFactory`. Authentication is performed using a **Gmail App Password** — a 16-character application-specific password that bypasses two-factor authentication restrictions. All email messages are composed and dispatched with a content type of `text/html; charset=utf-8`, enabling rich HTML formatting within notification emails.
 
-| SMTP Parameter | Value |
-|---|---|
-| Host | `smtp.gmail.com` |
-| Port | 465 (SSL) |
-| Socket Factory | `javax.net.ssl.SSLSocketFactory` |
-| Authentication | Gmail App Password (16-character) |
-| Content Type | `text/html; charset=utf-8` |
-
-**Table 7.11: SMTP Configuration**
-
-Four types of automated emails are dispatched:
-
-| Email Type | Trigger | Function Called |
-|---|---|---|
-| New Registration Alert | Successful OTP completion | `sendRegistrationAlert(user)` |
-| Verification Completed Alert | 30-second verification timer elapses | `sendVerificationAlert(user)` |
-| SOS Emergency Alert | SOS triggered (any pathway) | `sendSosAlert(user, rideId, lat, lng)` |
-| Account Deletion Alert | User deletes account | `sendAccountDeletionAlert(user)` |
-| Password Reset OTP | Forgot password request | `sendOtpEmail(toEmail, otp)` |
-
-**Table 7.12: Automated Email Notification Types**
+Five types of automated emails are dispatched by the system. A **New Registration Alert** is sent via `sendRegistrationAlert(user)` immediately after a user successfully completes the OTP verification step during account creation. A **Verification Completed Alert** is dispatched via `sendVerificationAlert(user)` when the 30-second institutional identity review timer elapses, notifying the admin that the verification process has concluded. An **SOS Emergency Alert** is triggered via `sendSosAlert(user, rideId, lat, lng)` whenever any of the three SOS activation pathways is invoked — manual FAB, hardware volume button triple-press, or inactivity timer. An **Account Deletion Alert** is sent via `sendAccountDeletionAlert(user)` to inform the admin when a user permanently removes their account. A **Password Reset OTP** email is dispatched via `sendOtpEmail(toEmail, otp)` in response to a forgot-password request, delivering the 4-digit one-time password to the user's registered email address.
 
 All emails are sent asynchronously on `Dispatchers.IO` using Kotlin Coroutines to prevent blocking the main UI thread.
 
@@ -1675,34 +1548,13 @@ All emails are sent asynchronously on `Dispatchers.IO` using Kotlin Coroutines t
 
 ### 7.2.5 Android Permissions
 
-The CoRide application declares the following permissions in `AndroidManifest.xml`:
-
-| Permission | Purpose |
-|---|---|
-| `INTERNET` | Required for weather API, Firebase, email dispatch, live tracker |
-| `ACCESS_FINE_LOCATION` | GPS location for ride pickup, SOS coordinates, driver matching |
-| `ACCESS_COARSE_LOCATION` | Approximate location fallback |
-| `SEND_SMS` | SMS safety alerts to trusted contacts |
-| `RECEIVE_SMS` | (If OTP via SMS is enabled) |
-| `POST_NOTIFICATIONS` | Push notification delivery on Android 13+ (API 33+) |
-| `USE_BIOMETRIC` | Fingerprint/face recognition for quick login |
-| `USE_FINGERPRINT` | Legacy biometric support |
-| `FOREGROUND_SERVICE` | RideForegroundService for active ride tracking |
-| `WAKE_LOCK` | Prevent CPU sleep during active ride |
-
-**Table 7.13: Application Permissions**
+The CoRide application declares the following permissions in `AndroidManifest.xml`. The `INTERNET` permission is required to enable the weather API calls, Firebase Realtime Database communication, email dispatch, and access to the live tracker web page. The `ACCESS_FINE_LOCATION` permission provides precise GPS coordinates for ride pickup and drop-off point detection, driver matching, and SOS coordinate capture, while `ACCESS_COARSE_LOCATION` serves as an approximate location fallback for lower-accuracy scenarios. The `SEND_SMS` permission enables the application to programmatically dispatch SMS safety alerts to the user's configured trusted contacts, and `RECEIVE_SMS` is declared to support OTP delivery via SMS if that option is enabled. The `POST_NOTIFICATIONS` permission is required for delivering push notification alerts on Android 13 and above (API 33+). The `USE_BIOMETRIC` and `USE_FINGERPRINT` permissions collectively enable both modern biometric hardware (face recognition) and legacy fingerprint sensors for the quick login feature. The `FOREGROUND_SERVICE` permission supports the `RideForegroundService`, which maintains active ride tracking as a foreground service visible to the user. The `WAKE_LOCK` permission prevents the device CPU from entering a sleep state during an active ride session, ensuring continuous tracking and safety monitoring.
 
 ---
 
 ### 7.2.6 Architecture Pattern
 
-The CoRide application follows the **MVVM (Model-View-ViewModel)** pattern guidance from Android Architecture Components, implemented as a simplified variant suited to the prototype's offline-first nature:
-
-| Layer | Technology | Role |
-|---|---|---|
-| **View** | Fragments, Activities, XML Layouts, Material Design 3 | Renders UI; receives user input; observes data changes |
-| **ViewModel** | (Simplified — logic in Fragments) | Lifecycle-aware data management; survives configuration changes |
-| **Model** | `MockDataRepository`, `LocalPreferences`, Data Model Classes | Business logic; data access; state management |
+The CoRide application follows the **MVVM (Model-View-ViewModel)** architectural guidance from Android Architecture Components, implemented as a simplified variant suited to the prototype's offline-first nature. The **View layer** is composed of Fragments, Activities, XML layout files, and Material Design 3 components; it is responsible for rendering the user interface, receiving user input, and observing data changes communicated from the ViewModel. The **ViewModel layer** provides lifecycle-aware data management that survives configuration changes such as screen rotation; in CoRide's prototype, some ViewModel responsibilities are handled directly within Fragments to reduce architectural overhead while still maintaining clean data flow. The **Model layer** encompasses `MockDataRepository`, `LocalPreferences`, and all data model classes; it contains all business logic, data access operations, and application state management.
 
 The use of the Jetpack Navigation Component with a single-activity architecture (`AuthActivity` → `MainActivity`) further reinforces clean separation of concerns and predictable back-stack management.
 
@@ -1710,39 +1562,19 @@ The use of the Jetpack Navigation Component with a single-activity architecture 
 
 ### 7.2.7 Security Architecture
 
-Given the security-critical nature of the CoRide platform (handling institutional student/employee identity data, live GPS, and financial transactions), the following security measures are implemented at various levels:
+Given the security-critical nature of the CoRide platform — which handles institutional student and employee identity data, live GPS coordinates, and ride transaction flows — multiple security measures are implemented across the application architecture.
 
-| Security Measure | Implementation |
-|---|---|
-| **Biometric Authentication** | `BiometricHelper.kt` using `androidx.biometric.BiometricPrompt` with BIOMETRIC_STRONG authenticator; device credential fallback |
-| **OTP-based Registration** | 4-digit OTP verification required before account creation; OTP `1234` is verified via `MockDataRepository.verifyOtp()` |
-| **OTP-based Password Reset** | 4-digit OTP sent to registered email via SMTP; `sendOtpEmail()` in `EmailNotificationHelper.kt` |
-| **Institutional Identity Verification** | Document upload (Org Card or CNIC) required; admin notified via email on status change |
-| **SOS Multi-pathway Emergency System** | Manual FAB, hardware volume button (3×), automatic timer; email + SMS + Firebase real-time tracking |
-| **Trusted Contact SMS Alerts** | Ride-start notifications and SOS dispatched to all configured trusted contacts |
-| **Admin Email Oversight** | All registration, verification, SOS, and deletion events trigger admin email alerts |
-| **Local Data Isolation** | SharedPreferences stored in app-private internal storage; `MODE_PRIVATE` flag |
-| **Hardware SOS with 10-min Tracking** | Continuous GPS tracking via `FusedLocationProviderClient` for 10 minutes post-SOS trigger |
-| **Safety Check Dialog** | Periodic "Are you OK?" prompt during ride; auto-triggers SOS if unanswered for 15 seconds |
-| **Ride Share Safety Message** | Passenger can share driver details and live tracker link via intent |
-| **Route Deviation Alert** | `AlertType.ROUTE_DEVIATION` defined in models for future integration with route monitoring |
+**Biometric Authentication** is implemented in `BiometricHelper.kt` using `androidx.biometric.BiometricPrompt` with the `BIOMETRIC_STRONG` authenticator class, providing a device credential fallback for users whose biometric hardware is unavailable or not enrolled. **OTP-based Registration** requires a 4-digit one-time password to be verified by `MockDataRepository.verifyOtp()` before any new account is created, preventing automated or fraudulent registrations. Similarly, **OTP-based Password Reset** dispatches a 4-digit OTP to the user's registered email address via `sendOtpEmail()` in `EmailNotificationHelper.kt`, ensuring that only the legitimate account holder can reset their password.
 
-**Table 7.14: Security Architecture Summary**
+**Institutional Identity Verification** requires every user to upload an official Organisation Card or CNIC document before gaining full access to ride features; the administration is notified via email whenever a verification status changes. The **SOS Multi-pathway Emergency System** provides three independent activation methods — a manual floating action button, a hardware volume button triple-press, and an automatic inactivity timer — each triggering a coordinated emergency response comprising an HTML email alert, SMS messages to all trusted contacts, and a Firebase Realtime Database GPS update. **Trusted Contact SMS Alerts** are dispatched both at ride commencement and upon SOS activation, ensuring that configured emergency contacts are informed at every critical stage of a journey.
+
+**Admin Email Oversight** ensures that all key lifecycle events — registration, verification, SOS activation, and account deletion — generate email notifications to the administrator's address, maintaining full operational visibility. **Local Data Isolation** is enforced by storing all SharedPreferences data in the application's private internal storage directory using the `MODE_PRIVATE` flag, preventing access by other installed applications. **Hardware SOS with 10-Minute Tracking** activates a continuous GPS polling loop via `FusedLocationProviderClient` for a full 10 minutes following an SOS trigger, publishing location updates to Firebase every 10 seconds. The **Safety Check Dialog** periodically presents an "Are you OK?" confirmation prompt to the passenger during an active ride; if no response is received within 15 seconds, the SOS system is automatically activated. The **Ride Share Safety Message** feature allows a passenger to proactively share the driver's details and the live tracker URL with a third party via Android's native share intent. Finally, the **Route Deviation Alert** mechanism is declared through the `AlertType.ROUTE_DEVIATION` enum value in the application's data models, architected for future integration with active route deviation monitoring logic.
 
 ---
 
 ### 7.2.8 Version Control and Collaboration Tools
 
-| Tool | Version / Details | Usage |
-|---|---|---|
-| **Git** | 2.40+ | Source code version control; branch management; commit history |
-| **GitHub** | Cloud-hosted repository | Remote code storage; issue tracking; Pull Request workflow |
-| **GitHub Pages** | Static site hosting | Live Tracker HTML page hosting (`live_tracker.html`) |
-| **Android Studio** | Hedgehog (2023.1.1) | Primary IDE; code completion; Gradle build; AVD Manager; debugger |
-| **Logcat** | Android Studio built-in | Real-time app log monitoring during testing and debugging |
-| **Android Profiler** | Android Studio built-in | CPU, memory, network, and energy profiling during performance testing |
-
-**Table 7.15: Version Control and Development Tools**
+**Git** (version 2.40 and above) serves as the distributed version control system for all CoRide source code, managing branch creation, commit history, and code merging throughout the development lifecycle. **GitHub** hosts the remote repository in the cloud, providing code storage with full history, issue tracking, and the Pull Request workflow for code review and integration. **GitHub Pages** is used to host the static `live_tracker.html` emergency location page at no additional cost, making the real-time location tracker accessible from any web browser during an SOS event. **Android Studio Hedgehog (2023.1.1)** is the primary IDE for the project, providing intelligent code completion, integrated Gradle build execution, the Android Virtual Device (AVD) Manager for emulator provisioning, and a fully integrated debugger for step-through code inspection. **Logcat**, available as a built-in panel within Android Studio, enables real-time monitoring of application log output during testing and debugging sessions. The **Android Profiler**, also integrated into Android Studio, provides detailed visualisations of CPU usage, memory allocation, network activity, and battery consumption, supporting performance analysis and optimisation during the testing phase.
 
 ---
 
