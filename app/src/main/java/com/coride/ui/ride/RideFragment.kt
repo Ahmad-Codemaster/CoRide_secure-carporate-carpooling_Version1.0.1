@@ -49,6 +49,9 @@ class RideFragment : Fragment() {
     private var currentState: RideState = RideState.SearchingDrivers
     private var rideId: String = ""
     private var isAutoTracking = true
+    private var lastPosition: LatLng? = null
+    private var stoppedTimeMs: Long = 0
+    private var isSafetyCheckVisible = false
     private lateinit var fabRecenter: FloatingActionButton
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -279,6 +282,8 @@ class RideFragment : Fragment() {
                 val count = SmsSafetyHelper.sendToAllEmergencyContacts(requireContext(), rideMsg)
                 if (count > 0) Toast.makeText(requireContext(), "✅ Safety alert sent to $count contacts", Toast.LENGTH_SHORT).show()
                 Log.d("RideSafety", "Auto-sent SMS to $count contacts")
+            } else {
+                Toast.makeText(requireContext(), "⚠️ SMS permission missing! Auto-safety alerts disabled.", Toast.LENGTH_LONG).show()
             }
 
             RideForegroundService.startService(requireContext(), rideId, driverNameVal, destNameVal, pLat, pLng)
@@ -334,7 +339,27 @@ class RideFragment : Fragment() {
                 FirebaseSafetyHelper.pushLocationUpdate(rideId, "driver", pos.latitude, pos.longitude)
                 updateState(RideState.RideInProgress(i.toFloat() / rideSteps, maxOf(1, (10 * (1 - i.toFloat() / rideSteps)).toInt())))
 
-                // Simulation steps removed for stability
+                // ── SIMULATED STOP AT 40% JOURNEY ──
+                if (i == (rideSteps * 0.4).toInt()) {
+                    Log.d("RideSafety", "Simulating stop for safety check...")
+                    
+                    // Show safety check
+                    showSafetyCheckDialog()
+                    
+                    // Wait until either the 10s is up OR the user dismisses it
+                    val stopStart = System.currentTimeMillis()
+                    while (isSafetyCheckVisible && (System.currentTimeMillis() - stopStart < 10000)) {
+                        if (!isAdded) return@launch
+                        delay(500)
+                    }
+                    
+                    // If user is still not responding after 10s, the dialog will trigger SOS automatically
+                    // and we wait for them to eventually dismiss it or for SOS flow to finish
+                    while (isSafetyCheckVisible) {
+                        if (!isAdded) return@launch
+                        delay(500)
+                    }
+                }
 
                 delay(120)
             }
@@ -470,6 +495,29 @@ class RideFragment : Fragment() {
             warningCard.postDelayed({ if (isAdded) warningCard.animate().alpha(0f).translationY(-40f).setDuration(400).withEndAction { warningCard.visibility = View.GONE }.start() }, 5000)
         }.start()
         Toast.makeText(requireContext(), "Safety Alert: Route deviation detected", Toast.LENGTH_SHORT).show()
+    }
+
+    private fun showSafetyCheckDialog() {
+        if (!isAdded || isSafetyCheckVisible) return
+        isSafetyCheckVisible = true
+        
+        val dialog = SafetyCheckDialogFragment.newInstance(
+            rideId,
+            currentDriverPosition?.latitude ?: 0.0,
+            currentDriverPosition?.longitude ?: 0.0
+        )
+        
+        dialog.onDismissedSafe = {
+            isSafetyCheckVisible = false
+            Toast.makeText(requireContext(), "Great! Continuing your ride.", Toast.LENGTH_SHORT).show()
+        }
+        
+        dialog.onSosTriggered = {
+            isSafetyCheckVisible = false
+            // SOS already handled inside dialog
+        }
+        
+        dialog.show(childFragmentManager, "safety_check_dialog")
     }
 
     override fun onDestroyView() {

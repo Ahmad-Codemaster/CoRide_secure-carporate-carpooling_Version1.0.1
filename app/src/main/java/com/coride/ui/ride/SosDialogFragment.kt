@@ -39,9 +39,21 @@ class SosDialogFragment : BottomSheetDialogFragment() {
         val btnCancel = view.findViewById<MaterialButton>(R.id.btnGoBack)
 
         // Get actual contacts from repository (limiting to 3 as requested)
-        val trustedContacts = MockDataRepository.getTrustedContacts().take(3)
+        val user = MockDataRepository.getCurrentUser()
+        val trustedContacts = MockDataRepository.getTrustedContacts().toMutableList()
         
-        if (trustedContacts.isEmpty()) {
+        // Also include the primary emergency contact if set
+        if (user.emergencyContactPhone.isNotEmpty()) {
+            trustedContacts.add(0, com.coride.data.model.TrustedContact(
+                name = user.emergencyContactName.ifEmpty { "Emergency Contact" },
+                phone = user.emergencyContactPhone,
+                relation = "Primary"
+            ))
+        }
+        
+        val displayContacts = trustedContacts.take(3)
+        
+        if (displayContacts.isEmpty()) {
             tvNoContacts.visibility = View.VISIBLE
             btnNotifyAll.isEnabled = false
             btnNotifyAll.alpha = 0.5f
@@ -49,7 +61,7 @@ class SosDialogFragment : BottomSheetDialogFragment() {
             tvNoContacts.visibility = View.GONE
             containerContacts.removeAllViews()
             
-            trustedContacts.forEach { contact ->
+            displayContacts.forEach { contact ->
                 val row = layoutInflater.inflate(R.layout.item_sos_contact, containerContacts, false)
                 row.findViewById<TextView>(R.id.tvSosContactName).text = contact.name
                 row.findViewById<TextView>(R.id.tvSosContactPhone).text = contact.phone
@@ -82,14 +94,18 @@ class SosDialogFragment : BottomSheetDialogFragment() {
             val sentCount = SmsSafetyHelper.sendToAllEmergencyContacts(requireContext(), sosMessage)
             
             if (sentCount > 0) {
-                Toast.makeText(requireContext(), "🆘 SOS Alerts dispatched to $sentCount real contacts!", Toast.LENGTH_LONG).show()
+                Toast.makeText(requireContext(), "🆘 SOS Alerts dispatched to $sentCount contacts!", Toast.LENGTH_LONG).show()
                 btnNotifyAll.text = "NOTIFIED ✅"
                 btnNotifyAll.isEnabled = false
                 
                 // Also trigger internal SOS state
                 MockDataRepository.triggerSOS()
             } else {
-                Toast.makeText(requireContext(), "No contacts chosen to notify.", Toast.LENGTH_SHORT).show()
+                if (!com.coride.utils.SmsSafetyHelper.hasSmsPermission(requireContext())) {
+                    Toast.makeText(requireContext(), "⚠️ SMS Permission Denied. Cannot send SOS.", Toast.LENGTH_LONG).show()
+                } else {
+                    Toast.makeText(requireContext(), "No contacts chosen or delivery failed.", Toast.LENGTH_SHORT).show()
+                }
             }
         }
 

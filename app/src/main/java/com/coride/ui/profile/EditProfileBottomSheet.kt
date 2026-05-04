@@ -50,8 +50,8 @@ class EditProfileBottomSheet : BottomSheetDialogFragment() {
             val org = etOrg?.text.toString().trim()
             val studentId = etStudentId?.text.toString().trim()
             val address = etAddress?.text.toString().trim()
-            val emerName = etName?.text.toString().trim()
-            val emerPhone = etPhone?.text.toString().trim()
+            val emerName = user.emergencyContactName
+            val emerPhone = user.emergencyContactPhone
 
             if (name.isEmpty() || phone.isEmpty() || org.isEmpty() || studentId.isEmpty() || address.isEmpty()) {
                 Toast.makeText(requireContext(), "Mandatory fields cannot be empty", Toast.LENGTH_SHORT).show()
